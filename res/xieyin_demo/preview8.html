@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>SVG 谜题 v6 · 多方向（明星 / 古代人物 / 物品 / 成语）</title>
+<style>
+  :root {
+    --ink:#2f2f45; --paper:#fff; --gold:#f6c344;
+    --tag-cy:#8c7ae6; --tag-star:#e35d5d; --tag-anc:#2980b9; --tag-obj:#27ae60;
+    --panel-stroke:3px; --panel-radius:10px; --card-radius:26px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"Microsoft YaHei","PingFang SC",sans-serif;
+    background:linear-gradient(135deg,#1a1a2e 0%,#16213e 60%,#0f3460 100%);
+    min-height:100vh; color:#eee; padding:40px 20px; }
+  .wrap { max-width:1180px; margin:0 auto; }
+  h1 { text-align:center; font-size:28px; color:#ffd166; margin-bottom:10px; }
+  .sub { text-align:center; color:#8d99ae; font-size:14px; line-height:1.9; margin-bottom:14px; }
+  .legend { text-align:center; margin-bottom:34px; }
+  .legend span { display:inline-block; color:#fff; font-size:13px; font-weight:bold;
+    border-radius:999px; padding:5px 16px; margin:0 5px; }
+  .grid { display:grid; grid-template-columns:repeat(2, 500px); gap:44px; justify-content:center; }
+  .pcard { position:relative; background:var(--paper); border-radius:var(--card-radius); padding:12px;
+    width:500px; box-shadow:0 14px 40px rgba(0,0,0,.45); }
+  .lv { position:absolute; top:-12px; left:-12px; background:var(--ink); color:#fff;
+    font-size:14px; font-weight:900; padding:6px 14px; border-radius:999px;
+    box-shadow:0 4px 10px rgba(0,0,0,.4); }
+  .panel { position:relative; width:100%; aspect-ratio:470/268;
+    border:var(--panel-stroke) solid var(--ink); border-radius:var(--panel-radius); overflow:hidden; }
+  .panel + .panel { margin-top:10px; }
+  .thing { position:absolute; }
+  .fx { position:absolute; inset:0; width:100%; height:100%; }
+  .cap { position:absolute; bottom:4px; width:100%; text-align:center;
+    font-size:30px; font-weight:900; color:var(--ink); }
+  .slots { display:inline-block; vertical-align:8px; margin-left:10px; }
+  .slots i { display:inline-block; width:30px; height:30px; border:3px solid var(--ink);
+    border-radius:7px; background:#fff; margin:0 3px; }
+  .meta { padding:12px 8px 4px; display:flex; align-items:center; gap:16px; }
+  .ansline { margin-top:14px; font-size:17px; color:#ffd166; font-weight:bold; }
+  .expl { margin-top:5px; font-size:13.5px; color:#a8b2c1; line-height:1.8; margin-bottom:6px; }
+  .tag { display:inline-block; font-size:12px; color:#fff; border-radius:999px;
+    padding:2px 10px; margin-left:8px; vertical-align:2px; }
+  .credit { text-align:center; color:#6c7a89; font-size:13px; margin-top:40px; line-height:2; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎯 SVG 谜题 v6 · 四大方向</h1>
+  <p class="sub">公式不变：上格只报物件名（提示），下格同物件＋新元素，答案永远不上画面</p>
+  <div class="legend">
+    <span style="background:#e35d5d">明星</span><span style="background:#2980b9">古代人物</span>
+    <span style="background:#27ae60">物品</span><span style="background:#8c7ae6">成语</span>
+    <span style="background:#16a085">词语</span>
+  </div>
+
+  <div class="grid">
+
+    <!-- 05 明星 · 杨幂 = 羊 + 蜜 -->
+    <div>
+      <div class="pcard"><span class="lv">第 05 关</span>
+        <div class="panel" style="background:#fcd5ce;">
+          <img class="thing" src="openmoji/1F411.svg" style="left:170px; top:24px; width:158px;">
+          <div class="cap">这是羊</div>
+        </div>
+        <div class="panel" style="background:#aee0f5;">
+          <img class="thing" src="openmoji/1F411.svg" style="left:56px; top:44px; width:170px;">
+          <img class="thing" src="openmoji/1F36F.svg" style="left:292px; top:64px; width:104px;">
+          <svg class="fx" viewBox="0 0 470 268">
+            <path d="M232,96 Q244,104 236,116" stroke="#2f2f45" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            <path d="M428,52 L432,61 L441,64 L432,67 L428,76 L424,67 L415,64 L424,61 Z" fill="#f6c344" stroke="#2f2f45" stroke-width="2.5"/>
+          </svg>
+          <div class="cap">这是<span class="slots"><i></i><i></i></span></div>
+        </div>
+        <div class="meta">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#e35d5d"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">明星</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#d9d9e3"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：杨幂<span class="tag" style="background:#e35d5d">明星</span></div>
+      <div class="expl">羊在舔蜂蜜 →「羊蜜」→ 杨幂，谐音明星名，观众喊出答案会有梗感</div>
+    </div>
+
+    <!-- 06 明星 · 吴京 = 屋 + 鲸 -->
+    <div>
+      <div class="pcard"><span class="lv">第 06 关</span>
+        <div class="panel" style="background:#fdf6a3;">
+          <img class="thing" src="openmoji/1F3E0.svg" style="left:166px; top:22px; width:140px;">
+          <div class="cap">这是屋</div>
+        </div>
+        <div class="panel" style="background:#aee0f5;">
+          <img class="thing" src="openmoji/1F3E0.svg" style="left:44px; top:76px; width:120px;">
+          <img class="thing" src="openmoji/1F40B.svg" style="left:236px; top:36px; width:196px;">
+          <svg class="fx" viewBox="0 0 470 268">
+            <g stroke="#7ec8ff" stroke-width="4" fill="none" stroke-linecap="round">
+              <path d="M300,214 q10,-14 24,-10"/><path d="M340,222 q12,-10 22,-6"/>
+            </g>
+          </svg>
+          <div class="cap">这是<span class="slots"><i></i><i></i></span></div>
+        </div>
+        <div class="meta">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#e35d5d"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">明星</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#d9d9e3"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：吴京<span class="tag" style="background:#e35d5d">明星</span></div>
+      <div class="expl">房子旁边鲸鱼出水 →「屋鲸」→ 吴京（屋 wū ≈ 吴 wú）</div>
+    </div>
+
+    <!-- 07 古代 · 西施 = 西瓜 + 狮 -->
+    <div>
+      <div class="pcard"><span class="lv">第 07 关</span>
+        <div class="panel" style="background:#c8f0d8;">
+          <img class="thing" src="openmoji/1F349.svg" style="left:160px; top:24px; width:156px;">
+          <div class="cap">这是西瓜</div>
+        </div>
+        <div class="panel" style="background:#fcd5ce;">
+          <img class="thing" src="openmoji/1F349.svg" style="left:56px; top:118px; width:120px;">
+          <img class="thing" src="openmoji/1F981.svg" style="left:226px; top:34px; width:168px;">
+          <div class="cap">这是<span class="slots"><i></i><i></i></span></div>
+        </div>
+        <div class="meta">
+          <svg width="80" height="34" viewBox="0 0 80 34"><rect width="80" height="34" rx="8" fill="#2980b9"/><text x="40" y="23" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">古代人物</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#d9d9e3"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：西施<span class="tag" style="background:#2980b9">古代人物</span></div>
+      <div class="expl">西瓜 + 狮子 →「西狮」→ 西施（狮 shī ≈ 施 shī），四大美人变身动物梗</div>
+    </div>
+
+    <!-- 08 古代 · 嫦娥 = 肠 + 鹅 -->
+    <div>
+      <div class="pcard"><span class="lv">第 08 关</span>
+        <div class="panel" style="background:#aee0f5;">
+          <img class="thing" src="openmoji/1FABF.svg" style="left:166px; top:20px; width:150px;">
+          <div class="cap">这是鹅</div>
+        </div>
+        <div class="panel" style="background:#ffe0b2;">
+          <img class="thing" src="openmoji/1F32D.svg" style="left:52px; top:76px; width:150px; transform:rotate(-18deg);">
+          <img class="thing" src="openmoji/1FABF.svg" style="left:238px; top:48px; width:150px;">
+          <svg class="fx" viewBox="0 0 470 268">
+            <text x="392" y="60" text-anchor="middle" font-size="34" font-weight="900" fill="#2f2f45">？</text>
+          </svg>
+          <div class="cap">这是<span class="slots"><i></i><i></i></span></div>
+        </div>
+        <div class="meta">
+          <svg width="80" height="34" viewBox="0 0 80 34"><rect width="80" height="34" rx="8" fill="#2980b9"/><text x="40" y="23" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">古代人物</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#d9d9e3"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：嫦娥<span class="tag" style="background:#2980b9">古代人物</span></div>
+      <div class="expl">香肠 + 鹅大眼瞪小眼 →「肠鹅」→ 嫦娥（肠 cháng ≈ 嫦），奔月的仙女成了下饭梗</div>
+    </div>
+
+    <!-- 09 古代 · 岳飞 = 月 + 飞 -->
+    <div>
+      <div class="pcard"><span class="lv">第 09 关</span>
+        <div class="panel" style="background:#16213e;">
+          <img class="thing" src="openmoji/1F319.svg" style="left:168px; top:22px; width:136px;">
+          <div class="cap" style="color:#fff">这是月亮</div>
+        </div>
+        <div class="panel" style="background:#16213e;">
+          <img class="thing" src="openmoji/1F319.svg" style="left:44px; top:28px; width:110px;">
+          <img class="thing" src="openmoji/1F426.svg" style="left:268px; top:96px; width:110px;">
+          <svg class="fx" viewBox="0 0 470 268">
+            <g stroke="#8d99ae" stroke-width="4" fill="none" stroke-linecap="round">
+              <path d="M196,150 q-16,-6 -28,-18"/><path d="M188,178 q-18,-2 -32,-10"/>
+            </g>
+            <g fill="#fff" opacity=".9">
+              <circle cx="392" cy="52" r="2.5"/><circle cx="424" cy="88" r="2"/><circle cx="360" cy="36" r="2"/>
+            </g>
+          </svg>
+          <div class="cap" style="color:#fff">这是<span class="slots"><i style="background:#fff"></i><i style="background:#fff"></i></span></div>
+        </div>
+        <div class="meta">
+          <svg width="80" height="34" viewBox="0 0 80 34"><rect width="80" height="34" rx="8" fill="#2980b9"/><text x="40" y="23" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">古代人物</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#d9d9e3"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：岳飞<span class="tag" style="background:#2980b9">古代人物</span></div>
+      <div class="expl">夜空里月亮 + 飞鸟掠过 →「月飞」→ 岳飞（月 yuè ≈ 岳），深蓝夜空板式也是新底色示范</div>
+    </div>
+
+    <!-- 10 物品 · 热狗 = 狗 + 热 -->
+    <div>
+      <div class="pcard"><span class="lv">第 10 关</span>
+        <div class="panel" style="background:#c8f0d8;">
+          <img class="thing" src="openmoji/1F415.svg" style="left:160px; top:26px; width:160px;">
+          <div class="cap">这是狗</div>
+        </div>
+        <div class="panel" style="background:#fcd5ce;">
+          <img class="thing" src="openmoji/1F415.svg" style="left:150px; top:74px; width:170px;">
+          <img class="thing" src="openmoji/1F525.svg" style="left:206px; top:14px; width:74px;">
+          <svg class="fx" viewBox="0 0 470 268">
+            <g stroke="#8d99ae" stroke-width="4" fill="none" stroke-linecap="round">
+              <path d="M132,96 q-8,12 0,24"/><path d="M340,96 q8,12 0,24"/>
+            </g>
+            <g fill="#7ec8ff">
+              <path d="M126,140 q-6,12 0,16 q6,-4 0,-16"/><path d="M346,140 q6,12 0,16 q-6,-4 0,-16"/>
+            </g>
+          </svg>
+          <div class="cap">这是<span class="slots"><i></i><i></i></span></div>
+        </div>
+        <div class="meta">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#27ae60"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">物品</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#d9d9e3"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：热狗<span class="tag" style="background:#27ae60">物品</span></div>
+      <div class="expl">狗头顶冒火、热得直冒汗 →「热（的）狗」→ 热狗，物品方向最直观的一道</div>
+    </div>
+
+    <!-- 11 物品 · 蛋挞 = 蛋 + 塔 -->
+    <div>
+      <div class="pcard"><span class="lv">第 11 关</span>
+        <div class="panel" style="background:#fdf6a3;">
+          <img class="thing" src="openmoji/1F95A.svg" style="left:176px; top:26px; width:120px;">
+          <div class="cap">这是蛋</div>
+        </div>
+        <div class="panel" style="background:#aee0f5;">
+          <img class="thing" src="openmoji/1F95A.svg" style="left:64px; top:96px; width:104px; transform:rotate(-14deg);">
+          <img class="thing" src="openmoji/1F5FC.svg" style="left:244px; top:16px; width:150px;">
+          <svg class="fx" viewBox="0 0 470 268">
+            <path d="M212,150 Q236,120 260,142" stroke="#2f2f45" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-dasharray="7 7"/>
+          </svg>
+          <div class="cap">这是<span class="slots"><i></i><i></i></span></div>
+        </div>
+        <div class="meta">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#27ae60"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">物品</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#d9d9e3"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：蛋挞<span class="tag" style="background:#27ae60">物品</span></div>
+      <div class="expl">蛋顺着虚线飞向铁塔 →「蛋塔」→ 蛋挞（塔 tǎ ≈ 挞 tà），下午茶联动巴黎铁塔</div>
+    </div>
+
+    <!-- 12 成语 · 狐假虎威 -->
+    <div>
+      <div class="pcard"><span class="lv">第 12 关</span>
+        <div class="panel" style="background:#ffe0b2;">
+          <img class="thing" src="openmoji/1F98A.svg" style="left:168px; top:26px; width:140px;">
+          <div class="cap">这是狐狸</div>
+        </div>
+        <div class="panel" style="background:#aee0f5;">
+          <img class="thing" src="openmoji/1F42F.svg" style="left:196px; top:36px; width:186px;">
+          <img class="thing" src="openmoji/1F98A.svg" style="left:58px; top:60px; width:118px;">
+          <svg class="fx" viewBox="0 0 470 268">
+            <g stroke="#2f2f45" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".65">
+              <path d="M186,104 q14,6 20,18"/><path d="M178,124 q12,8 16,18"/>
+            </g>
+          </svg>
+          <div class="cap">这是<span class="slots"><i></i><i></i><i></i><i></i></span></div>
+        </div>
+        <div class="meta">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#8c7ae6"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">成语</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#d9d9e3"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：狐假虎威<span class="tag">成语</span></div>
+      <div class="expl">狐狸昂首走在老虎前面，路线朝向老虎——故事型成语直接演出来，成语方向的新画法</div>
+    </div>
+
+    <!-- 13 成语 · 井底之蛙 -->
+    <div>
+      <div class="pcard"><span class="lv">第 13 关</span>
+        <div class="panel" style="background:#c8f0d8;">
+          <img class="thing" src="openmoji/1F438.svg" style="left:172px; top:26px; width:130px;">
+          <div class="cap">这是青蛙</div>
+        </div>
+        <div class="panel" style="background:#16213e;">
+          <svg class="fx" viewBox="0 0 470 268">
+            <rect x="105" y="-40" width="260" height="348" fill="#7a5236" stroke="#2f2f45" stroke-width="4.5"/>
+            <rect x="145" y="-40" width="180" height="268" fill="#3e4d6b"/>
+            <ellipse cx="235" cy="228" rx="90" ry="20" fill="#5d7296"/>
+            <g stroke="#2f2f45" stroke-width="4" opacity=".5">
+              <line x1="125" y1="20" x2="345" y2="20"/><line x1="125" y1="70" x2="345" y2="70"/>
+              <line x1="125" y1="120" x2="345" y2="120"/><line x1="125" y1="170" x2="345" y2="170"/>
+            </g>
+            <ellipse cx="235" cy="18" rx="86" ry="22" fill="#87ceeb" stroke="#2f2f45" stroke-width="4.5"/>
+            <circle cx="204" cy="12" r="9" fill="#fff7ec" stroke="#2f2f45" stroke-width="3.5"/>
+          </svg>
+          <img class="thing" src="openmoji/1F438.svg" style="left:186px; top:150px; width:100px;">
+          <div class="cap" style="color:#fff">这是<span class="slots"><i style="background:#fff"></i><i style="background:#fff"></i><i style="background:#fff"></i><i style="background:#fff"></i></span></div>
+        </div>
+        <div class="meta">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#8c7ae6"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">成语</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#d9d9e3"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：井底之蛙<span class="tag">成语</span></div>
+      <div class="expl">同一只青蛙坐进井底抬头看天——深井剖面 + 井口一小片天，空间关系讲故事</div>
+    </div>
+
+    <!-- 14 词语 · 锦绣 = 金 + 秀 -->
+    <div>
+      <div class="pcard"><span class="lv">第 14 关</span>
+        <div class="panel" style="background:#fcd5ce;">
+          <svg class="fx" viewBox="0 0 470 268">
+            <g transform="translate(235,112)">
+              <rect x="-44" y="-52" width="88" height="28" rx="14" fill="#ffe08a" stroke="#2f2f45" stroke-width="4.5"/>
+              <rect x="-58" y="-32" width="116" height="50" rx="16" fill="#f6c344" stroke="#2f2f45" stroke-width="4.5"/>
+              <circle cx="-14" cy="-12" r="3.5" fill="#2f2f45"/><circle cx="14" cy="-12" r="3.5" fill="#2f2f45"/>
+              <path d="M-9,-2 Q0,6 9,-2" stroke="#2f2f45" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+              <circle cx="-24" cy="-4" r="5" fill="#f7a6a6" opacity=".8"/><circle cx="24" cy="-4" r="5" fill="#f7a6a6" opacity=".8"/>
+            </g>
+            <g fill="#f6c344" stroke="#2f2f45" stroke-width="2.5">
+              <path d="M150,52 L153,61 L162,64 L153,67 L150,76 L147,67 L138,64 L147,61 Z"/>
+              <path d="M322,44 L325,53 L334,56 L325,59 L322,68 L319,59 L310,56 L319,53 Z"/>
+            </g>
+          </svg>
+          <div class="cap">这是金子</div>
+        </div>
+        <div class="panel" style="background:#1f2a44;">
+          <svg class="fx" viewBox="0 0 470 268">
+            <polygon points="187,10 283,10 330,238 140,238" fill="#fff7cc" opacity=".2"/>
+            <rect x="205" y="2" width="60" height="12" rx="4" fill="#8d99ae" stroke="#2f2f45" stroke-width="3.5"/>
+            <path d="M10,4 Q34,134 12,264 L58,264 Q40,134 56,4 Z" fill="#e35d5d" stroke="#2f2f45" stroke-width="4"/>
+            <path d="M460,4 Q436,134 458,264 L412,264 Q430,134 414,4 Z" fill="#e35d5d" stroke="#2f2f45" stroke-width="4"/>
+            <rect x="60" y="236" width="350" height="30" fill="#17203a" stroke="#2f2f45" stroke-width="3.5"/>
+          </svg>
+          <svg class="fx" viewBox="0 0 470 268">
+            <g transform="translate(226,186)">
+              <rect x="-40" y="-44" width="80" height="26" rx="13" fill="#ffe08a" stroke="#2f2f45" stroke-width="4.5"/>
+              <rect x="-53" y="-25" width="106" height="46" rx="16" fill="#f6c344" stroke="#2f2f45" stroke-width="4.5"/>
+              <circle cx="-13" cy="-6" r="3.2" fill="#2f2f45"/><circle cx="13" cy="-6" r="3.2" fill="#2f2f45"/>
+              <path d="M-9,3 Q0,11 9,3" stroke="#2f2f45" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+              <g stroke="#2f2f45" stroke-width="5" stroke-linecap="round">
+                <line x1="-44" y1="-32" x2="-58" y2="-52"/><line x1="44" y1="-32" x2="58" y2="-52"/>
+              </g>
+            </g>
+          </svg>
+          <img class="thing" src="openmoji/1F3A4.svg" style="left:286px; top:130px; width:64px; transform:rotate(14deg);">
+          <svg class="fx" viewBox="0 0 470 268">
+            <g fill="#f6c344" stroke="#2f2f45" stroke-width="2.5">
+              <path d="M158,96 L161,105 L170,108 L161,111 L158,120 L155,111 L146,108 L155,105 Z"/>
+              <path d="M300,72 L303,81 L312,84 L303,87 L300,96 L297,87 L288,84 L297,81 Z"/>
+            </g>
+          </svg>
+          <div class="cap" style="color:#fff">这是<span class="slots"><i style="background:#fff"></i><i style="background:#fff"></i></span></div>
+        </div>
+        <div class="meta">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#16a085"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">词语</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#d9d9e3"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：锦绣<span class="tag" style="background:#16a085">词语</span></div>
+      <div class="expl">同一块金子跳上舞台，聚光灯下举起双臂拿麦「作秀」→「金秀」→ 锦绣（金 jīn ≈ 锦 jǐn，秀 xiù ＝ 绣 xiù）</div>
+    </div>
+
+  </div>
+
+  <p class="credit">素材：OpenMoji（CC BY-SA 4.0）· 谜题体系：上格提示 / 下格同物件变化 / 空格槽=答案字数 / 分类标签</p></div>
+</body>
+</html>

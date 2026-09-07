@@ -1,0 +1,219 @@
+/* ══════════════════════════════════════════════════════════════════
+   stage.css — 弹幕数独 · 展示屏专属样式（games/sudoku/public）
+   主题变量/手机框/排行榜/获胜横幅/烟花等公共样式在 /common/base.css
+   ══════════════════════════════════════════════════════════════════ */
+
+/* 状态行：倒计时 / 已填 / 点赞充能 */
+.stat-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.stat {
+  display: flex; align-items: center; gap: 5px;
+  background: var(--panel2); border: 1px solid var(--line);
+  border-radius: 10px; padding: 4px 10px;
+  font-size: 13px; color: var(--sub); white-space: nowrap;
+}
+.stat b { color: var(--text); }
+.stat-ico { font-size: 13px; }
+.cd-b {
+  color: var(--gold); font-size: 20px; font-weight: 700;
+  font-variant-numeric: tabular-nums; line-height: 1;
+  text-shadow: 0 0 14px rgba(var(--glow-rgb), .35);
+}
+.stat-like { flex: 1; min-width: 0; }
+.like-name {
+  min-width: 0; max-width: 72px; overflow: hidden; text-overflow: ellipsis;
+  color: var(--text); font-weight: 500;
+}
+.stat-like .mini {
+  flex: 1; height: 8px; min-width: 20px;
+  background: var(--cell-bg); border-radius: 999px; overflow: hidden;
+}
+.stat-like .mini i {
+  display: block; height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--gold-mid), var(--gold));
+  border-radius: 999px; transition: width .4s;
+}
+.stat-like.charged { border-color: rgba(var(--glow-rgb), .55); }
+.stat-like.charged .mini i { box-shadow: 0 0 10px rgba(var(--glow-rgb), .8); }
+.stat-like.flash { animation: likeFlash .5s; }
+@keyframes likeFlash { 50% { background: rgba(var(--glow-rgb), .16); } }
+
+/* 本局填格进度 */
+.fill-progress {
+  height: 7px; margin-top: 8px;
+  background: var(--panel2); border: 1px solid var(--line);
+  border-radius: 999px; overflow: hidden;
+}
+.fill-progress i {
+  display: block; height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--gold-mid), var(--gold));
+  border-radius: 999px; transition: width .5s;
+}
+
+/* ═══════════ 数独盘面（带行列坐标标记） ═══════════ */
+.board-wrap {
+  width: min(100%, 630px);
+  margin: 10px auto 0; flex: none;
+  display: grid; grid-template-columns: 14px 1fr; grid-template-rows: 14px 1fr; gap: 3px;
+}
+.bcorner { grid-area: 1 / 1; }
+/* 行列号与盘面 9 列/9 行对齐：同 gap，padding 抵消盘面边框 */
+.bcol-labels {
+  grid-area: 1 / 2;
+  display: grid; grid-template-columns: repeat(9, 1fr); gap: 2px; padding: 0 2px;
+}
+.brow-labels {
+  grid-area: 2 / 1;
+  display: grid; grid-template-rows: repeat(9, 1fr); gap: 2px; padding: 2px 0;
+}
+.bcol-labels span, .brow-labels span {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; color: var(--dim);
+  font-variant-numeric: tabular-nums;
+}
+.board {
+  grid-area: 2 / 2;
+  aspect-ratio: 1; position: relative;
+  display: grid; grid-template-columns: repeat(9, 1fr); grid-template-rows: repeat(9, 1fr);
+  gap: 2px; background: var(--line2);
+  border: 2px solid var(--line); border-radius: 6px;
+}
+/* 3×3 宫分隔线（calc 定位与盘面尺寸解耦：min(100%,352px) 下自动对齐） */
+.bdiv { position: absolute; width: 3px; height: 3px; background: var(--sub); opacity: .45; pointer-events: none; z-index: 3; }
+.bdiv.v { top: 0; bottom: 0; height: auto; }
+.bdiv.h { left: 0; right: 0; width: auto; }
+
+.cell {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--cell-bg); border-radius: 2px;
+}
+.cell.alt { background: var(--panel); }
+.cell .num {
+  font-size: clamp(18px, 4.6vw, 22px); font-weight: 700; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+/* 提示数（开局给定）：亮白 */
+.cell.given .num { color: var(--text); }
+.cell.given.alt .num { color: var(--text); }
+/* 观众/系统填入：金色 */
+.cell.filled { background: rgba(var(--glow-rgb), .12); }
+.cell.filled .num { color: var(--gold); text-shadow: 0 0 9px rgba(var(--glow-rgb), .45); }
+/* 填入弹跳动画 */
+.cell.pop .num { animation: cellPop .55s cubic-bezier(.2, 1.5, .4, 1); }
+.cell.pop { animation: cellBgPop .8s; }
+@keyframes cellPop { 0% { transform: scale(.2); } 60% { transform: scale(1.35); } 100% { transform: scale(1); } }
+@keyframes cellBgPop { 0% { background: rgba(var(--glow-rgb), .6); } }
+/* 错填红闪（不落格） */
+.cell.bad { animation: cellBad .6s; }
+@keyframes cellBad { 0%, 60% { background: rgba(248, 113, 113, .55); } }
+/* 同数字联动高亮 */
+.cell.dup { box-shadow: inset 0 0 0 2px rgba(var(--glow-rgb), .5); }
+
+/* 头像角标：默认右上角（服务端 avatarCorner 可切左上），小圆不遮数字 */
+.cell .cav {
+  position: absolute; top: -2px; right: -2px;
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1.5px solid var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; color: var(--text);
+  background: var(--avatar-bg); overflow: hidden; z-index: 2;
+}
+.cell.corner-left .cav { top: -2px; right: auto; left: -2px; }
+.cell .cav img { width: 100%; height: 100%; object-fit: cover; }
+/* 来源徽章：👍 点赞 / 🎁 礼物 / 💡 提示 / ⚙️ 系统自动，右下角小标 */
+.cell .cbadge {
+  position: absolute; bottom: -2px; right: -2px;
+  width: 11px; height: 11px; border-radius: 50%;
+  background: var(--panel); border: 1px solid var(--line);
+  font-size: 7px; line-height: 9px; text-align: center; z-index: 2;
+}
+.cell.corner-left .cbadge { right: auto; left: -2px; }
+
+/* 玩法说明 */
+.howto { text-align: center; font-size: 12px; line-height: 1.55; color: var(--sub); margin-top: 10px; }
+.howto b { color: var(--gold); font-weight: 500; }
+.howto-line { color: var(--text); }
+.howto-gold { color: var(--sub); font-size: 11.5px; }
+
+/* ═══════════ 下部分栏：操作记录 | 排行榜（与猜数字同版式，左右各半） ═══════════ */
+.lower { flex: 1; display: flex; gap: 8px; margin-top: 11px; min-height: 0; }
+.col-log, .col-board { display: flex; flex-direction: column; min-width: 0; }
+.col-log { flex: 0 0 50%; }
+.col-board { flex: 1; }
+.lower h3 {
+  font-size: 12px; color: var(--sub); font-weight: 400;
+  margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.board-head h3 { margin-bottom: 4px; }
+
+.log-box {
+  flex: 1; min-height: 0;
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 12px; padding: 7px 8px;
+  overflow: hidden;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.op {
+  display: flex; gap: 5px; align-items: flex-start;
+  font-size: 12px; color: var(--sub); line-height: 1.45;
+}
+.op .t { color: var(--dim); font-size: 10.5px; flex: none; font-variant-numeric: tabular-nums; padding-top: 2px; }
+.op .who { color: var(--text); font-weight: 500; }
+.op.hot { color: var(--gold); }
+.op.err { color: var(--red); }
+.op .pos { color: var(--accent); font-weight: 500; }
+.op.enter { animation: opIn .35s ease; }
+@keyframes opIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.board-box {
+  flex: 1; min-height: 0;
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 12px; padding: 7px 8px;
+  overflow: hidden;
+}
+/* 数独专属榜：名次/头像/玩家/MVP次数/积分（按 MVP 次数排序） */
+.lb-th .mv, .lb-row .mv { flex: 0 0 52px; text-align: right; }
+.lb-th .mv { color: var(--dim); }
+.lb-row .mv { color: var(--gold); font-size: 14px; font-variant-numeric: tabular-nums; }
+/* 排行榜分格复用 base.css 的 .lb-th/.lb-row（名次/头像/玩家/得分） */
+
+/* ═══════════ 结算面板：本局 Top5（MVP 皇冠 + 每人填对/错填数） ═══════════ */
+.win-top5 {
+  margin: 14px auto 6px; width: 340px; max-width: 92%;
+  display: flex; flex-direction: column; gap: 5px;
+}
+.wt-row {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--panel2); border: 1px solid var(--line);
+  border-radius: 9px; padding: 5px 10px;
+  font-size: 14px; color: var(--sub); text-align: left;
+}
+.wt-row .rk {
+  flex: none; width: 20px; height: 20px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; background: var(--cell-bg); color: var(--dim);
+}
+.wt-row.m1 .rk { background: var(--gold); color: var(--on-chip); box-shadow: 0 0 8px rgba(var(--glow-rgb), .5); }
+.wt-row.m2 .rk { background: var(--silver); color: var(--on-chip); }
+.wt-row.m3 .rk { background: var(--bronze); color: var(--on-chip); }
+.wt-row .avatar { flex: none; }
+.wt-row .nm {
+  flex: 1; min-width: 0; color: var(--text); font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.wt-row.mvp { background: linear-gradient(90deg, rgba(var(--glow-rgb), .18), transparent 75%); border-color: rgba(var(--glow-rgb), .5); }
+.wt-row.mvp .nm { color: var(--gold); font-weight: 700; }
+.wt-row .st { flex: none; font-size: 12px; white-space: nowrap; }
+.wt-row .st b.ok { color: var(--green); font-weight: 600; }
+.wt-row .st b.bad { color: var(--red); font-weight: 600; }
+.wt-row .sc { flex: none; color: var(--gold); font-weight: 700; }
+.wt-empty { text-align: center; color: var(--dim); font-size: 13px; padding: 10px 0; }
+
+/* 下一局倒计时胶囊（卡片下方） */
+.result-next {
+  margin-top: 10px; text-align: center;
+  font-size: 13px; color: var(--sub);
+  background: var(--panel2); border: 1px solid var(--line);
+  border-radius: 999px; padding: 5px 16px; width: fit-content;
+  margin-left: auto; margin-right: auto;
+}

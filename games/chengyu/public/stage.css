@@ -1,0 +1,71 @@
+/* ══════════════════════════════════════════════════════════════════
+   stage.css — 成语接龙 · 展示屏专属样式（games/chengyu/public）
+   手机框/主题变量/排行榜基础行等公共样式在 /common/base.css
+   ══════════════════════════════════════════════════════════════════ */
+.cy-top { display: flex; align-items: baseline; justify-content: space-between; margin-top: 2px; }
+.cy-badge { font-size: 12px; color: var(--gold); background: var(--panel2); border: 1px solid var(--gold); padding: 3px 10px; border-radius: 999px; }
+.cy-cd { display: flex; align-items: baseline; justify-content: center; gap: 6px; margin-top: 12px; }
+.cy-cd-num { font-size: 46px; font-weight: 500; color: var(--gold); font-variant-numeric: tabular-nums; line-height: 1; }
+.cy-cd-unit { font-size: 17px; color: var(--sub); }
+.cy-prog { margin-top: 10px; }
+.cy-prog-track { position: relative; height: 8px; background: var(--panel2); border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.cy-prog-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: var(--accent); border-radius: 999px; transition: width .9s linear; }
+/* 适配度图例（置于倒计时/进度条下方） */
+.cy-legend { display: flex; justify-content: center; gap: 10px; margin-top: 15px; font-size: 11px; color: var(--sub); flex-wrap: wrap; }
+.cy-legend b { font-weight: 500; }
+.cy-tag { display: inline-block; font-size: 10px; padding: 1px 7px; border-radius: 999px; margin-right: 3px; }
+.cy-tag-same { background: var(--gold); color: var(--on-chip); }
+.cy-tag-tone { background: var(--sub); color: var(--on-chip); }
+.cy-tag-rhyme { background: var(--bronze); color: var(--on-chip); }
+/* 目标层 */
+.cy-goal { margin-top: 12px; border: 1.5px dashed var(--gold); border-radius: 10px; padding: 7px 10px; text-align: center; }
+.cy-goal-title { font-size: 16px; color: var(--gold); font-weight: 500; }
+.cy-goal-sub { font-size: 17px; color: var(--sub); margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 2px; flex-wrap: wrap; }
+.cy-goal-sub b { color: var(--gold); font-weight: 500; }
+.cy-goal-jy { margin-top: 5px; font-size: 11px; color: var(--sub); line-height: 1.5; display: flex; flex-direction: column; gap: 2px; align-items: center; }
+.cy-goal-jy .jy-txt { max-width: 90%; }
+.cy-goal-jy .jy-lb { color: var(--gold); font-weight: 500; margin-right: 4px; }
+.cy-goal-jy .jy-cy { color: var(--dim); font-size: 10px; }
+/* 主体对半 */
+.cy-body { flex: 1; display: flex; gap: 8px; margin-top: 6px; min-height: 0; }
+.cy-col { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.cy-col-title { font-size: 11px; color: var(--gold); font-weight: 400; margin-bottom: 5px; }
+/* 积木大厦 */
+.cy-tower { flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 5px; min-height: 0; }
+.cy-floor { background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; padding: 4px 6px; flex: 0 0 auto; display: flex; flex-direction: column; align-self: stretch; width: 100%; box-sizing: border-box; }
+.cy-floor.top { border-color: var(--gold); }
+.cy-floor.seed { opacity: .85; }
+.cy-floor-row1 { display: flex; align-items: center; justify-content: flex-start; text-align: left; gap: 5px; flex: none; width: 100%; box-sizing: border-box; }
+/* 层数徽章：明显可读 */
+.cy-floor-f {
+  flex: none; min-width: 20px; height: 20px; padding: 0 4px; border-radius: 6px;
+  background: var(--accent); color: var(--on-chip); font-size: 12px; font-weight: 500;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+/* 第 1 层（地基）层数徽章用暗色 */
+.cy-floor.seed .cy-floor-f { background: var(--seed-bg); }
+.cy-avatar { flex: 0 0 18px; width: 18px; height: 18px; border-radius: 50%; background: var(--avatar-bg); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--avatar-fg); overflow: hidden; }
+.cy-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cy-floor-name { font-size: 16px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cy-floor-score { flex: none; font-size: 10px; color: var(--gold); }
+/* 成语第二行：居中，字+拼音，尺寸收敛避免溢出 */
+.cy-floor-row2 { display: flex; justify-content: center; align-items: center; gap: 2px; margin-top: 2px; flex: none; width: 100%; box-sizing: border-box; }
+.cy-ch { display: inline-flex; flex-direction: column-reverse; align-items: center; line-height: 1.1; font-size: 24px; font-weight: 500; color: var(--text); }
+.cy-ch > .cy-py { font-style: normal; font-size: 18px; color: var(--dim); max-width: none; white-space: nowrap; }
+/* 连接类型字色（与 tag 同色）：同字金 / 同音银 / 谐韵铜 */
+.cy-han.c-same { color: var(--gold); }
+.cy-han.c-tone { color: var(--sub); }
+.cy-han.c-rhyme { color: var(--bronze); }
+.cy-ch-big { font-size: 68px; font-weight: 500; }
+.cy-ch-big .cy-py { font-size: 20px; }
+.cy-py-inline { font-size: 11px; color: var(--gold); margin-left: 2px; }
+/* 排行榜（容器本游戏布局，行/表头分格用 common/public/base.css 的 .lb-th/.lb-row） */
+.cy-board { flex: 1; overflow: hidden; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 6px; }
+/* 实时发送（固定高度，主体上方） */
+.cy-feed { margin-top: 8px; background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; height: 60px; flex: none; font-size: 10px; color: var(--sub); overflow: hidden; display: flex; flex-direction: column; gap: 3px; justify-content: flex-start; }
+.cy-feed-item { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: none; }
+.cy-feed-item .ok { color: var(--green); }
+.cy-feed-item .bad { color: var(--dim); }
+.cy-foot { margin-top: 5px; text-align: center; font-size: 10px; color: var(--dim); }
+.cy-foot-conn { color: var(--sub); }
+.cy-foot-conn + .cy-foot-conn::before { content: '· '; color: var(--dim); }

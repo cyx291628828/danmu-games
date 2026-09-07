@@ -1,0 +1,304 @@
+/* ══════════════════════════════════════════════════════════════════
+   stage.css — 答题竞猜 · 展示屏专属样式（games/quiz/public）
+   仅定义 quiz 专有类；手机框/排行榜/烟花等共用 common/public/base.css
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── 倒计时 ── */
+.countdown-row { display: flex; justify-content: center; margin: 12px 0 6px; }
+.cd { display: flex; align-items: baseline; gap: 4px; }
+.cd-num {
+  font-size: 46px; font-weight: 700; line-height: 1;
+  color: var(--gold); font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 16px rgba(var(--glow-rgb), 0.5);
+}
+.cd-unit { font-size: 14px; color: var(--dim); }
+
+.cd-progress { padding: 0 14px; margin-bottom: 8px; }
+.cd-progress-track {
+  height: 7px; background: var(--cell-bg); border-radius: 99px; overflow: hidden;
+  border: 1px solid var(--line);
+}
+.cd-progress-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  /* rAF 逐帧驱动宽度，过渡只做极轻微平滑；放大会导致视觉滞后 */
+  transition: width 0.1s linear;
+}
+
+/* ── 题卡 ── */
+.q-card {
+  margin: 4px 14px 10px; padding: 14px 16px;
+  background: var(--panel2); border: 1px solid var(--line);
+  border-radius: 14px; min-height: 78px;
+  display: flex; flex-direction: column; justify-content: center; gap: 6px;
+}
+.q-text { font-size: 24px; font-weight: 600; line-height: 1.4; color: var(--text); }
+.q-source { font-size: 12px; color: var(--dim); }
+
+/* 题目「分类 / 难度」标签 */
+.q-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.q-tags:empty { display: none; }
+.q-tag {
+  padding: 2px 9px; border-radius: 99px;
+  font-size: 13px; font-weight: 600; line-height: 1.5;
+  border: 1px solid var(--line); white-space: nowrap;
+}
+.q-tag-cat {
+  background: rgba(var(--accent-rgb, 77, 163, 255), 0.16);
+  color: var(--accent);
+  border-color: rgba(var(--accent-rgb, 77, 163, 255), 0.42);
+}
+.q-tag-diff {
+  background: rgba(var(--glow-rgb), 0.16);
+  color: var(--gold);
+  border-color: rgba(var(--glow-rgb), 0.42);
+}
+
+/* ── 选项条 ── */
+.opt-list { display: flex; flex-direction: column; gap: 8px; padding: 0 14px; }
+.opt {
+  position: relative; display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 12px; overflow: hidden;
+  background: var(--panel); border: 1px solid var(--line);
+}
+.opt-bar {
+  position: absolute; inset: 0; width: 0%;
+  background: rgba(var(--accent-rgb, 77, 163, 255), 0.18);
+  transition: width 0.4s ease; z-index: 0;
+}
+/* 必须排除 .opt-bar：写成 .opt > * 会命中它，且特异性相同(0,1,0)、位置在后，
+   把 absolute 覆盖成 relative → 进度条变成真实 flex 元素，width 一涨就把内容整体顶到右边 */
+.opt > *:not(.opt-bar) { position: relative; z-index: 1; }
+.opt-label {
+  flex: 0 0 26px; height: 26px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--cell-bg); color: var(--gold);
+  font-weight: 700; font-size: 15px;
+}
+.opt-text { flex: 1; min-width: 0; font-size: 17px; color: var(--text); line-height: 1.3; }
+.opt-pct {
+  flex: 0 0 auto; min-width: 44px; text-align: right;
+  font-size: 14px; font-weight: 600; color: var(--sub);
+  font-variant-numeric: tabular-nums;
+}
+/* 选项「头像(人数)」区：位于百分比左侧，固定占位、封顶，绝不挤压/覆盖左侧选项文本 */
+.opt-voters {
+  flex: 0 0 auto; display: flex; align-items: center;
+  max-width: 40%; overflow: hidden;   /* 极端情况超宽时裁掉，不压文本 */
+}
+.opt-voters .av-chip {
+  width: 26px; height: 26px; flex: 0 0 auto;
+  margin-left: -7px;                  /* 叠堆：省横向空间，可放更多头像 */
+  border: 2px solid var(--panel);     /* 用底色描边分隔相邻头像 */
+  box-shadow: 0 0 0 1px var(--line);
+}
+.opt-voters .av-chip:first-child { margin-left: 0; }
+.ov-count {
+  flex: 0 0 auto; margin-left: 6px;
+  font-size: 13px; font-weight: 600; color: var(--sub);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.opt.correct { border-color: var(--gold); }
+.opt.correct .opt-bar { background: rgba(var(--glow-rgb), 0.28); }
+.opt.correct .opt-label { background: var(--gold); color: var(--on-chip, #1b1408); }
+.opt.correct .opt-pct { color: var(--gold); }
+.opt.wrong { opacity: 0.55; }
+.opt.chosen .opt-label { box-shadow: 0 0 0 2px var(--accent); }
+/* 被排除的答案：灰显 + 删除线 + 角标（绝不显示正确高亮）；用 .opt 前缀提权压过 .opt > *:not(.opt-bar) 的 relative */
+.opt.eliminated { opacity: 0.5; filter: grayscale(0.5); border-style: dashed; border-color: var(--red); }
+.opt.eliminated .opt-text { text-decoration: line-through; }
+.opt.eliminated .opt-label { background: var(--red); color: #fff; }
+.opt .opt-elim-badge {
+  position: absolute; top: 6px; right: 8px; z-index: 2;
+  display: flex; align-items: center; gap: 4px;
+  background: var(--red); color: #fff; font-size: 11px; font-weight: 700;
+  padding: 2px 9px; border-radius: 10px; letter-spacing: 1px;
+  max-width: 62%; overflow: hidden; white-space: nowrap;
+}
+/* 角标内触发者：头像（无图回退首字）+ 名字（超长截断） */
+.opt-elim-badge .eb-av {
+  width: 14px; height: 14px; border-radius: 50%; object-fit: cover; flex: 0 0 auto;
+}
+.opt-elim-badge .eb-av-txt {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.25); font-size: 9px; font-weight: 600;
+}
+.opt-elim-badge .eb-name {
+  max-width: 64px; overflow: hidden; text-overflow: ellipsis; flex: 0 1 auto;
+}
+
+/* ── 玩法提示 ── */
+.howto {
+  text-align: center; font-size: 12.5px; color: var(--dim);
+  padding: 5px 14px 1px; line-height: 1.45;
+}
+.howto-b {
+  display: inline-block; padding: 1px 7px; margin: 0 1px; border-radius: 6px;
+  background: var(--cell-bg); color: var(--gold); font-weight: 600;
+}
+/* 计分规则区（按主播台配置动态生成，仅加分项；多行紧凑排版） */
+.howto-score { margin-top: 2px; font-size: 11.5px; line-height: 1.45; color: var(--text-dim, var(--dim)); }
+.howto-score b { color: var(--gold); font-weight: 600; }
+
+/* ── 实时答题栏上方「说明」区（标题与「实时答题/排行榜」完全同构：.lower h3 + 同外观卡片） ── */
+.like-progress {
+  display: flex; flex-direction: column;
+  padding: 0; flex: 0 0 auto;
+}
+.like-progress:empty { display: none; }
+.lp-card {
+  display: flex; flex-direction: column; gap: 4px;
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 12px; padding: 7px 8px;
+  margin-bottom: 8px; /* 说明卡片与下方「实时答题」标题的间隔（对齐 .lower margin-top 的节奏） */
+}
+/* 行永不收缩：内容多时保持原高，超出 lp-card 的部分直接裁掉 */
+.lp-card > * { flex-shrink: 0; }
+.lp-row {
+  display: flex; align-items: center; justify-content: flex-start; gap: 8px;
+  min-height: 22px;
+}
+.lp-row-center { justify-content: center; }
+.lp-item {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--text); min-width: 0;
+}
+.lp-item.done { color: var(--gold); }
+.lp-av {
+  width: 18px; height: 18px; border-radius: 50%; object-fit: cover; flex: 0 0 auto;
+}
+.lp-av-txt {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(140,140,140,0.25); color: var(--dim); font-size: 10px; font-weight: 600;
+}
+.lp-name { min-width: 5em; max-width: 84px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.lp-bar {
+  width: 70px; height: 5px; border-radius: 3px; overflow: hidden;
+  background: rgba(140,140,140,0.3); flex: 0 0 auto;
+}
+.lp-bar i { display: block; height: 100%; border-radius: 3px; background: var(--accent); transition: width .3s; }
+.lp-item.done .lp-bar i { background: var(--gold); }
+.lp-num { flex: 0 0 auto; font-size: 10.5px; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--dim); }
+.lp-tag { flex: 0 0 auto; font-size: 11.5px; color: var(--sub); }
+.lp-rule {
+  flex: 0 0 auto; font-size: 11.5px; color: var(--dim);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.lp-rule-lead { color: var(--gold); font-weight: 600; }
+/* 礼物图（本地 1 钻礼物资源）；无图时 🎁 占位 */
+.lp-gifts { display: flex; flex-wrap: wrap; align-items: center; gap: 3px; min-width: 0; }
+.lp-gift { width: 20px; height: 20px; object-fit: contain; flex: 0 0 auto; }
+.lp-gift-ph { display: inline-flex; align-items: center; justify-content: center; font-size: 15px; opacity: 0.75; }
+
+/* ── 排行榜区（左：实时答题 / 右：排行榜，与猜数字一致） ── */
+.lower {
+  flex: 1; display: flex; gap: 8px; margin-top: 6px; min-height: 0;
+  padding: 6px 14px 14px;
+}
+.col-guess, .col-board { display: flex; flex-direction: column; min-width: 0; }
+.col-guess { flex: 0 0 50%; }
+.col-board { flex: 1; }
+.lower h3 {
+  font-size: 12px; color: var(--sub); font-weight: 400;
+  margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.board-head { display: flex; align-items: baseline; justify-content: space-between; }
+.board-head h3 { margin-bottom: 4px; }
+
+/* 实时答题流 */
+.guess-box, .board-box {
+  flex: 1; min-height: 0;
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 12px; padding: 7px 8px;
+  overflow: hidden;
+}
+/* 保留滚动能力（榜单长时仍可滚），但隐藏滚动条 —— OBS 投屏不需要滚动条占位 */
+.board-box { overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none; }
+.board-box::-webkit-scrollbar { width: 0; height: 0; display: none; }
+/* 实时答题流：条目永不收缩（flex-shrink:0），行高恒定；
+   超出容器高度的内容由 overflow:hidden 直接裁掉不显示（渲染多少条都不压缩） */
+.guess-box { display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
+.guess-box > * { flex-shrink: 0; }
+.guess-box::-webkit-scrollbar { width: 0; height: 0; display: none; }
+.g-feed-item {
+  font-size: 12.5px; color: var(--sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.g-feed-item b { color: var(--text); font-weight: 600; }
+.g-feed-item .fb-ok { color: var(--green); font-weight: 700; }
+.g-feed-item .fb-no { color: var(--red); font-weight: 700; }
+.g-feed-item .fb-bonus { color: var(--green); font-weight: 700; }
+.g-feed-item.empty { color: var(--dim); }
+.g-feed-item.fb-streak, .g-feed-item.fb-fastest {
+  color: var(--gold); font-weight: 600;
+  border-left: 3px solid var(--gold); padding-left: 6px;
+}
+.g-feed-item.fb-streak b, .g-feed-item.fb-fastest b { color: var(--gold); }
+/* 改选提示：与对/错(绿/红)区分，用强调蓝；被禁止用警示红 */
+.g-feed-item.fb-change { color: var(--accent); font-weight: 600; }
+.g-feed-item.fb-change b { color: var(--accent); }
+.g-feed-item.fb-change-denied { color: var(--red); font-weight: 600; }
+.g-feed-item.fb-change-denied b { color: var(--red); }
+/* 排除答案记录（点赞/礼物触发）：琥珀色，与改选(蓝)/被禁(红)区分 */
+/* 关注主播算答对：与连对/最快同系，用金色标识 */
+.g-feed-item.fb-follow {
+  color: var(--gold); font-weight: 600;
+  border-left: 3px solid var(--gold); padding-left: 6px;
+}
+.g-feed-item.fb-elim { color: #f0a830; font-weight: 600; }
+.g-feed-item.fb-elim b { color: #f0a830; }
+/* 跨局分界：每局结束时插入的「第 N 局 · 答对 X / 共 Y · 正确率 Z%」小结分隔线 */
+.g-feed-item.fb-round {
+  color: var(--dim); text-align: center; font-size: 12px; letter-spacing: 1px;
+  white-space: normal; line-height: 1.35;
+  border-top: 1px dashed rgba(140,140,140,0.35); border-bottom: 1px dashed rgba(140,140,140,0.35);
+  padding: 6px 4px; margin: 4px 0; font-weight: 600;
+}
+.g-feed-item .fb-from { color: var(--dim); font-size: 12px; margin-left: 2px; }
+
+/* 头像芯片（结算弹窗用） */
+.av-chip { position: relative; flex: 0 0 auto; border-radius: 50%; overflow: hidden; border: 1.5px solid var(--gold); background: var(--cell-bg); }
+.av-chip img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.av-chip .av-fb { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--gold); font-weight: 700; }
+
+/* ── 揭晓横幅 ── */
+.result-banner {
+  position: absolute; inset: 0; z-index: 90;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(var(--scrim-rgb), 0.55); backdrop-filter: blur(2px);
+}
+.result-banner.hidden { display: none; }
+/* 纵向容器：卡片 + 卡片下方的「下一局倒计时」。
+   布局与胶囊样式在 common/base.css 共用，这里只补本游戏的宽度约束
+   （卡片改 100%，倒计时才能落在卡片边框之外） */
+.result-wrap {
+  width: 86%; max-width: 360px;
+}
+.result-card {
+  width: 100%; padding: 22px 20px; text-align: center;
+  background: var(--panel); border: 1.5px solid var(--gold);
+  border-radius: 18px; box-shadow: 0 0 40px rgba(var(--glow-rgb), 0.35);
+}
+.result-title {
+  font-size: 20px; font-weight: 700; letter-spacing: 4px; color: var(--gold);
+  margin-bottom: 12px;
+}
+.result-answer {
+  font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px;
+}
+.result-answer b { color: var(--gold); font-size: 22px; }
+.result-explain { font-size: 13px; color: var(--sub); line-height: 1.5; min-height: 18px; }
+.result-stat { margin-top: 12px; font-size: 14px; color: var(--green); font-weight: 600; }
+/* .result-next（下一局倒计时胶囊）样式已上提到 common/base.css，各游戏共用 */
+
+/* 结算弹窗：答对人头像墙 + 最快答对 */
+.result-avatars { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 12px 0 4px; max-height: 132px; overflow-y: auto; }
+.result-avatars .ra { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 48px; }
+.result-avatars .ra .ra-nm { font-size: 10.5px; color: var(--sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 48px; }
+.result-fastest {
+  margin-top: 8px; padding: 8px 10px; border-radius: 12px;
+  background: rgba(var(--glow-rgb), 0.12); border: 1px solid var(--gold);
+  display: flex; align-items: center; gap: 10px; text-align: left;
+}
+.result-fastest .rf-info { flex: 1; font-size: 12.5px; line-height: 1.45; color: var(--sub); }
+.result-fastest .rf-info b { color: var(--text); font-weight: 600; }
+.result-fastest .rf-bonus { color: var(--green); font-weight: 700; }

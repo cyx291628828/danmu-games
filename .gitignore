@@ -1,0 +1,22 @@
+# 依赖（npm install 后生成，见 package.json）
+node_modules/
+
+# 运行时数据：玩家排行榜 / 红蓝赛季名册（含真实观众昵称与头像，不入库；首次运行自动生成）
+data/*
+!data/.gitkeep
+
+# 日志
+log/
+*.log
+
+# 宿主运行时状态（端口 / 激活游戏 / 主题 / 游戏开关，宿主自动写入）
+host/host.json
+
+# GUI 测试截图与工具产物
+gui-test-screenshots/
+.mimosa/
+
+# 备份与临时文件
+*.bak
+*.back
+*.tmp

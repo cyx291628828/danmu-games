@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>赛马竞猜 · 直播互动 · 展示屏</title>
+<link rel="stylesheet" href="/common/base.css">
+<link rel="stylesheet" href="stage.css">
+</head>
+<body data-view="stage">
+
+<!-- ═══════════ 展示屏 stage（9:16 竖屏投屏 / OBS 浏览器源） ═══════════ -->
+<div id="view-stage">
+  <div class="phone" id="phone">
+
+    <!-- 顶栏：标题 + 彩池 + 滚存 + 局数 -->
+    <header class="top">
+      <div class="game-title">🐎 赛马竞猜</div>
+      <div class="top-right">
+        <div class="chip">💰 彩池 <b id="potNum">0</b></div>
+        <div class="chip carry hidden" id="chipCarry">🔥 滚存 <b id="carryNum">0</b></div>
+        <div class="round-badge" id="stRound">ROUND 0</div>
+      </div>
+    </header>
+
+    <!-- 倒计时 -->
+    <div class="countdown-row">
+      <span class="cd-num" id="cdNum">--</span>
+      <span class="cd-unit">秒</span>
+      <span class="phase-tag" id="phaseTag">等待开始</span>
+    </div>
+    <div class="cd-progress"><div class="cd-fill" id="cdFill"></div></div>
+
+    <!-- ═══ 核心区：下注板（下注期） ⇄ 赛道（比赛期/结算） ═══ -->
+    <div class="board-box" id="betBoard">
+      <div class="pool-row">
+        <span id="poolTip">赔率 = 彩池 ÷ 该马注额 · 越冷越赚</span>
+        <span class="pot" id="potMini">💰 0</span>
+      </div>
+      <div id="horseRows" class="horse-rows"></div>
+    </div>
+
+    <div class="track-box hidden" id="raceTrack">
+      <div class="track-head">
+        <span>🏁 100 格决胜</span>
+        <span id="trackTip">点赞为你押的马加速</span>
+      </div>
+      <div id="lanes" class="lanes"></div>
+    </div>
+
+    <!-- ═══ 助威 / 礼物面板（点赞欲 · 送礼欲的核心诱导区） ═══ -->
+    <div class="cheer-panel" id="cheerPanel">
+      <div class="cheer-head">
+        <span class="cheer-title">🔥 助威加速</span>
+        <span class="cheer-rule" id="cheerRule">每 3 赞 = +1 格</span>
+      </div>
+      <div class="cheer-rows" id="cheerRows"></div>
+      <div class="gift-row" id="giftRow">
+        <span class="gift-ico" id="giftIco">🎁</span>
+        <span class="gift-txt">送礼 = <b>骑士冲锋</b> <span id="giftCells">+6</span> 格 · 关注再送 <span id="followChips">500</span> 筹码</span>
+      </div>
+    </div>
+
+    <!-- 教学行 -->
+    <div class="howto" id="howto">弹幕发 <b>1 / 2 / 3 / 4</b> 下注</div>
+
+    <!-- 战报流 -->
+    <div class="feed" id="feed"></div>
+
+    <!-- 三榜单 -->
+    <div class="boards">
+      <div class="board">
+        <h3>本局赢家</h3>
+        <div class="rows" id="winRows"></div>
+      </div>
+      <div class="board">
+        <h3>筹码富家榜</h3>
+        <div class="rows" id="richRows"></div>
+      </div>
+      <div class="board">
+        <h3>总荣誉榜</h3>
+        <div class="rows" id="honorRows"></div>
+      </div>
+    </div>
+
+    <!-- ═══ 特效层 ═══ -->
+    <div class="fx-layer" id="fxLayer"></div>
+    <div class="flash" id="flash"></div>
+    <div id="fireworks" class="fireworks"></div>
+
+    <!-- 全屏横幅（骑士冲锋 / 头奖滚存 / 反超） -->
+    <div class="big-fx" id="bigFx"><div class="big-fx-inner" id="bigFxInner"></div></div>
+
+    <!-- AI 播报条 -->
+    <div class="bc-bar" id="bcBar"><span class="bc-ico">🎙️</span><span id="bcText"></span></div>
+
+    <!-- 结算横幅 -->
+    <div class="result-banner hidden" id="resultBanner">
+      <div class="result-card" id="resultCard">
+        <div class="result-title">本 局 结 算</div>
+        <div class="result-horse" id="resHorse">🏆</div>
+        <div class="result-odds" id="resOdds"></div>
+        <div class="result-stat" id="resStat"></div>
+        <div class="result-winners" id="resWinners"></div>
+        <div class="result-report" id="resReport"></div>
+      </div>
+      <div class="result-next" id="resNext"></div>
+    </div>
+
+    <div class="disclaimer">虚拟筹码 · 仅供娱乐 · 不可兑现</div>
+  </div>
+</div>
+
+<script src="/common/core.js"></script>
+<script src="stage.js"></script>
+</body>
+</html>

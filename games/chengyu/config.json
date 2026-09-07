@@ -1,0 +1,11 @@
+{
+  "pendingSec": 100,
+  "autoNext": true,
+  "baseScore": 100,
+  "rateLimitSec": 1,
+  "dictFilter": true,
+  "allowRepeat": false,
+  "startMode": "random",
+  "manualWord": "一马当先",
+  "allowedRoomId": ""
+}

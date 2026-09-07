@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>答题竞猜 · 直播互动 · 展示屏</title>
+<link rel="stylesheet" href="/common/base.css">
+<link rel="stylesheet" href="stage.css">
+</head>
+<body data-view="stage">
+
+<!-- ═══════════ 展示屏 stage（9:16 竖屏投屏 / OBS 浏览器源） ═══════════ -->
+<div id="view-stage">
+  <div class="phone">
+    <header class="top">
+      <div class="game-title">答题竞猜 · 直播互动</div>
+      <div class="round-badge" id="stRound">ROUND 0</div>
+    </header>
+
+    <div class="countdown-row">
+      <div class="cd">
+        <span id="cdNum" class="cd-num">--</span>
+        <span class="cd-unit">秒</span>
+      </div>
+    </div>
+    <div class="cd-progress">
+      <div class="cd-progress-track"><div class="cd-progress-fill" id="cdProgFill"></div></div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-tags" id="qTags"></div>
+      <div class="q-text" id="qText">等待出题…</div>
+      <div class="q-source" id="qSource"></div>
+    </div>
+
+    <div class="opt-list" id="optList"></div>
+
+    <div class="howto">
+      <div>弹幕发 <b class="howto-b">A</b> / <b class="howto-b">B</b> / <b class="howto-b">C</b> / <b class="howto-b">D</b>（或 <b class="howto-b">1</b>-<b class="howto-b">4</b>）参与答题</div>
+      <div id="howtoScore" class="howto-score"></div>
+    </div>
+
+    <div class="lower">
+      <section class="col-guess">
+        <div class="like-progress" id="likeProgress"></div>
+        <h3>实时答题</h3>
+        <div id="qFeed" class="guess-box"></div>
+      </section>
+      <section class="col-board">
+        <div class="board-head"><h3>排行榜</h3></div>
+        <div id="boardBody" class="board-box"></div>
+      </section>
+    </div>
+
+    <div id="fireworks" class="fireworks"></div>
+    <div id="resultBanner" class="result-banner hidden">
+      <div class="result-wrap">
+        <div class="result-card">
+          <div class="result-title" id="resultTitle">本 题 揭 晓</div>
+          <div class="result-answer" id="resultAnswer"></div>
+          <div class="result-explain" id="resultExplain"></div>
+          <div class="result-avatars" id="resultAvatars"></div>
+          <div class="result-fastest" id="resultFastest" style="display:none;"></div>
+          <div class="result-stat" id="resultStat"></div>
+        </div>
+        <!-- 下一局倒计时：位于卡片边框下方（卡片之外） -->
+        <div class="result-next" id="resultNext" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/common/core.js"></script>
+<script src="stage.js"></script>
+</body>
+</html>

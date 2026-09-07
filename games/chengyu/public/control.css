@@ -1,0 +1,8 @@
+/* ══════════════════════════════════════════════════════════════════
+   control.css — 成语接龙 · 控制台专属样式（games/chengyu/public）
+   连接类型标签（同字金 / 同音银 / 谐韵铜），展示屏专属样式在 stage.css
+   ══════════════════════════════════════════════════════════════════ */
+.cy-tag { display: inline-block; font-size: 10px; padding: 1px 7px; border-radius: 999px; margin-right: 3px; }
+.cy-tag-same { background: var(--gold); color: #261a0a; }
+.cy-tag-tone { background: #9aa3b2; color: #11141a; }
+.cy-tag-rhyme { background: #b07a3a; color: #17130d; }

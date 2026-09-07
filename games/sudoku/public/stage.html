@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>弹幕数独 · 直播互动游戏 · 展示屏</title>
+<link rel="stylesheet" href="/common/base.css">
+<link rel="stylesheet" href="stage.css">
+</head>
+<body data-view="stage">
+
+<!-- ═══════════ 展示屏 stage（9:16 竖屏投屏 / OBS 浏览器源） ═══════════ -->
+<div id="view-stage">
+  <div class="phone">
+    <header class="top">
+      <div class="game-title">弹幕数独 · 直播互动</div>
+      <div class="round-badge" id="stRound">ROUND 0</div>
+    </header>
+
+    <!-- 状态行：倒计时 / 已填 / 点赞充能 -->
+    <div class="stat-row">
+      <div class="stat"><span class="stat-ico">⏱</span><b class="cd-b" id="cdTxt">--</b></div>
+      <div class="stat">填格 <b id="fillTxt">0</b>/<b id="fillTotal">45</b></div>
+      <div class="stat stat-like" id="likeStat">
+        <span class="stat-ico">👍</span><span class="like-name" id="likerName">--</span>
+        <b id="likeTxt">0</b>/<span id="likeN">30</span>
+        <div class="mini"><i id="likeFill"></i></div>
+      </div>
+    </div>
+    <div class="fill-progress"><i id="progFill"></i></div>
+
+    <!-- 数独盘面：带行列坐标标记（发「行×列×数」用） -->
+    <div class="board-wrap">
+      <div class="bcorner"></div>
+      <div class="bcol-labels" id="colLabels"></div>
+      <div class="brow-labels" id="rowLabels"></div>
+      <div class="board" id="board">
+        <div class="bdiv v" style="left:calc((100% - 16px)/3 + 3.5px)"></div>
+        <div class="bdiv v" style="left:calc((100% - 16px)/3*2 + 9.5px)"></div>
+        <div class="bdiv h" style="top:calc((100% - 16px)/3 + 3.5px)"></div>
+        <div class="bdiv h" style="top:calc((100% - 16px)/3*2 + 9.5px)"></div>
+      </div>
+    </div>
+
+    <div class="howto">
+      <div class="howto-line">弹幕发 <b>行×列×数</b>：A33 = A行3列填 3 · 填对 <b id="howtoScore">+10</b> 分留头像</div>
+      <div class="howto-gold">个人点赞满 <b id="howtoLike">30</b> 随机填 1 格 👍 · 送礼连填 <b id="howtoGift">3</b> 格 🎁<span id="howtoAuto"></span></div>
+    </div>
+
+    <!-- 下部：操作记录 | 排行榜（左右各半，与猜数字同版式） -->
+    <div class="lower">
+      <section class="col-log">
+        <h3>操作记录</h3>
+        <div class="log-box" id="opStream"></div>
+      </section>
+      <section class="col-board">
+        <div class="board-head"><h3>MVP 排行榜</h3></div>
+        <div class="board-box" id="boardBody"></div>
+      </section>
+    </div>
+
+    <div id="fireworks" class="fireworks"></div>
+    <div id="winBanner" class="win-banner hidden">
+      <div class="result-wrap">
+        <div class="win-card">
+          <div class="win-body">
+            <div class="win-title" id="winTitle">数 独 完 成 !</div>
+            <!-- 本局 Top5：MVP 皇冠标记，每人填对/错填数 -->
+            <div class="win-top5" id="winTop5"></div>
+            <div class="win-answer" id="winSub"></div>
+          </div>
+        </div>
+        <!-- 下一局倒计时：位于卡片边框下方（取代旧的 win-ring 边框进度条） -->
+        <div class="result-next" id="winNext" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/common/core.js"></script>
+<script src="stage.js"></script>
+</body>
+</html>

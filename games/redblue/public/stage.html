@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>红蓝大作战 · 直播互动 · 展示屏</title>
+<link rel="stylesheet" href="/common/base.css">
+<link rel="stylesheet" href="stage.css">
+</head>
+<body data-view="stage">
+
+<!-- ═══════════ 展示屏 stage（9:16 竖屏投屏 / OBS 浏览器源） ═══════════ -->
+<div id="view-stage">
+  <div class="phone">
+    <header class="top">
+      <div class="game-title">红蓝大作战 · 直播互动</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="score-chip">
+          <span class="sc-r" id="scoreRed">红 0</span>
+          <span class="sc-sep">:</span>
+          <span class="sc-b" id="scoreBlue">0 蓝</span>
+        </div>
+        <div class="season-badge" id="seasonBadge">S1</div>
+        <div class="round-badge" id="stRound">ROUND 0</div>
+      </div>
+    </header>
+
+    <div class="countdown-row">
+      <div class="cd">
+        <span id="cdNum" class="cd-num">--</span>
+        <span class="cd-unit" id="cdUnit">秒</span>
+      </div>
+      <div class="phase-tag" id="phaseTag">等待开局</div>
+    </div>
+    <div class="cd-progress">
+      <div class="cd-progress-track"><div class="cd-progress-fill" id="cdProgFill"></div></div>
+    </div>
+
+    <!-- 战场 -->
+    <section class="battle" id="battleBox">
+      <div class="camps">
+        <div class="camp red" id="campRed">
+          <div class="camp-name" id="campNameRed">🔥 猛虎营</div>
+          <div class="camp-cnt"><span id="cntRed">0</span><small> 人</small></div>
+          <div class="camp-avs" id="avsRed"></div>
+        </div>
+        <div class="vs">VS</div>
+        <div class="camp blue" id="campBlue">
+          <div class="camp-name" id="campNameBlue">飞鲨营 🌊</div>
+          <div class="camp-cnt"><span id="cntBlue">0</span><small> 人</small></div>
+          <div class="camp-avs" id="avsBlue"></div>
+        </div>
+      </div>
+
+      <!-- 战场画布：拔河绳 / 守城战（canvas 渲染战场与能量条，特效走 FxEngine） -->
+      <div class="rope-meta">
+        <span class="rm-red">🚩 <b id="metaNameRed">红方底线</b></span>
+        <span class="rm-pos" id="posTxt">战线 50%</span>
+        <span class="rm-blue"><b id="metaNameBlue">蓝方底线</b> 🚩</span>
+      </div>
+      <canvas id="battleCanvas" class="battle-cv"></canvas>
+    </section>
+
+    <div class="howto" id="howto">弹幕发 <b class="ht-r">红</b> / <b class="ht-b">蓝</b> 加入阵营并推动战线 · 点赞为队伍<b>充能</b> · 能量满触发<b>全军冲锋</b></div>
+
+    <!-- 战报流 -->
+    <div class="feed" id="feed"></div>
+
+    <!-- 三榜单 -->
+    <div class="boards">
+      <section class="col-board">
+        <div class="board-head"><h3>本轮贡献 Top5</h3></div>
+        <div id="contribBody" class="board-box"></div>
+      </section>
+      <section class="col-board">
+        <div class="board-head"><h3>总排行榜</h3></div>
+        <div id="boardBody" class="board-box"></div>
+      </section>
+      <section class="col-board">
+        <div class="board-head"><h3 id="seasonTitle">赛季功勋</h3></div>
+        <div id="seasonBody" class="board-box"></div>
+      </section>
+    </div>
+
+      <!-- 冲锋/全力一击 全屏横幅 -->
+      <div class="surge-banner" id="surgeBanner"></div>
+
+      <div id="fireworks" class="fireworks"></div>
+    <div id="resultBanner" class="result-banner hidden">
+      <div class="result-wrap">
+        <div class="result-card">
+          <div class="result-title">本 局 结 算</div>
+          <div class="result-win" id="resultWin">--</div>
+          <div class="result-mvp" id="resultMvp"></div>
+          <div class="result-stat" id="resultStat"></div>
+          <div class="result-report" id="resultReport"></div>
+        </div>
+        <!-- 下一局倒计时：位于卡片边框下方（本游戏原本没有倒计时显示） -->
+        <div class="result-next" id="resultNext" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/common/core.js"></script>
+<script src="/common/fx.js"></script>
+<script src="stage-scene.js"></script>
+<script src="stage.js"></script>
+</body>
+</html>

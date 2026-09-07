@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>猜数字 · 直播互动游戏 · 展示屏</title>
+<link rel="stylesheet" href="/common/base.css">
+<link rel="stylesheet" href="stage.css">
+</head>
+<body data-view="stage">
+
+<!-- ═══════════ 展示屏 stage（9:16 竖屏投屏 / OBS 浏览器源） ═══════════ -->
+<div id="view-stage">
+  <div class="phone">
+    <header class="top">
+      <div class="game-title">猜数字 · 直播互动</div>
+      <div class="round-badge" id="stRound">ROUND 0</div>
+    </header>
+
+    <div class="countdown-row">
+      <div class="cd">
+        <span id="cdNum" class="cd-num">--</span>
+        <span class="cd-unit">秒</span>
+      </div>
+    </div>
+
+    <div class="cd-progress" id="cdProg">
+      <div class="cd-progress-labels" id="cdProgLabels"></div>
+      <div class="cd-progress-track">
+        <div class="cd-progress-fill" id="cdProgFill"></div>
+        <div class="cd-progress-marks" id="cdProgMarks"></div>
+      </div>
+    </div>
+
+    <div class="cells" id="cells"></div>
+
+    <div class="howto">
+      <div class="howto-line"><span id="howtoDigits">4</span> 位不重复数字 · 弹幕发： <b class="howto-b">1234</b> / <b class="howto-b">猜1234</b></div>
+      <div class="howto-gold">猜中得分 <b>200</b> + 剩余加成（越早越高）</div>
+    </div>
+
+    <div class="clue-tip">线索提示：<b>XAYB</b> = X 个数字对且位置对，Y 个数字对但位置错</div>
+    <div class="clues" id="clueGrid"></div>
+
+    <div class="lower">
+      <section class="col-guess">
+        <h3>实时猜测</h3>
+        <div id="guessStream" class="guess-box"></div>
+      </section>
+      <section class="col-board">
+        <div class="board-head">
+          <h3>排行榜</h3>
+        </div>
+        <div id="boardBody" class="board-box"></div>
+      </section>
+    </div>
+
+    <div id="fireworks" class="fireworks"></div>
+    <div id="winBanner" class="win-banner hidden">
+      <div class="result-wrap">
+        <div class="win-card">
+          <div class="win-body">
+            <div class="win-avatar" id="winAvatarWrap" style="display:none;">
+              <img id="winAvatar" src="" alt="" referrerpolicy="no-referrer">
+              <span id="winAvatarFallback" class="win-avatar-fb"></span>
+            </div>
+            <div class="win-title" id="winTitle">猜 中 答 案 !</div>
+            <div class="win-name" id="winName">--</div>
+            <div class="win-score" id="winScore"></div>
+            <div class="win-answer">答案是 <b id="winAnswer">--</b></div>
+          </div>
+        </div>
+        <!-- 下一局倒计时：位于卡片边框下方（取代旧的 win-ring 边框进度条） -->
+        <div class="result-next" id="winNext" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/common/core.js"></script>
+<script src="stage.js"></script>
+</body>
+</html>

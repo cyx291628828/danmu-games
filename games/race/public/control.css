@@ -1,0 +1,120 @@
+/* ══════════════════════════════════════════════════════════════════
+   control.css — 赛马竞猜 · 主播台专属样式（games/race/public）
+   主播台只引 /common/base.css，本文件补：实时状态统计条、迷你赛道、
+   模拟/钱包行、双榜单、结算卡
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── 组说明小字 ── */
+.ctl-hint { font-size: 12px; color: var(--dim); line-height: 1.6; margin-top: 8px; }
+
+/* ── 实时状态统计条 ── */
+.rc-stats { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.rc-stat {
+  flex: 1 1 96px; min-width: 90px;
+  background: var(--panel2); border: 1px solid var(--line2); border-radius: 9px;
+  padding: 7px 10px; display: flex; flex-direction: column; gap: 2px;
+}
+.rc-stat .k { font-size: 11px; color: var(--dim); }
+.rc-stat .v {
+  font-size: 17px; font-weight: 700; color: var(--gold);
+  font-variant-numeric: tabular-nums; letter-spacing: .5px;
+}
+.rc-stat.hot .v { color: #f87171; }
+
+/* ── 迷你赛道（主播台看各马进度与注额分布） ── */
+.rc-track-mini { display: flex; flex-direction: column; gap: 5px; margin-top: 12px; }
+.rc-mini {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--sub);
+}
+.rc-mini .mi-no {
+  flex: 0 0 24px; height: 22px; line-height: 22px; text-align: center;
+  border-radius: 6px; color: #17130d; font-weight: 800; font-size: 12px;
+}
+.rc-mini .mi-nm { flex: 0 0 62px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rc-mini .mi-bar {
+  flex: 1 1 auto; min-width: 80px; height: 12px; border-radius: 6px;
+  background: var(--cell-bg); border: 1px solid var(--line2); position: relative; overflow: hidden;
+}
+.rc-mini .mi-fill {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+  border-radius: 6px; transition: width .22s linear; opacity: .85;
+}
+.rc-mini .mi-flag { position: absolute; right: 0; top: 0; bottom: 0; width: 5px; background: repeating-linear-gradient(45deg,#fff 0 3px,#111 3px 6px); opacity: .5; }
+.rc-mini .mi-odds { flex: 0 0 52px; text-align: right; color: var(--gold); font-variant-numeric: tabular-nums; }
+.rc-mini .mi-bet { flex: 0 0 92px; text-align: right; color: var(--dim); font-variant-numeric: tabular-nums; }
+.rc-mini.win .mi-nm { color: var(--gold); font-weight: 700; }
+
+/* ── 模拟行 / 钱包行 ── */
+.sim-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.sim-row label { font-size: 12px; color: var(--sub); display: flex; align-items: center; gap: 5px; }
+.sim-row input, .sim-row select {
+  padding: 4px 7px; border-radius: 6px; font-size: 12px;
+  border: 1px solid var(--line); background: var(--bg); color: var(--text);
+}
+.sim-row input[type="text"] { min-width: 130px; }
+.sim-row input[type="number"] { width: 62px; }
+
+/* ── 钱包查询/调账结果 ── */
+.wallet-result { margin-top: 10px; display: flex; flex-direction: column; gap: 5px; }
+.wallet-row {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  background: var(--panel2); border: 1px solid var(--line2); border-radius: 8px;
+  padding: 6px 10px; font-size: 12.5px; color: var(--sub);
+}
+.wallet-row .wr-name { flex: 0 0 auto; color: var(--text); font-weight: 600; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wallet-row .wr-chip { flex: 0 0 auto; color: var(--gold); font-variant-numeric: tabular-nums; font-weight: 700; }
+.wallet-row .wr-meta { flex: 1 1 auto; color: var(--dim); font-size: 11px; }
+.wallet-row .wr-act { flex: 0 0 auto; display: flex; gap: 5px; align-items: center; }
+.wallet-row .wr-act input { width: 76px; padding: 3px 6px; border-radius: 6px; font-size: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+
+/* ── 双榜单 ── */
+.rc-boards { display: flex; gap: 14px; flex-wrap: wrap; }
+.rc-board { flex: 1 1 260px; min-width: 240px; }
+.rc-board-title { font-size: 12px; color: var(--sub); margin-bottom: 6px; }
+.rc-board-body { display: flex; flex-direction: column; gap: 4px; }
+.rc-lb-row {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--panel2); border: 1px solid var(--line2); border-radius: 7px;
+  padding: 4px 8px; font-size: 12.5px; color: var(--sub);
+}
+.rc-lb-row .rk {
+  flex: 0 0 18px; height: 18px; line-height: 18px; text-align: center;
+  border-radius: 5px; background: var(--cell-bg); color: var(--dim); font-size: 11px;
+}
+.rc-lb-row.r1 .rk { background: var(--gold); color: #3b2c09; font-weight: 700; }
+.rc-lb-row.r2 .rk { background: var(--silver); color: #2b2b2b; font-weight: 700; }
+.rc-lb-row.r3 .rk { background: var(--bronze); color: #2b1d0c; font-weight: 700; }
+.rc-lb-row .nm { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+.rc-lb-row .sc { flex: 0 0 auto; color: var(--gold); font-variant-numeric: tabular-nums; font-weight: 600; }
+.rc-lb-row .mt { flex: 0 0 auto; color: var(--dim); font-size: 10.5px; }
+
+/* ── 本局结算卡 ── */
+.rc-result { display: flex; flex-direction: column; gap: 6px; }
+.rc-result-head { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.rc-result-head .rc-wn { color: var(--gold); font-weight: 700; font-size: 16px; }
+.rc-result-head .rc-odds { color: var(--accent); font-weight: 600; }
+.rc-result-head .rc-jp {
+  font-size: 11px; padding: 2px 7px; border-radius: 6px;
+  background: linear-gradient(120deg, #b9455f, #8a2be2); color: #fff; font-weight: 700;
+}
+.rc-result-report {
+  font-size: 12.5px; color: var(--sub); line-height: 1.7;
+  background: var(--panel2); border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0; padding: 7px 10px;
+}
+.rc-winners { display: flex; flex-direction: column; gap: 3px; }
+.rc-winner {
+  display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--sub);
+  background: var(--cell-bg); border-radius: 6px; padding: 3px 9px;
+}
+.rc-winner .w-nm { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rc-winner .w-pay { color: var(--gold); font-variant-numeric: tabular-nums; font-weight: 700; }
+.rc-winner .w-st { color: var(--dim); font-variant-numeric: tabular-nums; }
+
+/* 历史战报行 */
+.ctl-history .half .h-no { flex: 0 0 34px; color: var(--dim); }
+.ctl-history .half .h-wn { flex: 0 0 92px; color: var(--gold); font-weight: 600; }
+.ctl-history .half .h-od { flex: 0 0 44px; color: var(--accent); }
+.ctl-history .half .h-rp { flex: 1 1 auto; min-width: 0; color: var(--sub); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ctl-history .half .h-jp { flex: 0 0 auto; color: #f87171; font-size: 11px; }

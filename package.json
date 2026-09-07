@@ -1,0 +1,16 @@
+{
+  "name": "danmu-games",
+  "version": "2.0.0",
+  "description": "弹幕互动游戏中心：主播控制台框架 + 插件式弹幕游戏（猜数字 / 成语接龙 / ...），接收 DanmuDesk 转发弹幕",
+  "type": "commonjs",
+  "main": "host/server.js",
+  "scripts": {
+    "start": "node host/server.js",
+    "simulate": "node scripts/simulate.js",
+    "gen-chengyu": "node scripts/gen_chengyu_dict.cjs"
+  },
+  "dependencies": {
+    "pinyin-pro": "^3.29.3",
+    "ws": "^8.0.0"
+  }
+}

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>SVG 谜题 v2 ·「津津有味」公式</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"Microsoft YaHei","PingFang SC",sans-serif;
+    background:linear-gradient(135deg,#1a1a2e 0%,#16213e 60%,#0f3460 100%);
+    min-height:100vh; color:#eee; padding:40px 20px; }
+  .wrap { max-width:1180px; margin:0 auto; }
+  h1 { text-align:center; font-size:28px; color:#ffd166; margin-bottom:10px; }
+  .sub { text-align:center; color:#8d99ae; font-size:14px; line-height:1.9; margin-bottom:14px; }
+  .formula { text-align:center; margin-bottom:34px; }
+  .formula span { display:inline-block; background:rgba(255,209,102,.12); border:1px solid rgba(255,209,102,.4);
+    color:#ffd166; border-radius:999px; padding:6px 18px; font-size:14px; margin:0 6px; }
+  .grid { display:grid; grid-template-columns:repeat(2, 500px); gap:44px; justify-content:center; }
+  .pcard { background:#fff; border-radius:26px; padding:12px; width:500px;
+    box-shadow:0 14px 40px rgba(0,0,0,.45); }
+  .pcard svg.panel { width:100%; display:block; }
+  .ansline { margin-top:14px; font-size:17px; color:#ffd166; font-weight:bold; }
+  .expl { margin-top:5px; font-size:13.5px; color:#a8b2c1; line-height:1.8; margin-bottom:6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎯 SVG 谜题 v2 ·「津津有味」公式</h1>
+  <p class="sub">
+    参考谜例拆解：金子×1「这是金子」→ 金子×2 捂鼻皱眉+发臭+苍蝇「这是____」＝ 金金·有味 → 津津有味<br>
+    规则① 上格只报物件名，答案里的字一个都不出现 ｜ 规则② 下格＝同一物件的数量/表情/动作变化，两格一眼是同一主角
+  </p>
+  <div class="formula"><span>物件名（谐音底）</span>＋<span>数量翻倍（叠字）</span>＋<span>状态变化（后两字）</span>＝<span>四字成语</span></div>
+
+  <div class="grid">
+
+    <!-- ======== 1. 洋洋得意 ======== -->
+    <div>
+      <div class="pcard">
+        <svg class="panel" viewBox="0 0 470 268">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#fcd5ce" stroke="#2f2f45" stroke-width="3"/>
+          <g transform="translate(255,95) scale(1.15)">
+            <g stroke="#2f2f45" stroke-width="6" stroke-linecap="round">
+              <line x1="-28" y1="42" x2="-28" y2="60"/><line x1="-10" y1="46" x2="-10" y2="64"/>
+              <line x1="12" y1="46" x2="12" y2="64"/><line x1="30" y1="42" x2="30" y2="60"/>
+            </g>
+            <ellipse cx="0" cy="14" rx="50" ry="36" fill="#fff" stroke="#2f2f45" stroke-width="5"/>
+            <ellipse cx="-50" cy="-20" rx="10" ry="6" fill="#f5c99b" stroke="#2f2f45" stroke-width="4" transform="rotate(-24 -50 -20)"/>
+            <ellipse cx="-12" cy="-32" rx="10" ry="6" fill="#f5c99b" stroke="#2f2f45" stroke-width="4" transform="rotate(18 -12 -32)"/>
+            <circle cx="-32" cy="-16" r="22" fill="#f5c99b" stroke="#2f2f45" stroke-width="5"/>
+            <circle cx="-30" cy="-38" r="8" fill="#fff" stroke="#2f2f45" stroke-width="4"/>
+            <circle cx="-40" cy="-18" r="2.8" fill="#2f2f45"/><circle cx="-26" cy="-18" r="2.8" fill="#2f2f45"/>
+            <path d="M-37,-8 Q-32,-3 -27,-8" stroke="#2f2f45" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </g>
+          <text x="235" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是羊</text>
+        </svg>
+        <svg class="panel" viewBox="0 0 470 268" style="margin-top:10px;">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#aee0f5" stroke="#2f2f45" stroke-width="3"/>
+          <g transform="translate(150,105) scale(0.95)">
+            <g stroke="#2f2f45" stroke-width="6" stroke-linecap="round">
+              <line x1="-24" y1="44" x2="-24" y2="62"/>
+              <line x1="-4" y1="48" x2="-4" y2="66"/>
+              <line x1="14" y1="48" x2="14" y2="66"/>
+              <path d="M30,44 L44,30"/>
+            </g>
+            <ellipse cx="0" cy="16" rx="50" ry="34" fill="#fff" stroke="#2f2f45" stroke-width="5"/>
+            <ellipse cx="40" cy="4" rx="13" ry="16" fill="#fff" stroke="#2f2f45" stroke-width="5"/>
+            <circle cx="-52" cy="6" r="8" fill="#fff" stroke="#2f2f45" stroke-width="4.5"/>
+            <g transform="translate(28,-28) rotate(-18)">
+              <ellipse cx="-22" cy="-8" rx="10" ry="6" fill="#f5c99b" stroke="#2f2f45" stroke-width="4" transform="rotate(-30 -22 -8)"/>
+              <circle cx="0" cy="0" r="22" fill="#f5c99b" stroke="#2f2f45" stroke-width="5"/>
+              <circle cx="2" cy="-22" r="8" fill="#fff" stroke="#2f2f45" stroke-width="4"/>
+              <path d="M-12,-8 Q-8,-13 -4,-8" stroke="#2f2f45" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+              <path d="M2,-8 Q6,-13 10,-8" stroke="#2f2f45" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+              <path d="M-8,3 Q0,14 8,3 Q0,7 -8,3 Z" fill="#2f2f45"/>
+              <circle cx="-15" cy="0" r="4.5" fill="#f7a6a6" opacity=".7"/>
+            </g>
+          </g>
+          <path d="M196,36 L199,45 L208,48 L199,51 L196,60 L193,51 L184,48 L193,45 Z" fill="#f6c344" stroke="#2f2f45" stroke-width="3"/>
+          <g transform="translate(330,100) scale(0.95)">
+            <g stroke="#2f2f45" stroke-width="6" stroke-linecap="round">
+              <line x1="-24" y1="44" x2="-24" y2="62"/>
+              <line x1="-4" y1="48" x2="-4" y2="66"/>
+              <line x1="14" y1="48" x2="14" y2="66"/>
+              <path d="M30,44 L44,30"/>
+            </g>
+            <ellipse cx="0" cy="16" rx="50" ry="34" fill="#fff" stroke="#2f2f45" stroke-width="5"/>
+            <ellipse cx="40" cy="4" rx="13" ry="16" fill="#fff" stroke="#2f2f45" stroke-width="5"/>
+            <circle cx="-52" cy="6" r="8" fill="#fff" stroke="#2f2f45" stroke-width="4.5"/>
+            <g transform="translate(28,-28) rotate(-18)">
+              <ellipse cx="-22" cy="-8" rx="10" ry="6" fill="#f5c99b" stroke="#2f2f45" stroke-width="4" transform="rotate(-30 -22 -8)"/>
+              <circle cx="0" cy="0" r="22" fill="#f5c99b" stroke="#2f2f45" stroke-width="5"/>
+              <circle cx="2" cy="-22" r="8" fill="#fff" stroke="#2f2f45" stroke-width="4"/>
+              <path d="M-12,-8 Q-8,-13 -4,-8" stroke="#2f2f45" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+              <path d="M2,-8 Q6,-13 10,-8" stroke="#2f2f45" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+              <path d="M-8,3 Q0,14 8,3 Q0,7 -8,3 Z" fill="#2f2f45"/>
+              <circle cx="-15" cy="0" r="4.5" fill="#f7a6a6" opacity=".7"/>
+            </g>
+          </g>
+          <path d="M382,30 L385,39 L394,42 L385,45 L382,54 L379,45 L370,42 L379,39 Z" fill="#f6c344" stroke="#2f2f45" stroke-width="3"/>
+          <text x="150" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是</text>
+          <g fill="#2f2f45"><rect x="195" y="230" width="34" height="6" rx="3"/><rect x="239" y="230" width="34" height="6" rx="3"/><rect x="283" y="230" width="34" height="6" rx="3"/><rect x="327" y="230" width="34" height="6" rx="3"/></g>
+        </svg>
+        <div style="padding:12px 8px 4px; display:flex; align-items:center; gap:16px;">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#8c7ae6"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">成语</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#f6c344"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：洋洋得意</div>
+      <div class="expl">羊×2 + 昂首挺胸咧嘴笑、抬蹄招摇走、头顶冒星星 →「羊羊得意」→ 洋洋得意</div>
+    </div>
+
+    <!-- ======== 2. 依依不舍 ======== -->
+    <div>
+      <div class="pcard">
+        <svg class="panel" viewBox="0 0 470 268">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#fdf6a3" stroke="#2f2f45" stroke-width="3"/>
+          <g transform="translate(235,115) scale(1.5)">
+            <path d="M-38,-24 L-14,-36 Q0,-26 14,-36 L38,-24 L29,-2 L16,-8 L16,34 Q0,39 -16,34 L-16,-8 L-29,-2 Z" fill="#e35d5d" stroke="#2f2f45" stroke-width="4.5" stroke-linejoin="round"/>
+            <circle cx="-10" cy="-8" r="2.8" fill="#2f2f45"/><circle cx="10" cy="-8" r="2.8" fill="#2f2f45"/>
+            <path d="M-8,4 Q0,12 8,4" stroke="#2f2f45" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </g>
+          <text x="235" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是衣服</text>
+        </svg>
+        <svg class="panel" viewBox="0 0 470 268" style="margin-top:10px;">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#c8f0d8" stroke="#2f2f45" stroke-width="3"/>
+          <g stroke="#8d99ae" stroke-width="4" stroke-linecap="round">
+            <line x1="44" y1="92" x2="80" y2="92"/>
+            <line x1="32" y1="116" x2="74" y2="116"/>
+            <line x1="44" y1="140" x2="80" y2="140"/>
+          </g>
+          <path d="M28,116 L58,102 L58,130 Z" fill="#8d99ae"/>
+          <g transform="translate(150,124) rotate(-10)">
+            <path d="M-38,-24 L-14,-36 Q0,-26 14,-36 L38,-24 L29,-2 L16,-8 L16,34 Q0,39 -16,34 L-16,-8 L-29,-2 Z" fill="#54a0ff" stroke="#2f2f45" stroke-width="4.5" stroke-linejoin="round"/>
+            <path d="M-14,-12 Q-10,-17 -6,-12" stroke="#2f2f45" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M6,-12 Q10,-17 14,-12" stroke="#2f2f45" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <ellipse cx="0" cy="2" rx="4.5" ry="6.5" fill="#2f2f45"/>
+            <path d="M-22,0 q-6,14 0,18" stroke="#7ec8ff" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M20,0 q6,14 0,18" stroke="#7ec8ff" stroke-width="5" fill="none" stroke-linecap="round"/>
+          </g>
+          <path d="M178,108 Q235,80 296,110" stroke="#2f2f45" stroke-width="19" fill="none" stroke-linecap="round"/>
+          <path d="M178,108 Q235,80 296,110" stroke="#54a0ff" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <g transform="translate(330,130) rotate(9)">
+            <path d="M-38,-24 L-14,-36 Q0,-26 14,-36 L38,-24 L29,-2 L16,-8 L16,34 Q0,39 -16,34 L-16,-8 L-29,-2 Z" fill="#ff9f43" stroke="#2f2f45" stroke-width="4.5" stroke-linejoin="round"/>
+            <path d="M-14,-12 Q-10,-17 -6,-12" stroke="#2f2f45" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M6,-12 Q10,-17 14,-12" stroke="#2f2f45" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <ellipse cx="0" cy="2" rx="4.5" ry="6.5" fill="#2f2f45"/>
+            <path d="M-22,0 q-6,14 0,18" stroke="#7ec8ff" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M20,0 q6,14 0,18" stroke="#7ec8ff" stroke-width="5" fill="none" stroke-linecap="round"/>
+          </g>
+          <g stroke="#8d99ae" stroke-width="4" stroke-linecap="round">
+            <line x1="300" y1="182" x2="318" y2="182"/>
+            <line x1="330" y1="186" x2="352" y2="186"/>
+          </g>
+          <g transform="translate(235,42) rotate(-6)">
+            <path d="M0,24 C-24,9 -30,-7 -17,-15 C-8,-20 0,-12 0,-5 C0,-12 8,-20 17,-15 C30,-7 24,9 0,24 Z" fill="#e35d5d" stroke="#2f2f45" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M0,-12 L-4,-3 L3,3 L-2,12" stroke="#2f2f45" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </g>
+          <text x="150" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是</text>
+          <g fill="#2f2f45"><rect x="195" y="230" width="34" height="6" rx="3"/><rect x="239" y="230" width="34" height="6" rx="3"/><rect x="283" y="230" width="34" height="6" rx="3"/><rect x="327" y="230" width="34" height="6" rx="3"/></g>
+        </svg>
+        <div style="padding:12px 8px 4px; display:flex; align-items:center; gap:16px;">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#8c7ae6"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">成语</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#f6c344"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：依依不舍</div>
+      <div class="expl">衣服×2 + 一件被拽走、袖子拉长不肯放、两件大哭、中间裂开的心 →「衣衣不舍」→ 依依不舍</div>
+    </div>
+
+    <!-- ======== 3. 蠢蠢欲动 ======== -->
+    <div>
+      <div class="pcard">
+        <svg class="panel" viewBox="0 0 470 268">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#c8f0d8" stroke="#2f2f45" stroke-width="3"/>
+          <g transform="translate(255,120) scale(1.25)">
+            <g stroke="#2f2f45" stroke-width="4.5">
+              <circle cx="-56" cy="6" r="14" fill="#57a05c"/>
+              <circle cx="-36" cy="2" r="15" fill="#57a05c"/>
+              <circle cx="-15" cy="-2" r="16" fill="#57a05c"/>
+              <circle cx="8" cy="-6" r="18" fill="#57a05c"/>
+            </g>
+            <path d="M4,-26 L-2,-38" stroke="#2f2f45" stroke-width="4" stroke-linecap="round"/>
+            <path d="M14,-25 L20,-36" stroke="#2f2f45" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="-2" cy="-40" r="3" fill="#2f2f45"/><circle cx="21" cy="-38" r="3" fill="#2f2f45"/>
+            <circle cx="3" cy="-12" r="2.8" fill="#2f2f45"/><circle cx="15" cy="-12" r="2.8" fill="#2f2f45"/>
+            <path d="M4,-3 Q10,2 16,-3" stroke="#2f2f45" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </g>
+          <text x="235" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是虫</text>
+        </svg>
+        <svg class="panel" viewBox="0 0 470 268" style="margin-top:10px;">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#ffe0b2" stroke="#2f2f45" stroke-width="3"/>
+          <g transform="translate(140,175) rotate(-6) scale(0.8)">
+            <path d="M-78,-14 q-10,12 0,24" stroke="#8d99ae" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <path d="M-90,-20 q-13,17 0,34" stroke="#8d99ae" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <g stroke="#2f2f45" stroke-width="4.5">
+              <circle cx="-56" cy="6" r="14" fill="#57a05c"/>
+              <circle cx="-36" cy="2" r="15" fill="#57a05c"/>
+              <circle cx="-15" cy="-2" r="16" fill="#57a05c"/>
+              <circle cx="8" cy="-6" r="18" fill="#57a05c"/>
+            </g>
+            <path d="M4,-26 L-2,-38" stroke="#2f2f45" stroke-width="4" stroke-linecap="round"/>
+            <path d="M14,-25 L20,-36" stroke="#2f2f45" stroke-width="4" stroke-linecap="round"/>
+            <path d="M-4,-16 L6,-13 M22,-15 L12,-13" stroke="#2f2f45" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="3" cy="-9" r="2.8" fill="#2f2f45"/><circle cx="15" cy="-9" r="2.8" fill="#2f2f45"/>
+            <path d="M4,-1 Q10,3 16,-1" stroke="#2f2f45" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </g>
+          <g transform="translate(340,150) rotate(-6) scale(0.8)">
+            <path d="M-78,-14 q-10,12 0,24" stroke="#8d99ae" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <g stroke="#2f2f45" stroke-width="4.5">
+              <circle cx="-56" cy="6" r="14" fill="#57a05c"/>
+              <circle cx="-36" cy="2" r="15" fill="#57a05c"/>
+              <circle cx="-15" cy="-2" r="16" fill="#57a05c"/>
+              <circle cx="8" cy="-6" r="18" fill="#57a05c"/>
+            </g>
+            <path d="M4,-26 L-2,-38" stroke="#2f2f45" stroke-width="4" stroke-linecap="round"/>
+            <path d="M14,-25 L20,-36" stroke="#2f2f45" stroke-width="4" stroke-linecap="round"/>
+            <path d="M-4,-16 L6,-13 M22,-15 L12,-13" stroke="#2f2f45" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="3" cy="-9" r="2.8" fill="#2f2f45"/><circle cx="15" cy="-9" r="2.8" fill="#2f2f45"/>
+            <path d="M4,-1 Q10,3 16,-1" stroke="#2f2f45" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </g>
+          <text x="150" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是</text>
+          <g fill="#2f2f45"><rect x="195" y="230" width="34" height="6" rx="3"/><rect x="239" y="230" width="34" height="6" rx="3"/><rect x="283" y="230" width="34" height="6" rx="3"/><rect x="327" y="230" width="34" height="6" rx="3"/></g>
+        </svg>
+        <div style="padding:12px 8px 4px; display:flex; align-items:center; gap:16px;">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#8c7ae6"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">成语</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#f6c344"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：蠢蠢欲动</div>
+      <div class="expl">虫×2 + 蓄势要冲出去的姿态 →「虫虫欲动」→ 蠢蠢欲动。后两字靠动作线讲</div>
+    </div>
+
+    <!-- ======== 4. 格格不入 ======== -->
+    <div>
+      <div class="pcard">
+        <svg class="panel" viewBox="0 0 470 268">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#ffe0b2" stroke="#2f2f45" stroke-width="3"/>
+          <g transform="translate(235,112)">
+            <rect x="-45" y="-45" width="90" height="90" rx="16" fill="#8c7ae6" stroke="#2f2f45" stroke-width="5"/>
+            <line x1="0" y1="-45" x2="0" y2="45" stroke="#2f2f45" stroke-width="4"/>
+            <line x1="-45" y1="0" x2="45" y2="0" stroke="#2f2f45" stroke-width="4"/>
+            <circle cx="-14" cy="-12" r="3" fill="#2f2f45"/><circle cx="14" cy="-12" r="3" fill="#2f2f45"/>
+            <path d="M-10,2 Q0,10 10,2" stroke="#2f2f45" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </g>
+          <text x="235" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是格子</text>
+        </svg>
+        <svg class="panel" viewBox="0 0 470 268" style="margin-top:10px;">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#fcd5ce" stroke="#2f2f45" stroke-width="3"/>
+          <g transform="translate(120,112) rotate(-18)">
+            <rect x="-45" y="-45" width="90" height="90" rx="16" fill="#8c7ae6" stroke="#2f2f45" stroke-width="5"/>
+            <line x1="0" y1="-45" x2="0" y2="45" stroke="#2f2f45" stroke-width="4"/>
+            <line x1="-45" y1="0" x2="45" y2="0" stroke="#2f2f45" stroke-width="4"/>
+            <path d="M-24,-20 L-8,-14 M24,-20 L8,-14" stroke="#2f2f45" stroke-width="3.5" stroke-linecap="round"/>
+            <circle cx="-13" cy="-8" r="3" fill="#2f2f45"/><circle cx="13" cy="-8" r="3" fill="#2f2f45"/>
+            <path d="M-9,8 Q0,1 9,8" stroke="#2f2f45" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </g>
+          <g transform="translate(350,112) rotate(18)">
+            <rect x="-45" y="-45" width="90" height="90" rx="16" fill="#8c7ae6" stroke="#2f2f45" stroke-width="5"/>
+            <line x1="0" y1="-45" x2="0" y2="45" stroke="#2f2f45" stroke-width="4"/>
+            <line x1="-45" y1="0" x2="45" y2="0" stroke="#2f2f45" stroke-width="4"/>
+            <path d="M-24,-20 L-8,-14 M24,-20 L8,-14" stroke="#2f2f45" stroke-width="3.5" stroke-linecap="round"/>
+            <circle cx="-13" cy="-8" r="3" fill="#2f2f45"/><circle cx="13" cy="-8" r="3" fill="#2f2f45"/>
+            <path d="M-9,8 Q0,1 9,8" stroke="#2f2f45" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </g>
+          <path d="M235,92 L241,108 L258,104 L247,118 L258,132 L241,128 L235,144 L229,128 L212,132 L223,118 L212,104 L229,108 Z" fill="#f6c344" stroke="#2f2f45" stroke-width="3.5"/>
+          <path d="M52,84 q-14,28 0,56" stroke="#8d99ae" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M418,84 q14,28 0,56" stroke="#8d99ae" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <text x="150" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是</text>
+          <g fill="#2f2f45"><rect x="195" y="230" width="34" height="6" rx="3"/><rect x="239" y="230" width="34" height="6" rx="3"/><rect x="283" y="230" width="34" height="6" rx="3"/><rect x="327" y="230" width="34" height="6" rx="3"/></g>
+        </svg>
+        <div style="padding:12px 8px 4px; display:flex; align-items:center; gap:16px;">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#8c7ae6"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">成语</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#f6c344"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：格格不入</div>
+      <div class="expl">格子×2 互看不顺眼、火花顶开 → 格格不入。这条不用谐音，物件名直接就是谜底用字</div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

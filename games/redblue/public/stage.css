@@ -1,0 +1,291 @@
+/* ══════════════════════════════════════════════════════════════════
+   stage.css — 红蓝大作战 · 展示屏样式（games/redblue/public）
+   依赖 common/base.css（主题变量/手机框/排行榜/烟花）；此处仅本游戏专属
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── 顶栏比分 ── */
+.score-chip {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--panel2); border: 1px solid var(--line); border-radius: 10px;
+  padding: 4px 10px; font-size: 14px; font-weight: 700;
+}
+.sc-r { color: var(--team-red, #f87171); }
+.sc-b { color: var(--team-blue, #4da3ff); }
+.sc-sep { color: var(--dim); }
+.season-badge {
+  background: linear-gradient(160deg, var(--gold-mid), var(--gold));
+  color: #17130d; font-size: 11px; font-weight: 800; letter-spacing: 1px;
+  border-radius: 8px; padding: 4px 8px; white-space: nowrap;
+}
+
+/* ── 倒计时行 ── */
+.countdown-row { display: flex; align-items: baseline; justify-content: center; gap: 10px; margin-top: 8px; }
+.cd { display: flex; align-items: baseline; gap: 4px; }
+.cd-num {
+  font-size: 40px; font-weight: 800; color: var(--gold); line-height: 1;
+  text-shadow: 0 0 18px rgba(var(--glow-rgb), .45);
+}
+.cd-unit { color: var(--sub); font-size: 12px; }
+.phase-tag {
+  font-size: 12px; color: var(--sub); background: var(--panel2);
+  border: 1px solid var(--line); border-radius: 99px; padding: 3px 10px;
+}
+.phase-tag.tug { color: var(--gold); border-color: rgba(var(--glow-rgb), .4); }
+.cd-progress { height: 6px; background: var(--cell-bg); border-radius: 99px; margin-top: 8px; overflow: hidden; }
+.cd-progress-track { height: 100%; }
+.cd-progress-fill {
+  height: 100%; width: 0; border-radius: 99px;
+  background: linear-gradient(90deg, var(--gold-mid), var(--gold));
+  transition: width .5s linear;
+}
+
+/* ── 战场 ── */
+.battle {
+  position: relative;
+  margin-top: 10px; background: var(--panel);
+  border: 1px solid var(--line); border-radius: 14px; padding: 10px;
+}
+.camps { display: flex; align-items: stretch; gap: 8px; }
+.camp { flex: 1; border-radius: 10px; padding: 7px 9px; border: 1px solid; min-width: 0; }
+.camp.red {
+  background: linear-gradient(160deg, rgba(248, 113, 113, .16), rgba(248, 113, 113, .05));
+  border-color: rgba(248, 113, 113, .4);
+}
+.camp.blue {
+  background: linear-gradient(200deg, rgba(77, 163, 255, .16), rgba(77, 163, 255, .05));
+  border-color: rgba(77, 163, 255, .4);
+  text-align: right;
+}
+.camp-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.camp.red .camp-name { color: var(--team-red, #f87171); }
+.camp.blue .camp-name { color: var(--team-blue, #4da3ff); }
+.camp-cnt { font-size: 20px; font-weight: 800; margin-top: 1px; }
+.camp-cnt small { font-size: 11px; color: var(--sub); font-weight: normal; }
+.camp-avs { display: flex; margin-top: 5px; height: 20px; }
+.camp.blue .camp-avs { justify-content: flex-end; }
+.camp-avs .avatar { width: 20px; height: 20px; font-size: 10px; margin-left: -6px; border: 2px solid var(--panel); }
+.camp.red .camp-avs .avatar:first-child { margin-left: 0; }
+.camp-avs .av-more {
+  width: 26px; height: 20px; border-radius: 10px; background: var(--panel2); color: var(--sub);
+  font-size: 9px; display: flex; align-items: center; justify-content: center;
+  margin-left: -2px; border: 1px solid var(--line);
+}
+.vs { display: flex; align-items: center; font-size: 13px; font-weight: 800; color: var(--dim); }
+
+/* ── 战线绳（拔河战场） ── */
+.rope-wrap { margin-top: 10px; }
+.rope-meta { display: flex; justify-content: space-between; font-size: 10px; color: var(--dim); margin-bottom: 4px; }
+.rope-meta b { color: var(--sub); }
+.rm-pos { color: var(--gold); font-weight: 700; }
+
+/* 两端拉绳队员 */
+.rope-outer { display: flex; align-items: center; gap: 5px; }
+.rope-team { flex: none; font-size: 15px; letter-spacing: -3px; line-height: 1; opacity: .92; white-space: nowrap; }
+.rope-team .pull-arrow { display: inline-block; font-size: 20px; font-weight: 900; letter-spacing: 0; margin: 0 1px; }
+.rope-team.red .pull-arrow { color: var(--team-red, #f87171); }
+.rope-team.blue .pull-arrow { color: var(--team-blue, #4da3ff); }
+.rope-team.pulling .pull-arrow { animation: arrowPunch .5s ease-in-out infinite; }
+@keyframes arrowPunch { 50% { transform: scale(1.5); } }
+
+.rope-track {
+  position: relative; flex: 1; height: 36px; border-radius: 99px;
+  border: 1px solid var(--line2); background: var(--cell-bg);
+}
+.rope-red, .rope-blue { position: absolute; top: 0; bottom: 0; transition: width .35s ease; }
+.rope-red { left: 0; width: 50%; background: linear-gradient(90deg, #7f1d1d, var(--team-red, #f87171)); border-radius: 99px 0 0 99px; }
+.rope-blue { right: 0; width: 50%; background: linear-gradient(270deg, #1e3a8a, var(--team-blue, #4da3ff)); border-radius: 0 99px 99px 0; }
+/* 麻绳本体：整根绳随战线滑动（JS 设 backgroundPositionX） */
+.rope-braid {
+  position: absolute; left: 2px; right: 2px; top: 50%; height: 15px; margin-top: -7.5px;
+  border-radius: 99px;
+  background: repeating-linear-gradient(-55deg, #ecd9b0 0 7px, #c9a86a 7px 14px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .55), inset 0 1px 2px rgba(255, 255, 255, .4), inset 0 -2px 3px rgba(0, 0, 0, .35);
+  transition: background-position .35s ease;
+}
+.rope-center { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 0; border-left: 2px dashed rgba(255, 255, 255, .3); z-index: 2; }
+/* 胜负线（直接画在轨道上） */
+.win-line { position: absolute; top: -3px; bottom: -3px; width: 0; border-left: 2px dashed rgba(var(--glow-rgb), .5); z-index: 2; }
+#winLineL { left: 10%; } #winLineR { left: 90%; }
+.win-line.danger { border-color: var(--gold); box-shadow: 0 0 12px rgba(var(--glow-rgb), .9); animation: ebarPulse .7s infinite; }
+.rope-knot {
+  position: absolute; left: 50%; top: 50%; width: 10px; height: 22px; margin: -11px 0 0 -5px;
+  background: #f5e7c8; border-radius: 4px;
+  box-shadow: 0 0 12px rgba(var(--glow-rgb), .8), 0 1px 3px rgba(0, 0, 0, .6);
+  transition: left .35s cubic-bezier(.34, 1.4, .64, 1); z-index: 3;
+}
+.rope-knot.bump { animation: knotBump .35s ease; }
+@keyframes knotBump { 40% { transform: scaleY(1.5) scaleX(1.3); } }
+.rope-flag {
+  position: absolute; left: 50%; top: -26px; transform: translateX(-50%);
+  font-size: 16px; z-index: 4; transition: left .35s cubic-bezier(.34, 1.4, .64, 1);
+  filter: drop-shadow(0 0 6px rgba(var(--glow-rgb), .7));
+}
+.rope-scale { display: flex; justify-content: space-between; font-size: 9px; color: var(--dim); margin-top: 4px; }
+.rope-scale .warn { color: var(--gold); }
+.rope-scale .dim { opacity: .7; }
+/* 临近胜负线告警（JS 加 danger 类） */
+.rope-track.danger-red { box-shadow: 0 0 0 2px rgba(248, 113, 113, .7); }
+.rope-track.danger-blue { box-shadow: 0 0 0 2px rgba(77, 163, 255, .7); }
+
+/* 拉动/冲锋特效层 */
+.fx-layer { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 6; border-radius: 99px; }
+.fx-float {
+  position: absolute; bottom: 62%; transform: translateX(-50%);
+  font-size: 13px; font-weight: 900; text-shadow: 0 1px 4px rgba(0, 0, 0, .8);
+  animation: floatUp .95s ease-out forwards; white-space: nowrap;
+}
+.fx-float.red { color: #ffb4b4; } .fx-float.blue { color: #a8cdff; } .fx-float.gold { color: var(--gold); }
+.fx-float.big { font-size: 16px; }
+@keyframes floatUp { from { opacity: 1; transform: translate(-50%, 0); } to { opacity: 0; transform: translate(-50%, -28px); } }
+.fx-chev {
+  position: absolute; top: 50%; margin-top: -10px; transform: translateX(-50%);
+  font-size: 16px; font-weight: 900; text-shadow: 0 1px 3px rgba(0, 0, 0, .8);
+  animation: chevGo .55s ease-out forwards;
+}
+.fx-chev.red { color: var(--team-red, #f87171); }
+.fx-chev.blue { color: var(--team-blue, #4da3ff); }
+@keyframes chevGo { from { opacity: 1; } to { opacity: 0; transform: translateX(-50%) scaleX(2); } }
+/* 冲锋/全力一击 全屏横幅（覆盖整个手机屏） */
+.surge-banner {
+  position: absolute; inset: 0; z-index: 55;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+}
+.surge-banner .txt {
+  font-size: 36px; font-weight: 900; letter-spacing: 10px; text-align: center;
+  padding: 18px 34px; border-radius: 20px;
+  background: rgba(5, 7, 11, .55); border: 1px solid currentColor;
+}
+.surge-banner.show { opacity: 1; }
+.surge-banner.show, .surge-banner.show .txt { animation-duration: calc(1.6s * var(--fxmul, 1)); }
+.surge-banner.show.red {
+  background: radial-gradient(ellipse at center, rgba(248, 113, 113, .35), rgba(248, 113, 113, .06) 65%, transparent 75%);
+  animation: surgeVeil 1.6s ease-out forwards;
+}
+.surge-banner.show.red .txt { color: #ffb4b4; text-shadow: 0 0 28px rgba(248, 113, 113, .95); animation: surgePop 1.6s ease-out forwards; }
+.surge-banner.show.blue {
+  background: radial-gradient(ellipse at center, rgba(77, 163, 255, .35), rgba(77, 163, 255, .06) 65%, transparent 75%);
+  animation: surgeVeil 1.6s ease-out forwards;
+}
+.surge-banner.show.blue .txt { color: #a8cdff; text-shadow: 0 0 28px rgba(77, 163, 255, .95); animation: surgePop 1.6s ease-out forwards; }
+.surge-banner.show.gold {
+  background: radial-gradient(ellipse at center, rgba(255, 197, 61, .35), rgba(255, 197, 61, .06) 65%, transparent 75%);
+  animation: surgeVeil 1.6s ease-out forwards;
+}
+.surge-banner.show.gold .txt { color: var(--gold); text-shadow: 0 0 28px rgba(255, 197, 61, .95); animation: surgePop 1.6s ease-out forwards; }
+@keyframes surgePop {
+  0% { opacity: 0; transform: scale(.45); }
+  14% { opacity: 1; transform: scale(1.16); }
+  26% { transform: scale(1); }
+  75% { opacity: 1; transform: scale(1.03); }
+  100% { opacity: 0; transform: scale(1.08); }
+}
+@keyframes surgeVeil {
+  0% { opacity: 0; } 14% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; }
+}
+/* 画面震动 */
+.battle.shake1 { animation: shakeS .28s ease; }
+.battle.shake2 { animation: shakeL .45s ease; }
+@keyframes shakeS { 25% { transform: translateX(3px); } 50% { transform: translateX(-3px); } 75% { transform: translateX(2px); } }
+@keyframes shakeL { 20% { transform: translate(6px, -2px); } 40% { transform: translate(-6px, 2px); } 60% { transform: translate(4px, 1px); } 80% { transform: translate(-3px, -1px); } }
+
+/* ── 能量槽 ── */
+.energy { display: flex; flex-direction: column; gap: 6px; margin-top: 9px; }
+.ebar { display: flex; align-items: center; gap: 8px; }
+.ebar .tag { width: 52px; font-size: 11px; font-weight: 700; flex: none; }
+.ebar.red .tag { color: var(--team-red, #f87171); }
+.ebar.blue .tag { color: var(--team-blue, #4da3ff); }
+.ebar .track {
+  flex: 1; height: 12px; background: var(--cell-bg);
+  border-radius: 99px; overflow: hidden; border: 1px solid var(--line2);
+}
+.ebar .fill { height: 100%; width: 0; border-radius: 99px; transition: width .5s; }
+.ebar.red .fill { background: linear-gradient(90deg, #7f1d1d, var(--team-red, #f87171)); }
+.ebar.blue .fill { background: linear-gradient(270deg, #1e3a8a, var(--team-blue, #4da3ff)); }
+.ebar .pct { width: 70px; font-size: 10px; color: var(--sub); text-align: right; flex: none; }
+.ebar.charged .fill { box-shadow: 0 0 14px currentColor; animation: ebarPulse 1s infinite; }
+.ebar.red.charged .fill { color: var(--team-red, #f87171); }
+.ebar.blue.charged .fill { color: var(--team-blue, #4da3ff); }
+@keyframes ebarPulse { 50% { opacity: .65; } }
+
+/* ── 教学行 ── */
+.howto { margin-top: 9px; text-align: center; font-size: 12px; color: var(--sub); line-height: 1.6; }
+.ht-r { color: var(--team-red, #f87171); }
+.ht-b { color: var(--team-blue, #4da3ff); }
+.howto b { color: var(--gold); }
+
+/* ── 守城战（PVE 轮） ── */
+.siege-box {
+  position: relative;
+  margin-top: 10px; background: var(--panel); border: 1px solid var(--line);
+  border-radius: 14px; padding: 10px; display: flex; flex-direction: column; gap: 8px;
+}
+.siege-box.monster-low { border-color: rgba(248, 113, 113, .6); box-shadow: 0 0 16px rgba(248, 113, 113, .25); }
+.sge-row { display: flex; align-items: center; gap: 8px; }
+.sge-row .sge-tag { width: 108px; font-size: 12px; font-weight: 700; color: var(--sub); flex: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sge-row.monster .sge-tag { color: var(--red); }
+.sge-row .track { flex: 1; height: 14px; background: var(--cell-bg); border-radius: 99px; overflow: hidden; border: 1px solid var(--line2); }
+.sge-row .fill { height: 100%; width: 100%; border-radius: 99px; transition: width .4s; }
+.sge-row.monster .fill { background: linear-gradient(90deg, #7f1d1d, var(--red, #f87171)); }
+.sge-row.wall .fill { background: linear-gradient(90deg, #92400e, var(--gold, #ffc53d)); }
+.sge-row.energy2 .fill { background: linear-gradient(90deg, #1e3a8a, var(--accent, #4da3ff)); }
+.sge-row.wall.danger .fill { animation: ebarPulse .8s infinite; }
+.sge-row .pct { width: 92px; font-size: 11px; color: var(--sub); text-align: right; flex: none; }
+
+/* ── 战报流 ── */
+.feed {
+  margin-top: 9px; background: var(--cell-bg); border: 1px solid var(--line2);
+  border-radius: 12px; padding: 6px 10px; height: 96px; overflow: hidden;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.feed .item { font-size: 11.5px; color: var(--sub); display: flex; gap: 6px; align-items: center; animation: feedIn .35s ease; min-width: 0; }
+.feed .item .who { color: var(--text); font-weight: 600; }
+.feed .item.hot { color: var(--gold); font-weight: 600; }
+.feed .item .t-red { color: var(--team-red, #f87171); font-weight: 700; }
+.feed .item .t-blue { color: var(--team-blue, #4da3ff); font-weight: 700; }
+.feed .item.empty { color: var(--dim); justify-content: center; }
+@keyframes feedIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+/* ── 双榜单 ── */
+.boards { display: flex; gap: 8px; margin-top: 9px; flex: 1; min-height: 0; }
+.col-board {
+  flex: 1; background: var(--panel); border: 1px solid var(--line);
+  border-radius: 12px; padding: 7px 9px; display: flex; flex-direction: column; min-width: 0;
+}
+.board-head h3 { font-size: 11px; color: var(--gold); letter-spacing: 2px; margin: 0 0 5px; font-weight: 700; }
+.board-box { display: flex; flex-direction: column; gap: 2px; overflow: hidden; flex: 1; }
+.board-box .lb-row { padding: 3px 6px; font-size: 11px; }
+.board-box .lb-row .rk { flex: 0 0 18px; height: 16px; font-size: 9px; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: var(--cell-bg); color: var(--dim); }
+.board-box .lb-row .avatar { width: 16px; height: 16px; font-size: 9px; }
+.board-box .lb-row .nm { font-size: 11px; }
+.board-box .lb-row .sub { flex: 0 0 auto; color: var(--dim); font-size: 9.5px; }
+.board-box .lb-row .sc { flex: 0 0 52px; font-size: 11px; }
+
+/* ── 结算横幅（与 base.css 的 .win-banner 风格一致，本游戏自定义卡内容） ── */
+.result-banner {
+  position: absolute; inset: 0; z-index: 60;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(var(--scrim-rgb, 5, 7, 11), .72);
+}
+.result-card {
+  width: 84%; text-align: center; border-radius: 16px; padding: 18px 14px;
+  background: linear-gradient(160deg, var(--panel2), var(--panel));
+  border: 1px solid rgba(var(--glow-rgb), .55);
+  box-shadow: 0 0 40px rgba(var(--glow-rgb), .28);
+}
+.result-title { font-size: 13px; letter-spacing: 6px; color: var(--sub); }
+.result-win { font-size: 28px; font-weight: 800; margin: 8px 0 4px; }
+.result-win.w-red { color: var(--team-red, #f87171); text-shadow: 0 0 22px rgba(248, 113, 113, .6); }
+.result-win.w-blue { color: var(--team-blue, #4da3ff); text-shadow: 0 0 22px rgba(77, 163, 255, .6); }
+.result-win.w-draw { color: var(--gold); }
+.result-mvp { font-size: 12px; color: var(--gold); min-height: 15px; }
+.result-stat { margin-top: 8px; font-size: 11px; color: var(--sub); line-height: 1.8; }
+.result-report {
+  margin-top: 8px; font-size: 11.5px; color: var(--text); line-height: 1.7;
+  background: var(--cell-bg); border: 1px solid var(--line2); border-radius: 10px; padding: 7px 9px;
+}
+.result-report:empty { display: none; }
+.result-report .rp-tag { color: var(--gold); font-weight: 700; }
+
+/* ── Canvas 战场（stage-scene.js 绘制拔河绳/守城战/能量条，替代原 DOM 战场） ── */
+.battle-cv { display: block; width: 100%; height: 178px; margin-top: 10px; border-radius: 12px; }

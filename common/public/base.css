@@ -1,0 +1,537 @@
+/* ══════════════════════════════════════════════════════════════════
+   base.css — 弹幕游戏中心公共样式（common/public）
+   所有游戏展示屏 / 游戏控制台 / 主播台框架共用：
+   主题变量、基础重置、9:16 手机框、排行榜、获胜横幅、烟花、
+   toast、控制台通用控件（按钮/表单/历史列表）
+   游戏专属样式放各游戏目录 public/stage.css、control.css
+   ══════════════════════════════════════════════════════════════════ */
+:root {
+  --bg: #0e1117;
+  --panel: #171c26;
+  --panel2: #1e2532;
+  --line: #2a3344;
+  --line2: #222b3b;
+  --text: #f2f4f8;
+  --sub: #98a2b3;
+  --dim: #78839a;     /* 深色系列共用：原 #6b7688 在最深底色上仅 4.08，提亮到 4.9+（浅色主题各自覆写） */
+  --accent: #4da3ff;
+  --gold: #ffc53d;
+  --green: #34d399;
+  --red: #f87171;
+  /* ── 换肤补充变量（原本硬编码，抽出以支持主题覆盖） ── */
+  --silver: #c9d2e3;      /* 排行榜银牌 */
+  --bronze: #b07a3a;      /* 排行榜铜牌 */
+  --avatar-bg: #2f3a4d;   /* 头像占位底色 */
+  --avatar-fg: #c8d2e3;   /* 头像占位首字色 */
+  --gold-mid: #ffb02e;    /* 金色渐变中间色 */
+  --bezel: #05070b;       /* 手机框边框 */
+  --cell-bg: #10141d;     /* 数字格/输入块底色 */
+  --on-chip: #17130d;     /* 金/银/铜色徽章上的深色文字 */
+  --seed-bg: #5c6577;     /* 起始词楼层标记底色 */
+  /* 以 "R, G, B" 形式存放，供 rgba(var(--x), 透明度) 复用（各处透明度不同，不能写成整色） */
+  --glow-rgb: 255, 197, 61;   /* 金色辉光（横幅/边框光晕） */
+  --scrim-rgb: 5, 7, 11;      /* 获胜横幅背后的遮罩 */
+  --stage-bg: #000;           /* 9:16 手机框外的背景（跟随主题） */
+}
+
+/* ═════════ 主题预设（仅展示屏生效，见 core.js applyTheme） ═════════
+   默认（无 data-theme）= 暗金。新增主题只需在此追加一块，
+   并同步 core.js 的 THEMES 列表即可。 */
+[data-theme="tech"] {
+  --bg: #0b1220; --panel: #131c2e; --panel2: #1a263c;
+  --line: #24344f; --line2: #1d2a41;
+  --accent: #38bdf8; --gold: #22d3ee; --green: #34d399; --red: #fb7185;
+  --silver: #a5b4c8; --bronze: #7dd3fc;
+  --avatar-bg: #1e3a5f; --avatar-fg: #bae6fd;
+  --gold-mid: #06b6d4; --bezel: #060c17; --cell-bg: #0d1626; --seed-bg: #3b5a7a;
+  --glow-rgb: 34, 211, 238;
+}
+[data-theme="festive"] {
+  --bg: #150a0e; --panel: #211015; --panel2: #2b1519;
+  --line: #4a2028; --line2: #3a1a21;
+  --accent: #ff6b6b; --gold: #ffd45e; --green: #4ade80; --red: #f87171;
+  --silver: #e5c9c9; --bronze: #d97757;
+  --avatar-bg: #4a1d28; --avatar-fg: #ffd9d9;
+  --gold-mid: #ffb703; --bezel: #0b0407; --cell-bg: #1c0d12; --seed-bg: #6b3a42;
+  --glow-rgb: 255, 212, 94;
+}
+[data-theme="cyber"] {
+  --bg: #0d0a16; --panel: #171232; --panel2: #1f1942;
+  --line: #332a5c; --line2: #271f47;
+  --accent: #a78bfa; --gold: #e879f9; --green: #4ade80; --red: #fb7185;
+  --silver: #c4b5fd; --bronze: #b975f9;
+  --avatar-bg: #2e1f5c; --avatar-fg: #ddd6fe;
+  --gold-mid: #c026d3; --bezel: #07040e; --cell-bg: #120e24; --seed-bg: #4a3a7a;
+  --glow-rgb: 232, 121, 249;
+}
+[data-theme="aurora"] {
+  --bg: #071410; --panel: #0f211c; --panel2: #142c26;
+  --line: #1f4438; --line2: #18362c;
+  --accent: #2dd4bf; --gold: #86efac; --green: #4ade80; --red: #fb7185;
+  --silver: #a7f3d0; --bronze: #14b8a6;
+  --avatar-bg: #12463c; --avatar-fg: #bbf7d0;
+  --gold-mid: #34d399; --bezel: #030a08; --cell-bg: #0a1f19; --seed-bg: #2f6b5a;
+  --glow-rgb: 134, 239, 172;
+}
+
+/* ═════════ 深色系列（续） ═════════ */
+[data-theme="lava"] {
+  --bg: #160d07; --panel: #221408; --panel2: #2c1a0c;
+  --line: #4a2a12; --line2: #3a210e;
+  --text: #f7f1e8; --sub: #bdaa8e; --dim: #a08f79;
+  --accent: #fb923c; --gold: #fdba74; --green: #4ade80; --red: #f87171;
+  --silver: #d6c3ad; --bronze: #d97706;
+  --avatar-bg: #4a2c14; --avatar-fg: #fcd9b6;
+  --gold-mid: #f97316; --bezel: #0a0503; --cell-bg: #1d1108; --seed-bg: #7c4a1e;
+  --glow-rgb: 251, 146, 60;
+}
+[data-theme="graphite"] {
+  --bg: #121417; --panel: #1b1e23; --panel2: #23272e;
+  --line: #343a44; --line2: #2a2f37;
+  --text: #eef1f5; --sub: #9ba4b0; --dim: #7d8794;
+  --accent: #94a3b8; --gold: #dfe4ea; --green: #4ade80; --red: #f87171;
+  --silver: #b6bec9; --bronze: #8b95a3;
+  --avatar-bg: #343a44; --avatar-fg: #cbd2db;
+  --gold-mid: #c3cad3; --bezel: #07080a; --cell-bg: #16191e; --seed-bg: #5a636f;
+  --glow-rgb: 148, 163, 184;
+}
+
+/* ── 浅色主题：强调色需整体降明度，否则在白底上对比度不足（金色 #ffc53d 在白底会发飘） ── */
+[data-theme="plain"] {
+  /* 配色经 WCAG 对比度校验：正文/次要/弱化均 >=4.5，强调色在底色与白底上均 >=4.7
+     浅色主题不能直接用深色的亮强调色（金色 #ffc53d 在白底仅 1.7:1，会发飘） */
+  --stage-bg: #d8dfe9;
+  --bg: #eef2f8; --panel: #ffffff; --panel2: #e7edf5;
+  --line: #aab5c7; --line2: #b9c3d3;   /* 白卡片与底色差极小(1.12)，层次全靠边框拉开 */
+  --text: #17202f; --sub: #4a5568; --dim: #616b7c;
+  --accent: #1d4ed8; --gold: #96600a; --green: #147033; --red: #c92020;
+  --silver: #5a6473; --bronze: #92400e;
+  --avatar-bg: #d3dbe7; --avatar-fg: #2f3948;
+  --gold-mid: #b8860b; --bezel: #b6c0cf; --cell-bg: #e7edf5;
+  --on-chip: #ffffff; --seed-bg: #8a95a8;
+  --glow-rgb: 150, 96, 10;        /* 深金辉光，浅底上才看得见 */
+  --scrim-rgb: 255, 255, 255;     /* 浅色遮罩 */
+}
+[data-theme="sky"] {
+  --stage-bg: #d3e0ee;
+  --bg: #eaf2fa; --panel: #ffffff; --panel2: #e2ecf8;
+  --line: #a3bbd6; --line2: #b8cbe0;
+  --text: #14202e; --sub: #45596e; --dim: #5c6b7d;
+  --accent: #1d6fd0; --gold: #8a5a08; --green: #147033; --red: #c92020;
+  --silver: #5a6b7d; --bronze: #8a5309;
+  --avatar-bg: #cddcec; --avatar-fg: #2c3d4f;
+  --gold-mid: #b8860b; --bezel: #aec2d6; --cell-bg: #e2ecf8;
+  --on-chip: #ffffff; --seed-bg: #8a9cb0;
+  --glow-rgb: 29, 111, 208;
+  --scrim-rgb: 255, 255, 255;
+}
+[data-theme="cream"] {
+  --stage-bg: #e6dccb;
+  --bg: #faf5ec; --panel: #ffffff; --panel2: #f3ebdd;
+  --line: #c4b49a; --line2: #d6c9b4;
+  --text: #2a2118; --sub: #5c4e3d; --dim: #6b5d4e;
+  --accent: #b45309; --gold: #8a5a08; --green: #3f6212; --red: #b91c1c;
+  --silver: #6b6255; --bronze: #92400e;
+  --avatar-bg: #e3d7c2; --avatar-fg: #40372c;
+  --gold-mid: #a16207; --bezel: #cbbb9f; --cell-bg: #f3ebdd;
+  --on-chip: #ffffff; --seed-bg: #a3907a;
+  --glow-rgb: 180, 83, 9;
+  --scrim-rgb: 255, 252, 245;
+}
+[data-theme="mint"] {
+  --stage-bg: #cfe6dd;
+  --bg: #e8f5f1; --panel: #ffffff; --panel2: #dcefe9;
+  --line: #9dc4b8; --line2: #b3d4ca;
+  --text: #12241f; --sub: #40574f; --dim: #527068;
+  --accent: #0f766e; --gold: #8a5a08; --green: #15803d; --red: #c92020;
+  --silver: #557068; --bronze: #8a5309;
+  --avatar-bg: #c8e4da; --avatar-fg: #2a3f38;
+  --gold-mid: #b8860b; --bezel: #a8c9be; --cell-bg: #dcefe9;
+  --on-chip: #ffffff; --seed-bg: #87a89d;
+  --glow-rgb: 15, 118, 110;
+  --scrim-rgb: 255, 255, 255;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  background: var(--stage-bg);
+  color: var(--text);
+  font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+/* 展示屏全屏铺满无滚动；控制台页面允许纵向滚动 */
+body[data-view="stage"] { overflow: hidden; }
+body[data-view="game-control"], body[data-view="control"] { overflow-y: auto; }
+.hidden { display: none !important; }
+button { cursor: pointer; }
+
+/* ═════════ 展示屏 9:16 手机框（随浏览器窗口自适应，比例恒定） ═════════ */
+#view-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  background: var(--stage-bg);
+  padding: 6px;
+}
+.phone {
+  position: relative;
+  /* 宽 = min(视口宽留边, 视口高按 9/16 换算后的宽)——窗口越大手机框越大，至少一个维度贴边齐平，比例恒定 */
+  width: min(100vw - 12px, calc((100dvh - 12px) * 9 / 16));
+  aspect-ratio: 9 / 16;
+  background: var(--bg);
+  border: 9px solid var(--bezel);
+  border-radius: 34px;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 16px 12px;
+  overflow: hidden;
+}
+
+/* 顶部：游戏名 + 轮次徽章 */
+.top { display: flex; align-items: center; justify-content: space-between; }
+.game-title { font-size: 19px; font-weight: 500; letter-spacing: 1px; }
+.round-badge {
+  font-size: 12px; font-weight: 500; color: var(--accent);
+  background: var(--panel2); border: 1px solid var(--accent);
+  padding: 4px 12px; border-radius: 999px;
+}
+
+/* ═════════ 排行榜（展示屏统一分格：名次 / 头像 / 玩家 / 得分） ═════════
+   所有游戏共用同一套分格，保证各游戏展示屏排行榜观感一致。 */
+.lb-th {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 14px; color: var(--dim);
+  padding: 2px 2px 4px; margin-bottom: 2px;
+  border-bottom: 1px solid var(--line);
+}
+.lb-th .rk { flex: 0 0 30px; }
+.lb-th .nm { flex: 1; }
+.lb-th .sc { flex: 0 0 70px; text-align: right; }
+.lb-row {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 16px; padding: 3px 2px;
+}
+.lb-row .rk { flex: 0 0 30px; font-weight: 500; color: var(--dim); }
+/* 头像（公共组件，排行榜/猜测流/结算横幅各处复用；具体位置可覆写尺寸） */
+.avatar {
+  flex: 0 0 20px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--avatar-bg); display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--avatar-fg); overflow: hidden;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.lb-row .nm {
+  flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  color: var(--text);
+}
+/* 得分：第 4 名起弱化，前三名才用奖牌色 —— 有对比才显得出层级 */
+.lb-row .sc { flex: 0 0 70px; color: var(--sub); font-size: 14px; text-align: right; }
+
+/* ═════════ 排行榜前三名强化 ═════════
+   奖牌徽章 + 第一名皇冠 + 行底色 + 左侧色条 + 头像描边 + 名字/得分上色。
+   全部走主题变量（--gold/--silver/--bronze/--glow-rgb/--on-chip），
+   11 套主题（含浅色）自动适配，不引入任何图片资源。 */
+.lb-row.r1, .lb-row.r2, .lb-row.r3 {
+  border-radius: 7px;
+  padding: 5px 4px 5px 7px;
+  margin: 1px 0;
+}
+/* 1) 名次 → 奖牌徽章（CSS 绘制的金银铜圆盘，非图片） */
+.lb-row.r1 .rk, .lb-row.r2 .rk, .lb-row.r3 .rk {
+  position: relative;
+  flex: 0 0 22px; width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  color: var(--on-chip);          /* 深色主题=深字，浅色主题=白字 */
+}
+/* 徽章底色必须是纯色：--on-chip 的设计前提就是「纯色奖牌底 + 对比文字」。
+   曾用渐变（底部压暗 34%）导致深色主题的深色字压在暗底上，铜牌仅 1.94，已改回纯色。
+   立体感改用外发光 + 外描边（都在文字区域之外，不影响对比度）。 */
+.lb-row.r1 .rk {
+  flex: 0 0 24px; width: 24px; height: 24px;
+  background: var(--gold);
+  box-shadow: 0 0 8px rgba(var(--glow-rgb), 0.5), 0 0 0 2px rgba(0, 0, 0, 0.25);
+}
+.lb-row.r2 .rk { background: var(--silver); box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25); }
+.lb-row.r3 .rk { background: var(--bronze); box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25); }
+/* 第一名皇冠（clip-path 三峰；需要上方留白，故 r1 单独加大 padding-top） */
+.lb-row.r1 {
+  padding-top: 13px;
+  background: linear-gradient(90deg, rgba(var(--glow-rgb), 0.22), transparent 72%);
+  box-shadow: inset 3px 0 0 var(--gold);
+}
+.lb-row.r1 .rk::before {
+  content: ''; position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+  width: 14px; height: 8px; background: var(--gold);
+  clip-path: polygon(0 100%, 0 40%, 25% 70%, 50% 0, 75% 70%, 100% 40%, 100% 100%);
+}
+/* 2) 行底色 + 左侧色条（inset box-shadow，不挤动布局） */
+.lb-row.r2 {
+  background: linear-gradient(90deg, rgba(150, 160, 175, 0.16), transparent 72%);
+  box-shadow: inset 3px 0 0 var(--silver);
+}
+.lb-row.r3 {
+  background: linear-gradient(90deg, rgba(190, 140, 90, 0.16), transparent 72%);
+  box-shadow: inset 3px 0 0 var(--bronze);
+}
+/* 3) 头像描边（ring 不占布局空间） */
+.lb-row.r1 .avatar { box-shadow: 0 0 0 2px var(--gold); }
+.lb-row.r2 .avatar { box-shadow: 0 0 0 2px var(--silver); }
+.lb-row.r3 .avatar { box-shadow: 0 0 0 2px var(--bronze); }
+/* 4) 名字上色加粗；第一名再放大一档 */
+.lb-row.r1 .nm { color: var(--gold); font-weight: 700; font-size: 17px; }
+.lb-row.r2 .nm { color: var(--silver); font-weight: 600; }
+.lb-row.r3 .nm { color: var(--bronze); font-weight: 600; }
+/* 5) 得分用奖牌色并加粗（第 4 名起已在上方弱化为 --sub） */
+.lb-row.r1 .sc { color: var(--gold); font-weight: 700; font-size: 15px; }
+.lb-row.r2 .sc { color: var(--silver); font-weight: 600; }
+.lb-row.r3 .sc { color: var(--bronze); font-weight: 600; }
+.lb-empty { text-align: center; color: var(--dim); font-size: 11px; padding: 14px 0; }
+.lb-row.enter { animation: lbSlideUp 0.35s ease; }
+@keyframes lbSlideUp { from { transform: translateY(14px); opacity: 0.4; } to { transform: translateY(0); opacity: 1; } }
+
+/* ═════════ 获胜横幅（结算弹窗，展示屏通用） ═════════ */
+.win-banner {
+  position: absolute; inset: 0; z-index: 99;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(var(--scrim-rgb), 0.92); border-radius: 26px;
+  overflow: hidden;
+}
+.win-card {
+  text-align: center; padding: 30px 44px 34px;
+  border: 2px solid var(--gold); border-radius: 22px;
+  background: var(--panel);
+  animation: bounce 0.55s cubic-bezier(.2,1.4,.4,1);
+  box-shadow: 0 0 40px rgba(var(--glow-rgb), 0.35);
+  position: relative;
+}
+.win-card.is-win { box-shadow: 0 0 60px rgba(var(--glow-rgb), 0.5); }
+/* 结算弹窗「下一局倒计时」胶囊 —— 取代旧的 .win-ring 边框进度条。
+   位于卡片边框下方（卡片之外），故需自带底色才能在半透明蒙层上看清。
+   布局：.result-wrap（纵向）上为卡片、下为倒计时胶囊。 */
+.result-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.result-next {
+  padding: 6px 15px; border-radius: 99px;
+  background: var(--panel); border: 1px solid var(--line);
+  font-size: 13px; font-weight: 600; color: var(--gold);
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+.win-body { position: relative; }
+@keyframes bounce { 0% { transform: scale(0.6); opacity: 0; } 60% { transform: scale(1.06); } 100% { transform: scale(1); } }
+.win-avatar {
+  width: 96px; height: 96px; margin: 4px auto 14px;
+  border-radius: 50%; position: relative;
+  border: 3px solid var(--gold);
+  box-shadow: 0 0 24px rgba(var(--glow-rgb), 0.6);
+  animation: avatarPop 0.6s cubic-bezier(.2,1.6,.4,1) 0.15s both;
+  overflow: hidden; background: var(--avatar-bg);
+}
+.win-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.win-avatar-fb {
+  position: absolute; inset: 0; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 38px; color: var(--text); font-weight: 500;
+}
+@keyframes avatarPop { 0% { transform: scale(0) rotate(-20deg); opacity: 0; } 70% { transform: scale(1.12) rotate(3deg); } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+.win-title { font-size: 26px; font-weight: 500; color: var(--gold); letter-spacing: 8px; }
+.win-name {
+  font-size: 36px; font-weight: 700; color: var(--text);
+  margin: 10px 0 4px; letter-spacing: 1px;
+  text-shadow: 0 0 18px rgba(var(--glow-rgb), 0.7);
+  animation: nameGlow 0.7s ease 0.25s both;
+}
+@keyframes nameGlow { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
+.win-score { font-size: 17px; color: var(--gold); margin-bottom: 6px; font-weight: 500; }
+.win-answer { font-size: 16px; color: var(--sub); }
+.win-answer b { color: var(--accent); }
+
+/* ═════════ 烟花粒子 ═════════ */
+.fireworks { position: absolute; inset: 0; z-index: 100; pointer-events: none; overflow: hidden; }
+.fw-particle {
+  position: absolute; width: 10px; height: 10px;
+  border-radius: 50%; will-change: transform, opacity;
+  animation: fwFly 5s cubic-bezier(.12,.7,.25,1) forwards;
+}
+.fw-particle::after {
+  /* 拖尾光点（弱化，避免遮挡文字） */
+  content: ''; position: absolute; inset: -2px;
+  border-radius: 50%;
+  box-shadow: 0 0 6px 1px currentColor;
+  opacity: 0.6;
+}
+.fw-spark {
+  /* 星形闪光粒子 */
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  border-radius: 0;
+}
+@keyframes fwFly {
+  0%   { transform: translate(0,0) scale(0.3); opacity: 0; }
+  8%   { transform: translate(calc(var(--dx) * 0.25), calc(var(--dy) * 0.25)) scale(1.1); opacity: 0.85; }
+  35%  { transform: translate(calc(var(--dx) * 0.6), calc(var(--dy) * 0.6 - 18px)) scale(1); opacity: 0.8; }
+  70%  { transform: translate(var(--dx), calc(var(--dy) + 42px)) scale(0.7); opacity: 0.6; }
+  100% { transform: translate(var(--dx), calc(var(--dy) + 120px)) scale(0.1); opacity: 0; }
+}
+
+/* ═════════ 控制台通用控件（各游戏控制台页面 + 主播台框架共用） ═════════ */
+.ctl-panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+.ctl-panel h2 { font-size: 15px; color: var(--sub); margin-bottom: 12px; font-weight: 400; }
+
+/* ── 功能分组盒：各游戏控制台按「局面控制 / 接入与模拟 / 实时状态 / 游戏配置 / 历史」分区 ──
+   新游戏控制台直接套用，保证全部主播台观感一致、配置好找。 */
+.ctl-group {
+  border: 1px solid var(--line2); border-radius: 10px;
+  padding: 12px 14px; margin-bottom: 12px;
+}
+.ctl-group-title {
+  font-size: 13px; font-weight: 600; color: var(--sub);
+  letter-spacing: 1px; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.ctl-group-title .ctl-group-flag { font-size: 12px; font-weight: 400; color: var(--dim); }
+
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.ctl-group .btn-row { margin-bottom: 0; }
+.btn {
+  padding: 8px 18px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--panel2); color: var(--text); font-size: 14px;
+}
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: #1b5fb5; border-color: #1b5fb5; }
+.btn.warn { color: var(--warn-color, #fbbf24); }
+.btn.secondary { background: transparent; }
+.btn.accent { background: linear-gradient(120deg, #b9455f, #8a2be2); border-color: transparent; color: #fff; }
+.nar-status { font-size: 12px; color: var(--sub); align-self: center; }
+/* 展示屏主题选择器（主播台；core.js mountThemePicker 渲染） */
+.theme-row { display: flex; align-items: center; margin-bottom: 14px; }
+.theme-picker { font-size: 13px; color: var(--sub); display: flex; align-items: center; gap: 6px; }
+.theme-picker select {
+  padding: 4px 6px; border-radius: 6px; font-size: 13px;
+  border: 1px solid var(--line); background: var(--panel2); color: var(--text);
+}
+
+/* 游戏开关（控制页；core.js autoMountPowerPin 渲染） */
+.power-pin { display: inline-flex; align-items: center; gap: 10px; margin-left: 12px; vertical-align: middle; }
+.power-pin-tip { font-size: 12px; color: var(--dim); }
+.power-pin[data-on="0"] .power-pin-tip { color: var(--green); }
+.power-pin[data-on="1"] .power-pin-tip { color: var(--gold); }
+
+/* 线索出现条件（主播台）：每条独立选触发方式，选项由服务端 clueCondModes 下发动态渲染 */
+.cc-title { font-size: 13px; color: var(--sub); margin: 2px 0 6px; }
+.clue-cond-box { display: flex; flex-direction: column; gap: 6px; }
+.cc-row { display: flex; align-items: center; gap: 8px; }
+.cc-label { flex: 0 0 44px; font-size: 13px; color: var(--sub); }
+.cc-row select {
+  padding: 4px 6px; border-radius: 6px; font-size: 13px;
+  width: auto; min-width: 96px;
+  border: 1px solid var(--line); background: var(--panel2); color: var(--text);
+}
+.cc-row input {
+  padding: 4px 6px; border-radius: 6px;
+  width: auto; min-width: 64px;
+  border: 1px solid var(--line); background: var(--panel2); color: var(--text);
+}
+.cc-unit { font-size: 12px; color: var(--dim); }
+.cc-progress { font-size: 12px; color: var(--accent); margin-top: 8px; }
+/* ── 手动加赞调试工具（历史遗留：现由「接入与模拟」面板的模拟点赞取代） ── */
+.btn.tiny { padding: 2px 10px; font-size: 12px; line-height: 1.6; }
+
+.cfg-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.cfg-row label { font-size: 13px; color: var(--sub); display: flex; align-items: center; gap: 6px; }
+/* 控件宽度自适应内容 + 保底最小宽度：旧的固定窄宽（44~72px）会把数值/选项文字截断 */
+.cfg-row input, .cfg-row select {
+  padding: 4px 6px; border-radius: 6px;
+  border: 1px solid var(--line); background: var(--panel2); color: var(--text);
+}
+.cfg-row input[type="number"] { width: auto; min-width: 64px; }
+.cfg-row input[type="text"], .cfg-row input[type="password"] { width: auto; min-width: 130px; }
+.cfg-row select { width: auto; min-width: 90px; }
+.cfg-row input[type="checkbox"] { width: auto; min-width: 0; }
+/* 强制换行：.cfg-row 是 flex-wrap 容器，只能靠 100% 宽度的断行元素换行
+   （注意：grid-column 在 flex 容器下完全无效，别再用它做换行） */
+.cfg-break { flex: 0 0 100%; height: 0; }
+/* 配置说明文字：独占一行 */
+.cfg-hint { flex: 0 0 100%; font-size: 12px; color: var(--dim); line-height: 1.5; }
+/* 配置说明文字：行内小字 */
+.cfg-hint-inline { font-size: 12px; color: var(--dim); }
+/* 直播间ID筛选 + 模拟观众（各游戏控制台共用，core.js mountFeedTools 渲染） */
+.ctl-roomid-filter {
+  display: flex; flex-direction: column; align-items: stretch; gap: 10px;
+  padding: 10px 12px; background: var(--panel2); border: 1px solid var(--line);
+  border-radius: 8px; margin-bottom: 12px;
+}
+/* 筛选行 */
+.ctl-roomid-inner { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ctl-roomid-label {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: 13px; color: var(--sub);
+}
+.ctl-roomid-label input {
+  padding: 4px 8px; border-radius: 6px;
+  flex: 1 1 300px; min-width: 220px; max-width: 560px;
+  border: 1px solid var(--line); background: var(--bg); color: var(--text);
+  font-size: 13px;
+}
+/* 模拟行：昵称 + 弹幕 + 点赞(可调数量) + 送礼 + 进场，换行自适应 */
+.feed-sim { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.feed-sim-tag {
+  flex: 0 0 auto; font-size: 12px; font-weight: 600; color: var(--accent);
+  border: 1px solid var(--accent); border-radius: 999px; padding: 1px 9px;
+}
+.feed-sim input {
+  padding: 4px 8px; border-radius: 6px; font-size: 13px;
+  border: 1px solid var(--line); background: var(--bg); color: var(--text);
+}
+.feed-sim input#simName { width: 130px; }
+.feed-sim input#simText { flex: 1 1 220px; min-width: 180px; max-width: 360px; }
+.feed-sim input::placeholder { color: var(--dim); }
+.feed-num { display: flex; align-items: center; gap: 4px; font-size: 13px; color: var(--sub); }
+.feed-num input {
+  width: 56px; min-width: 56px; padding: 4px 6px;
+  text-align: center; font-variant-numeric: tabular-nums;
+}
+.feed-num input#simGiftName { width: 84px; min-width: 84px; text-align: left; }
+.danger-tip { color: var(--red); font-size: 12px; font-weight: 400; }
+.ctl-answer { font-size: 26px; font-weight: 500; color: var(--accent); margin-bottom: 10px; letter-spacing: 4px; }
+.ctl-clues { display: flex; flex-direction: column; gap: 8px; }
+.ctl-clue { display: flex; gap: 10px; font-size: 14px; padding: 8px 12px; background: var(--panel2); border-radius: 8px; }
+.ctl-clue .n { font-weight: 500; color: var(--accent); letter-spacing: 2px; min-width: 90px; }
+.ctl-clue .h { color: var(--text); }
+.ctl-status { margin-top: 12px; font-size: 14px; color: var(--sub); }
+.ctl-history-wrap h3 { font-size: 13px; color: var(--sub); font-weight: 400; margin-bottom: 8px; }
+.ctl-history { display: flex; flex-direction: column; gap: 4px; font-size: 13px; max-height: 320px; overflow-y: auto; }
+.ctl-history .half { display: flex; gap: 8px; align-items: center; padding: 6px 10px; background: var(--panel2); border-radius: 8px; }
+.ctl-history .r-ans { color: var(--accent); font-weight: 500; }
+/* 接龙历史（可折叠轮次） */
+.ctl-history .cround { background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.ctl-history .cround-hd { display: flex; gap: 8px; align-items: center; padding: 7px 10px; cursor: pointer; user-select: none; }
+.ctl-history .cround-hd:hover { background: var(--panel); }
+.ctl-history .cround-arrow { flex: none; color: var(--dim); transition: transform .15s; font-size: 10px; }
+.ctl-history .cround.open .cround-arrow { transform: rotate(90deg); }
+.ctl-history .cround-no { flex: none; color: var(--dim); }
+.ctl-history .cround-word { flex: 1; min-width: 0; color: var(--accent); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ctl-history .cround-meta { flex: none; color: var(--dim); font-size: 12px; }
+.ctl-history .cround-body { display: none; padding: 4px 10px 8px; border-top: 1px dashed var(--line); flex-direction: column; gap: 3px; }
+.ctl-history .cround.open .cround-body { display: flex; }
+.ctl-history .cfloor { display: flex; gap: 6px; align-items: center; font-size: 12px; color: var(--sub); }
+.ctl-history .cfloor .cf-tag { flex: none; font-size: 10px; padding: 1px 5px; border-radius: 4px; color: var(--dim); }
+.ctl-history .cfloor .cf-word { flex: 1; min-width: 0; font-weight: 500; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ctl-history .cfloor .cfloor-user { flex: none; color: var(--sub); max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ctl-history .cfloor .cf-score { flex: none; color: var(--gold); font-variant-numeric: tabular-nums; }
+.ctl-game-head { display: flex; align-items: baseline; justify-content: space-between; }
+.ctl-game-head h2 { font-size: 17px; color: var(--text); margin-bottom: 10px; }
+.ctl-conn { color: var(--sub); font-size: 14px; }
+.ctl-game-title {
+  font-size: 22px; font-weight: 600; color: var(--text);
+  text-align: center; margin: 0 0 10px; letter-spacing: 1px;
+}
+
+/* toast（全局提示） */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 999;
+  background: var(--panel2); border: 1px solid #fbbf24; color: #fbbf24;
+  padding: 10px 16px; border-radius: 8px; font-size: 13px; max-width: 360px;
+}

@@ -1,0 +1,79 @@
+/* ══════════════════════════════════════════════════════════════════
+   stage.css — 谐音梗猜词 · 展示屏（9:16 手机壳内）
+   谜题卡 = 白底双格粗描边贴纸风（与定稿预览一致）
+   ══════════════════════════════════════════════════════════════════ */
+
+.phone-xy { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+
+/* ───────── 倒计时 ───────── */
+.xy-cd { display: flex; align-items: baseline; gap: 8px; }
+.xy-cd-num { font-size: 44px; font-weight: 900; color: var(--accent); line-height: 1; min-width: 74px; }
+.xy-cd-unit { font-size: 15px; color: var(--sub); }
+.xy-cat {
+  margin-left: auto; font-size: 14px; font-weight: bold; color: #fff;
+  background: #8c7ae6; border-radius: 999px; padding: 4px 14px;
+}
+.xy-prog { height: 10px; border-radius: 999px; background: var(--panel2); overflow: hidden; }
+.xy-prog-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), #ffd166); border-radius: 999px; transition: width .3s linear; }
+.xy-prog-fill.urgent { background: linear-gradient(90deg, #e35d5d, #ff9f43); }
+
+/* ───────── 双格谜题卡 ───────── */
+.xy-pcard {
+  background: #fff; border-radius: 22px; padding: 10px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .4);
+  display: flex; flex-direction: column; gap: 8px;
+  flex: 1; min-height: 0; justify-content: center;
+}
+.xy-panel {
+  position: relative; width: 100%; aspect-ratio: 470 / 268;
+  background: #fdf6a3; border: 3px solid #2f2f45; border-radius: 10px; overflow: hidden;
+}
+.xy-art { position: absolute; inset: 0; }
+.xy-art.dark { background: #16213e; }
+.xy-thing { position: absolute; }
+.xy-fx { position: absolute; inset: 0; width: 100%; height: 100%; }
+.xy-cap {
+  position: absolute; bottom: 3px; width: 100%; text-align: center;
+  font-size: clamp(18px, 3.4vw, 30px); font-weight: 900; color: #2f2f45;
+}
+.xy-cap.revealed { color: #b3541e; }
+.xy-slots { display: inline-block; vertical-align: 4px; margin-left: 8px; }
+.xy-slots i {
+  display: inline-block; width: clamp(16px, 3vw, 26px); height: clamp(16px, 3vw, 26px);
+  border: 3px solid #2f2f45; border-radius: 6px; background: #fff; margin: 0 3px;
+}
+
+/* ───────── 揭示 / 获胜 / 解读 ───────── */
+.xy-answer {
+  display: flex; align-items: baseline; justify-content: center; gap: 12px;
+  background: rgba(255, 209, 102, .12); border: 1px dashed rgba(255, 209, 102, .5);
+  border-radius: 12px; padding: 6px 10px;
+}
+.xy-answer-word { font-size: 30px; font-weight: 900; color: var(--accent); letter-spacing: 6px; }
+.xy-answer-py { font-size: 14px; color: var(--sub); }
+.xy-winner {
+  text-align: center; font-size: 20px; color: var(--text);
+  background: linear-gradient(120deg, rgba(185, 69, 95, .25), rgba(138, 43, 234, .2));
+  border: 1px solid rgba(255, 209, 102, .4); border-radius: 12px; padding: 8px 12px;
+}
+.xy-winner b { color: var(--accent); font-size: 24px; }
+.xy-expl { font-size: 13.5px; line-height: 1.7; color: var(--sub); text-align: center; }
+
+/* ───────── 榜单 ───────── */
+.xy-body { display: flex; gap: 10px; flex: 1; min-height: 0; }
+.xy-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.xy-col-title { font-size: 14px; color: var(--sub); }
+.xy-board { flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 4px; }
+.xy-row {
+  display: flex; align-items: center; gap: 6px; font-size: 13px;
+  background: var(--panel2); border-radius: 8px; padding: 4px 8px;
+}
+.xy-row-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.xy-row-score { color: var(--accent); font-weight: 600; }
+.xy-rank { width: 20px; text-align: center; }
+.xy-empty { color: var(--dim); font-size: 13px; padding: 8px 2px; }
+
+.xy-foot { text-align: center; font-size: 12.5px; color: var(--dim); }
+
+/* 烟花容器 */
+.fw-box { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 50; }

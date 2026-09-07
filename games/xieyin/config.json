@@ -1,0 +1,10 @@
+{
+  "answerSec": 60,
+  "revealSec": 8,
+  "autoNext": true,
+  "baseScore": 100,
+  "rateLimitSec": 1,
+  "category": "全部",
+  "noRepeatWindow": 40,
+  "allowedRoomId": ""
+}

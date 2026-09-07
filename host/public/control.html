@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>弹幕互动游戏 · 主播台</title>
+<link rel="stylesheet" href="/common/base.css">
+<link rel="stylesheet" href="/host-assets/control.css">
+</head>
+<body data-view="control">
+
+<!-- ═══════════ 主播台框架壳：左导航（游戏列表）+ 右侧 iframe（各游戏控制台页面） ═══════════ -->
+<div class="ctl-layout">
+  <aside class="ctl-side">
+    <div class="ctl-side-title">弹幕互动游戏</div>
+    <nav class="ctl-nav" id="gameNav">
+      <!-- 游戏列表由 /api/games 动态渲染 -->
+    </nav>
+  </aside>
+
+  <main class="ctl-main">
+    <!-- 弹幕接入信息：置顶展示，切换游戏不变 -->
+    <div class="ctl-danmu-bar">
+      <span class="ctl-conn" id="ctlDanmu">弹幕接入 0 路</span>
+      <span class="ctl-stage-link" id="ctlStageLink">投屏地址：--</span>
+      <span class="ctl-tip">DanmuDesk 底部工具栏「转发」填写 <b>ws://127.0.0.1:18080/danmu</b> 并勾选启用</span>
+    </div>
+
+    <!-- 当前游戏控制台（iframe 加载 /games/<id>/public/control.html） -->
+    <iframe id="gameFrame" class="game-frame" src=""></iframe>
+  </main>
+</div>
+
+<script src="/common/core.js"></script>
+<script src="/host-assets/control.js"></script>
+</body>
+</html>

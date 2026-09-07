@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>赛马竞猜 · 界面草图（Mockup）</title>
+<style>
+/* ═══ 设计令牌：与 danmu-games 暗金主题一致 ═══ */
+:root{
+  --bg:#0e1117; --panel:#171c26; --panel2:#1e2532; --line:#2a3344; --line2:#222b3b;
+  --text:#f2f4f8; --sub:#98a2b3; --dim:#78839a;
+  --accent:#4da3ff; --gold:#ffc53d; --green:#34d399; --red:#f87171;
+  --gold-mid:#ffb02e; --bezel:#05070b; --cell-bg:#10141d;
+  --glow-rgb:255,197,61;
+  --h1:#f87171; --h2:#ffc53d; --h3:#a78bfa; --h4:#34d399;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;padding:24px 28px 40px}
+a{color:var(--accent)}
+.page-head{max-width:1180px;margin:0 auto 20px}
+.page-head h1{font-size:24px;letter-spacing:1px}
+.page-head h1 .en{color:var(--dim);font-size:14px;font-weight:normal;margin-left:10px}
+.page-head p{color:var(--sub);font-size:13px;margin-top:6px;line-height:1.7}
+.mock-wrap{max-width:1180px;margin:0 auto;display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start;justify-content:center}
+.mock-col{display:flex;flex-direction:column;align-items:center;gap:10px}
+.mock-label{color:var(--dim);font-size:12px;letter-spacing:2px}
+
+/* ═══ 9:16 手机框 ═══ */
+.phone{width:400px;height:780px;background:var(--bg);border:9px solid var(--bezel);
+  border-radius:38px;overflow:hidden;position:relative;box-shadow:0 18px 50px rgba(0,0,0,.55);
+  display:flex;flex-direction:column;padding:12px 12px 10px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.game-title{font-size:15px;font-weight:700;letter-spacing:1px}
+.top-right{display:flex;gap:6px;align-items:center}
+.chip{background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+  padding:3px 9px;font-size:11px;color:var(--sub);white-space:nowrap}
+.chip b{color:var(--gold)}
+.season-badge{background:linear-gradient(160deg,var(--gold-mid),var(--gold));
+  color:#17130d;font-size:11px;font-weight:800;border-radius:8px;padding:4px 8px}
+.round-badge{background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+  padding:3px 9px;font-size:11px;color:var(--gold);letter-spacing:1px}
+.countdown-row{display:flex;align-items:baseline;justify-content:center;gap:10px;margin-top:8px}
+.cd-num{font-size:38px;font-weight:800;color:var(--gold);line-height:1;text-shadow:0 0 18px rgba(var(--glow-rgb),.45)}
+.cd-unit{color:var(--sub);font-size:12px}
+.phase-tag{font-size:12px;color:var(--sub);background:var(--panel2);border:1px solid var(--line);
+  border-radius:99px;padding:3px 10px}
+.phase-tag.race{color:var(--gold);border-color:rgba(var(--glow-rgb),.4)}
+.cd-progress{height:6px;background:var(--cell-bg);border-radius:99px;margin-top:6px;overflow:hidden}
+.cd-fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--gold-mid),var(--gold))}
+
+/* ═══ 下注板 ═══ */
+.board-box{margin-top:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:9px;
+  display:flex;flex-direction:column;gap:6px}
+.pool-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--sub);padding:0 2px}
+.pool-row .pot{color:var(--gold);font-weight:800;font-size:14px}
+.horse-row{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--line2);
+  border-radius:10px;padding:6px 9px;cursor:pointer}
+.horse-row.fav{border-color:rgba(var(--glow-rgb),.5)}
+.horse-no{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:13px;color:#17130d;flex:none}
+.horse-info{flex:1;min-width:0}
+.horse-name{font-size:13px;font-weight:700}
+.horse-meta{font-size:9.5px;color:var(--dim);margin-top:1px}
+.heat-wrap{flex:1;max-width:110px}
+.heat-bar{height:8px;background:var(--cell-bg);border-radius:99px;overflow:hidden}
+.heat-fill{height:100%;border-radius:99px;transition:width .5s}
+.odds{width:64px;text-align:right;flex:none}
+.odds .x{font-size:19px;font-weight:900;line-height:1}
+.odds .lbl{font-size:9px;color:var(--dim)}
+
+/* ═══ 赛道 ═══ */
+.track-box{margin-top:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:9px;
+  display:flex;flex-direction:column;gap:5px}
+.track-head{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);padding:0 2px}
+.lane{position:relative;height:44px;background:var(--cell-bg);border:1px solid var(--line2);border-radius:10px;overflow:hidden}
+.lane .ground{position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,transparent 0 26px,rgba(255,255,255,.035) 26px 52px)}
+.lane .runner{position:absolute;top:50%;left:0;transform:translate(0,-50%);display:flex;align-items:center;gap:2px;
+  transition:left .6s linear;white-space:nowrap;z-index:2}
+.lane .runner .em{font-size:20px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
+.lane .runner .nm{font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;color:#17130d}
+.lane .runner.burst .em{animation:gallop .4s ease-in-out infinite}
+@keyframes gallop{50%{transform:translateX(4px) scale(1.12)}}
+.lane .boost{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:9px;color:var(--gold);z-index:2}
+.lane .lead-crown{position:absolute;right:6px;top:3px;font-size:11px;z-index:2}
+.finish-line{position:absolute;right:0;top:0;bottom:0;width:10px;z-index:3;
+  background:repeating-linear-gradient(45deg,#fff 0 5px,#111 5px 10px);opacity:.85}
+.lane.winner-lane{border-color:rgba(var(--glow-rgb),.7);box-shadow:0 0 14px rgba(var(--glow-rgb),.35)}
+
+/* ═══ 教学行 / 战报流 ═══ */
+.howto{margin-top:9px;text-align:center;font-size:11.5px;color:var(--sub);line-height:1.6}
+.howto b{color:var(--gold)}
+.feed{margin-top:9px;background:var(--cell-bg);border:1px solid var(--line2);border-radius:12px;
+  padding:6px 10px;height:88px;overflow:hidden;display:flex;flex-direction:column;gap:3px}
+.feed .item{font-size:11px;color:var(--sub);display:flex;gap:6px;align-items:center;animation:fadeIn .3s;min-width:0}
+.feed .item .who{color:var(--text);font-weight:600}
+.feed .item.hot{color:var(--gold);font-weight:600}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* ═══ 三榜单 ═══ */
+.boards{display:flex;gap:7px;margin-top:9px;flex:1;min-height:0}
+.board{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:7px 8px;display:flex;flex-direction:column;min-width:0}
+.board h3{font-size:10.5px;color:var(--gold);letter-spacing:1.5px;margin-bottom:5px;font-weight:700}
+.board .rows{display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.row{display:flex;align-items:center;gap:5px;font-size:10.5px;padding:3px 5px;border-radius:6px;background:var(--panel2)}
+.row .rk{width:15px;height:15px;border-radius:4px;display:flex;align-items:center;justify-content:center;
+  font-size:8.5px;font-weight:700;background:var(--cell-bg);color:var(--dim);flex:none}
+.row.r1 .rk{background:var(--gold);color:#17130d}
+.row.r2 .rk{background:#c9d2e3;color:#17130d}
+.row.r3 .rk{background:#b07a3a;color:#17130d}
+.row .nm{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .sc{color:var(--gold);font-weight:700;flex:none}
+
+/* ═══ 结算横幅 ═══ */
+.result-banner{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;
+  background:rgba(5,7,11,.72)}
+.result-banner.show{display:flex}
+.result-card{width:84%;text-align:center;border-radius:16px;padding:18px 14px;
+  background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid rgba(var(--glow-rgb),.55);
+  box-shadow:0 0 40px rgba(var(--glow-rgb),.28)}
+.result-title{font-size:13px;letter-spacing:6px;color:var(--sub)}
+.result-win{font-size:26px;font-weight:800;margin:8px 0 4px;color:var(--gold);text-shadow:0 0 22px rgba(var(--glow-rgb),.6)}
+.result-odds{font-size:13px;color:var(--accent)}
+.result-stat{margin-top:8px;font-size:11px;color:var(--sub);line-height:1.8}
+.result-report{margin-top:8px;font-size:11.5px;color:var(--text);line-height:1.7;
+  background:var(--cell-bg);border:1px solid var(--line2);border-radius:10px;padding:7px 9px}
+.result-report:empty{display:none}
+.result-report .rp-tag{color:var(--gold);font-weight:700}
+
+/* ═══ 控制台 ═══ */
+.console{width:640px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;
+  box-shadow:0 18px 50px rgba(0,0,0,.45)}
+.console h2{font-size:15px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.console h2 .live{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.35}}
+.sec{margin-top:12px;border-top:1px dashed var(--line2);padding-top:10px}
+.sec h4{font-size:11px;color:var(--dim);letter-spacing:2px;margin-bottom:8px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip2{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:5px 10px;font-size:12px;color:var(--sub)}
+.chip2 b{color:var(--text)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;
+  padding:7px 14px;font-size:12.5px;cursor:pointer}
+.btn.primary{background:linear-gradient(160deg,var(--gold-mid),var(--gold));color:#17130d;border:none;font-weight:700}
+.btn.warn{color:var(--team-warn,#fbbf24)}
+.cfg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cfg{background:var(--panel2);border:1px solid var(--line2);border-radius:9px;padding:6px 9px}
+.cfg label{font-size:10px;color:var(--dim);display:block}
+.cfg .val{font-size:13px;font-weight:700;margin-top:2px}
+.cfg .val .on{color:var(--green);font-size:12px}
+.hist{font-size:12px;color:var(--sub);line-height:2}
+.hist .win{color:var(--gold);font-weight:600}
+.foot-note{max-width:1180px;margin:26px auto 0;color:var(--dim);font-size:12px;line-height:1.9;
+  border-top:1px solid var(--line2);padding-top:14px}
+.foot-note b{color:var(--sub)}
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <h1>赛马竞猜 · 界面草图<span class="en">Horse Race Betting · Mockup v0.1</span></h1>
+  <p>左侧为 9:16 展示屏（下注板 ⇄ 赛道 双态自动切换演示：下注期 8s → 比赛期 9s → 结算），右侧为主播控制台。数据均为演示假数据。
+     配套方案见 <a href="./赛马竞猜-方案.md">赛马竞猜-方案.md</a>。</p>
+</div>
+
+<div class="mock-wrap">
+
+  <!-- ═══════════ 展示屏 ═══════════ -->
+  <div class="mock-col">
+    <div class="mock-label">展示屏 stage.html（9:16）</div>
+    <div class="phone">
+
+      <div class="top">
+        <div class="game-title">赛马竞猜 · 直播互动</div>
+        <div class="top-right">
+          <div class="chip">💰 彩池 <b id="potNum">3,200</b></div>
+          <div class="season-badge">S1 赛季</div>
+          <div class="round-badge" id="stRound">ROUND 1</div>
+        </div>
+      </div>
+
+      <div class="countdown-row">
+        <span class="cd-num" id="cdNum">8</span><span class="cd-unit">秒</span>
+        <span class="phase-tag" id="phaseTag">下注期 · 发 1/2/3/4</span>
+      </div>
+      <div class="cd-progress"><div class="cd-fill" id="cdFill"></div></div>
+
+      <!-- 下注板（下注期） -->
+      <div class="board-box" id="betBoard">
+        <div class="pool-row"><span>彩池：全部注额按赔率派彩 · 无人押中的马获胜则<b style="color:var(--gold)">滚存头奖</b></span><span class="pot" id="potMini">💰 3,200</span></div>
+        <div id="horseRows"></div>
+      </div>
+
+      <!-- 赛道（比赛期） -->
+      <div class="track-box" id="raceTrack" style="display:none">
+        <div class="track-head"><span>🏁 100 格决胜 · 点赞为你的马加速（3 赞 +1 格）</span><span id="racePot">💰 3,200</span></div>
+        <div id="lanes"></div>
+      </div>
+
+      <div class="howto" id="howto">弹幕发 <b>1 / 2 / 3 / 4</b> 下注（每注 <b>100</b> 筹码）· 赔率随彩池浮动 · 冷门暴富 / 头奖滚存</div>
+
+      <div class="feed" id="feed"></div>
+
+      <div class="boards">
+        <div class="board">
+          <h3>本局赢家 Top5</h3>
+          <div class="rows" id="winRows">
+            <div class="row r1"><span class="rk">1</span><span class="nm">小龙</span><span class="sc">+2,150</span></div>
+            <div class="row r2"><span class="rk">2</span><span class="nm">阿伟</span><span class="sc">+1,400</span></div>
+            <div class="row r3"><span class="rk">3</span><span class="nm">梅子</span><span class="sc">+900</span></div>
+            <div class="row"><span class="rk">4</span><span class="nm">大山</span><span class="sc">+450</span></div>
+          </div>
+        </div>
+        <div class="board">
+          <h3>筹码富家榜</h3>
+          <div class="rows">
+            <div class="row r1"><span class="rk">1</span><span class="nm">首富·老猫</span><span class="sc">8,420</span></div>
+            <div class="row r2"><span class="rk">2</span><span class="nm">峰哥</span><span class="sc">6,310</span></div>
+            <div class="row r3"><span class="rk">3</span><span class="nm">小雪</span><span class="sc">5,180</span></div>
+            <div class="row"><span class="rk">4</span><span class="nm">阿伟</span><span class="sc">4,150</span></div>
+          </div>
+        </div>
+        <div class="board">
+          <h3>总荣誉榜</h3>
+          <div class="rows">
+            <div class="row r1"><span class="rk">1</span><span class="nm">小龙</span><span class="sc">2680</span></div>
+            <div class="row r2"><span class="rk">2</span><span class="nm">阿伟</span><span class="sc">2240</span></div>
+            <div class="row r3"><span class="rk">3</span><span class="nm">梅子</span><span class="sc">2010</span></div>
+            <div class="row"><span class="rk">4</span><span class="nm">峰哥</span><span class="sc">1735</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 结算横幅 -->
+      <div class="result-banner" id="resultBanner">
+        <div class="result-card">
+          <div class="result-title">本 局 结 算</div>
+          <div class="result-win" id="resWin">🏆 黑珍珠 获胜！</div>
+          <div class="result-odds" id="resOdds">最终赔率 ×5.2 · 彩池 3,200 筹码</div>
+          <div class="result-stat" id="resStat">押中 3 人 · 最高赢 520 筹码<br>押中者 +30 荣誉分</div>
+          <div class="result-report" id="resReport"><span class="rp-tag">🎙️</span> 冷门！黑珍珠以 5.2 倍赔率爆冷夺魁，追风党当场沉默……</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ 控制台 ═══════════ -->
+  <div class="mock-col" style="align-items:stretch">
+    <div class="mock-label" style="text-align:center">主播控制台 control.html（嵌主播台框架）</div>
+    <div class="console">
+      <h2><span class="live"></span>赛马竞猜 · 控制台 <span style="color:var(--dim);font-size:11px;font-weight:normal">🐎 下注期 · 第 7 局</span></h2>
+
+      <div class="sec">
+        <h4>实时状态</h4>
+        <div class="chips">
+          <div class="chip2">阶段 <b>下注期</b></div>
+          <div class="chip2">剩余 <b>18s</b></div>
+          <div class="chip2">彩池 <b style="color:var(--gold)">3,200</b></div>
+          <div class="chip2">下注 <b>32 注</b></div>
+          <div class="chip2">滚存 <b>0</b></div>
+          <div class="chip2">赔率 <b>1.9 / 3.1 / 5.2 / 4.4</b></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h4>运行控制</h4>
+        <div class="btn-row">
+          <button class="btn primary">▶ 开始一局</button>
+          <button class="btn">⏸ 暂停</button>
+          <button class="btn">🏁 立即开赛</button>
+          <button class="btn warn">■ 结束</button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h4>钱包工具</h4>
+        <div class="btn-row">
+          <input class="btn" style="flex:1;min-width:150px;background:var(--cell-bg);cursor:text;color:var(--sub)" value="输入昵称查筹码…">
+          <button class="btn">查询</button>
+          <button class="btn warn">手动调账（需确认）</button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h4>模拟观众（联调）</h4>
+        <div class="btn-row">
+          <input class="btn" style="flex:1;min-width:130px;background:var(--cell-bg);cursor:text;color:var(--sub)" value="昵称：路人甲">
+          <button class="btn">押 1 号</button>
+          <button class="btn">押 2 号</button>
+          <button class="btn">押 3 号</button>
+          <button class="btn">押 4 号</button>
+          <button class="btn">模拟点赞 ×10</button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h4>游戏配置</h4>
+        <div class="cfg-grid">
+          <div class="cfg"><label>下注期</label><div class="val">30 秒</div></div>
+          <div class="cfg"><label>比赛期</label><div class="val">25 秒</div></div>
+          <div class="cfg"><label>结算停留</label><div class="val">12 秒</div></div>
+          <div class="cfg"><label>每注金额</label><div class="val">100 筹码</div></div>
+          <div class="cfg"><label>每人每局上限</label><div class="val">5 注</div></div>
+          <div class="cfg"><label>起始筹码</label><div class="val">1,000</div></div>
+          <div class="cfg"><label>破产救济金</label><div class="val">500 / 局</div></div>
+          <div class="cfg"><label>赔率上下限</label><div class="val">×1.2 ~ ×20</div></div>
+          <div class="cfg"><label>点赞加速</label><div class="val">3 赞 = +1 格</div></div>
+          <div class="cfg"><label>单马助威上限</label><div class="val">20 格</div></div>
+          <div class="cfg"><label>头奖滚存</label><div class="val"><span class="on">✔ 开启</span></div></div>
+          <div class="cfg"><label>押中荣誉分</label><div class="val">30 分</div></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h4>战报 / 历史</h4>
+        <div class="hist">
+          第 6 局 · <span class="win">追风 获胜 ×1.9</span> · 彩池 2,400 · 押中 12 人<br>
+          第 5 局 · <span class="win">小土豆 获胜 ×7.5</span> · 彩池 1,800 · 押中 3 人 · 冷门！<br>
+          第 4 局 · <span class="win">闪电 获胜 ×1.4</span> · 无人押中 → <b style="color:var(--gold)">头奖滚存 900</b>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="foot-note">
+  <b>草图说明</b>：① 下注期与比赛期共用核心区，双态自动切换；② 赔率 = 彩池 ÷ 该马注额，热度条显示注额占比，最热马带高亮边框；③ 赛道 4 泳道左→右，终点为黑白格旗，领先马 👑、爆发时马匹抖动；④ 点赞计入所押马的助威池（3 赞 = +1 格，上限 20 格）；⑤ 结算横幅含 AI 战报卡（冷门/滚存/险胜等场景模板）；⑥ 展示屏角落上线时加一行「虚拟筹码 · 仅供娱乐」。Demo：下注 8s → 比赛 9s → 结算 5s 自动循环。
+</div>
+
+<script>
+/* ═══ 演示动效（正式实现由后端 SSE 状态驱动） ═══ */
+const $=id=>document.getElementById(id);
+const HORSES=[
+  {no:1,name:'闪电',  c:'var(--h1)',bg:'#b91c1c',pos:0,bet:1200,odds:1.9,sp:11},
+  {no:2,name:'追风',  c:'var(--h2)',bg:'#b8860b',pos:0,bet:740, odds:3.1,sp:10},
+  {no:3,name:'黑珍珠',c:'var(--h3)',bg:'#7c3aed',pos:0,bet:460, odds:5.2,sp:9},
+  {no:4,name:'小土豆',c:'var(--h4)',bg:'#15803d',pos:0,bet:800, odds:4.4,sp:9.5},
+];
+const NAMES=['小龙','阿伟','梅子','大山','老猫','峰哥','小雪','汤圆','柚子'];
+const rand=a=>a[Math.floor(Math.random()*a.length)];
+let pool=3200, phase='betting', cd=8, cdTotal=8, round=1;
+const fmt=n=>n.toLocaleString('en-US');
+
+/* ── 下注板渲染 ── */
+function renderBetBoard(){
+  const box=$('horseRows');
+  const maxBet=Math.max(...HORSES.map(h=>h.bet));
+  box.innerHTML=HORSES.map(h=>`
+    <div class="horse-row${h.bet===maxBet?' fav':''}">
+      <div class="horse-no" style="background:${h.c}">${h.no}</div>
+      <div class="horse-info">
+        <div class="horse-name" style="color:${h.c}">🐎 ${h.name}${h.bet===maxBet?' 🔥':''}</div>
+        <div class="horse-meta">${Math.round(h.bet/pool*100)}% 注 · ${8+((h.no*3)%9)} 人下注</div>
+      </div>
+      <div class="heat-wrap"><div class="heat-bar"><div class="heat-fill" style="width:${Math.round(h.bet/pool*100)}%;background:${h.c}"></div></div></div>
+      <div class="odds"><div class="x" style="color:${h.c}">×${h.odds.toFixed(1)}</div><div class="lbl">赔率</div></div>
+    </div>`).join('');
+  $('potNum').textContent=fmt(pool); $('potMini').textContent='💰 '+fmt(pool);
+}
+/* ── 赛道渲染 ── */
+function renderLanes(){
+  $('lanes').innerHTML=HORSES.map((h,i)=>`
+    <div class="lane" id="lane${i}">
+      <div class="ground"></div>
+      <div class="runner" id="run${i}"><span class="em">🐎</span><span class="nm" style="background:${h.c}">${h.no} ${h.name}</span></div>
+      <div class="boost" id="boost${i}"></div>
+      <div class="lead-crown" id="crown${i}"></div>
+      <div class="finish-line"></div>
+    </div>`).join('');
+  HORSES.forEach((h,i)=>{$('run'+i).style.left='3%'});
+}
+function updateRunners(){
+  const lead=Math.max(...HORSES.map(h=>h.pos));
+  HORSES.forEach((h,i)=>{
+    const r=$('run'+i); if(!r) return;
+    r.style.left=(3+h.pos*0.9)+'%';
+    r.classList.toggle('burst',h.bursting);
+    $('crown'+i).textContent=h.pos>=lead&&h.pos>10?'👑':'';
+    $('boost'+i).textContent=h.boostText||'';
+  });
+}
+/* ── 战报流 ── */
+function feed(html,hot){
+  const f=$('feed'),d=document.createElement('div');
+  d.className='item'+(hot?' hot':''); d.innerHTML=html; f.insertBefore(d,f.firstChild);
+  while(f.children.length>6) f.removeChild(f.lastChild);
+}
+const rn=()=>rand(NAMES);
+
+/* ── 阶段机（压缩演示：8s 下注 → 9s 比赛 → 5s 结算 循环） ── */
+function setPhase(p){
+  phase=p;
+  const betting=p==='betting', racing=p==='racing';
+  $('betBoard').style.display=betting?'flex':'none';
+  $('raceTrack').style.display=racing?'flex':'none';
+  $('phaseTag').textContent=betting?'下注期 · 发 1/2/3/4':(racing?'比赛期 · 冲刺！':'本局结算');
+  $('phaseTag').classList.toggle('race',racing);
+  cdTotal=betting?8:(racing?9:5); cd=cdTotal;
+  $('stRound').textContent='ROUND '+round;
+}
+setInterval(()=>{
+  cd--;
+  if(cd<=0){
+    if(phase==='betting'){ // 进入比赛
+      setPhase('racing'); renderLanes();
+      feed('🏁 <span class="who">开赛！</span>4 匹马冲出闸门，点赞为你的马加速！',true);
+    } else if(phase==='racing'){ // 结算
+      const w=[...HORSES].sort((a,b)=>b.pos-a.pos)[0];
+      $('resWin').textContent=`🏆 ${w.no} 号 ${w.name} 获胜！`;
+      $('resOdds').textContent=`最终赔率 ×${w.odds.toFixed(1)} · 彩池 ${fmt(pool)} 筹码`;
+      $('resReport').innerHTML='<span class="rp-tag">🎙️</span> '+rand([
+        `冷门！${w.name}以 ${w.odds.toFixed(1)} 倍赔率爆冷夺魁，热门党当场沉默……`,
+        `${w.name}一路领跑毫无悬念，押中的朋友今晚加鸡腿！`,
+        `最后一秒绝杀！${w.name}以一鼻尖优势险胜，这就是赛马的魅力！`,
+      ]);
+      $('resultBanner').classList.add('show');
+      setPhase('result');
+    } else { // 下一局
+      $('resultBanner').classList.remove('show');
+      round++; pool=800+Math.round(Math.random()*2500);
+      HORSES.forEach(h=>{h.pos=0;h.bursting=false;h.boostText='';});
+      setPhase('betting'); renderBetBoard();
+      feed('🎬 <span class="who">第 '+round+' 局</span> 下注开始！发 1 / 2 / 3 / 4 押注',true);
+    }
+  }
+  $('cdNum').textContent=cd;
+  $('cdFill').style.width=((1-cd/cdTotal)*100)+'%';
+},1000);
+
+/* ── 下注期：赔率漂移 + 战报 ── */
+setInterval(()=>{
+  if(phase!=='betting') return;
+  const h=rand(HORSES);
+  const amt=100*(1+Math.floor(Math.random()*3));
+  h.bet+=amt; pool+=amt;
+  HORSES.forEach(x=>{x.odds=Math.max(1.2,Math.min(20,pool/x.bet))});
+  feed(`💸 <span class="who">${rn()}</span> 押 ${h.no} 号 ${h.name}（赔率 ×${h.odds.toFixed(1)}）`);
+  renderBetBoard();
+},1500);
+/* ── 比赛期：马匹竞速 ── */
+setInterval(()=>{
+  if(phase!=='racing') return;
+  HORSES.forEach(h=>{
+    h.pos=Math.min(100,h.pos+h.sp*0.9+Math.random()*2);
+    h.bursting=Math.random()<0.18;
+  });
+  const last=rand(NAMES), h=rand(HORSES);
+  if(Math.random()<0.3){h.boostText='👍 +1';feed(`👍 <span class="who">${last}</span> 的点赞为 ${h.name} 加速！`);}
+  else if(Math.random()<0.25){feed(`💨 <span class="who">${h.name}</span> 突然发力冲刺！`,true);}
+  updateRunners();
+},900);
+
+/* ── 初始化 ── */
+setPhase('betting'); renderBetBoard();
+feed('💸 <span class="who">小雪</span> 押 3 号 黑珍珠（赔率 ×5.2）');
+feed('🎬 <span class="who">第 1 局</span> 下注开始！发 1 / 2 / 3 / 4 押注',true);
+</script>
+</body>
+</html>

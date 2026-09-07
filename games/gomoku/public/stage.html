@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>弹幕五子棋 · 直播互动 · 展示屏</title>
+<link rel="stylesheet" href="/common/base.css">
+<link rel="stylesheet" href="stage.css">
+</head>
+<body data-view="stage">
+
+<!-- ═══════════ 展示屏 stage（9:16 竖屏投屏 / OBS 浏览器源） ═══════════ -->
+<div id="view-stage">
+  <div class="phone">
+    <header class="top">
+      <div class="game-title">弹幕五子棋 · 直播互动</div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <div class="mode-badge" id="modeBadge">人机对决</div>
+        <div class="round-badge" id="stRound">ROUND 0</div>
+      </div>
+    </header>
+
+    <!-- 回合状态行：落子倒计时 / 思考中 / 等待上座 -->
+    <div class="turn-bar">
+      <span class="turn-txt" id="turnTxt">等待开局</span>
+      <span class="turn-cd" id="turnCd"></span>
+    </div>
+
+    <!-- 中部：左列（黑方侧：队尾→队头在下→黑方落子者）/ 棋盘 / 右列（白方落子者在上→队头→队尾） -->
+    <div class="mid">
+      <div class="side-col left">
+        <div class="q-side" id="qSideLeft"></div>
+        <div class="player p-side" id="pBlack">
+          <div class="p-av-wrap">
+            <span class="p-av" id="pBlackAv"></span>
+            <span class="stone-dot b"></span>
+          </div>
+          <div class="p-name" id="pBlackName">虚位以待</div>
+          <div class="p-tag" id="pBlackTag">--</div>
+        </div>
+      </div>
+      <div class="board-wrap">
+        <div class="bwrap-inner" id="bwrapInner">
+          <div class="bcorner"></div>
+          <div class="bcol-labels" id="colLabels"></div>
+          <div class="brow-labels" id="rowLabels"></div>
+          <div class="board" id="board"></div>
+        </div>
+      </div>
+      <div class="side-col right">
+        <div class="player p-side" id="pWhite">
+          <div class="p-av-wrap">
+            <span class="p-av" id="pWhiteAv"></span>
+            <span class="stone-dot w"></span>
+          </div>
+          <div class="p-name" id="pWhiteName">虚位以待</div>
+          <div class="p-tag" id="pWhiteTag">--</div>
+        </div>
+        <div class="q-side" id="qSideRight"></div>
+      </div>
+    </div>
+
+<!-- 玩法速览（三排居中：排队 → 提位 → 落子） -->
+    <div class="howto">
+      <div class="howto-line">💬 发「排队 / 排黑 / 排白」抢占棋席，队首即刻上座</div>
+      <div class="howto-gold">👍 点赞 · 🎁 送礼 可以使排名靠前 <b id="htGift">+30</b> 排序值 · 上座后送礼可悔棋</div>
+      <div class="howto-line">🎯 开局后发<b>坐标</b>落子：如 <b>H8</b>＝H行8列，或发<b>格子编号</b>（如 113）</div>
+    </div>
+
+    <!-- 下部：战报 | 排行榜（flex 吸收棋盘剩余空间，列表内部滚动） -->
+    <div class="lower">
+      <section class="col-log">
+        <h3>对局战报</h3>
+        <div class="log-box" id="opStream"></div>
+      </section>
+      <section class="col-board">
+        <div class="board-head"><h3>排行榜</h3></div>
+        <div class="board-box" id="boardBody"></div>
+      </section>
+    </div>
+
+    <!-- 等待上座 / 准备确认 提示浮层 -->
+    <div class="wait-tip hidden" id="waitTip">
+      <div class="wt-card">
+        <div class="wt-title" id="wtTitle">虚 位 以 待</div>
+        <div class="wt-line" id="wtLine">发「排队 / 排黑 / 排白」抢座</div>
+        <div class="wt-line dim" id="wtSub">点赞可插队 · 送礼快速插队 · 队首即刻上座</div>
+      </div>
+    </div>
+
+    <div id="fireworks" class="fireworks"></div>
+    <div id="winBanner" class="win-banner hidden">
+      <div class="result-wrap">
+        <div class="win-card">
+          <div class="win-body">
+            <div class="win-avatar" id="winAvatarWrap" style="display:none;">
+              <img id="winAvatar" src="" alt="" referrerpolicy="no-referrer">
+              <span id="winAvatarFallback" class="win-avatar-fb"></span>
+            </div>
+            <div class="win-title" id="winTitle">五 连 获 胜 !</div>
+            <div class="win-name" id="winName">--</div>
+            <div class="win-score" id="winScore"></div>
+            <div class="win-answer" id="winSub"></div>
+          </div>
+        </div>
+        <div class="result-next" id="winNext" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/common/core.js"></script>
+<script src="stage.js"></script>
+</body>
+</html>

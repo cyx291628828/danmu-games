@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>红蓝大作战 · 界面草图（Mockup）</title>
+<style>
+/* ═══ 设计令牌：与 danmu-games/common/public/base.css 暗金主题一致 ═══ */
+:root{
+  --bg:#0e1117; --panel:#171c26; --panel2:#1e2532; --line:#2a3344; --line2:#222b3b;
+  --text:#f2f4f8; --sub:#98a2b3; --dim:#78839a;
+  --accent:#4da3ff; --gold:#ffc53d; --green:#34d399; --red:#f87171;
+  --gold-mid:#ffb02e; --bezel:#05070b; --cell-bg:#10141d;
+  --glow-rgb:255,197,61;
+  --team-red:#f87171; --team-red-deep:#7f1d1d;
+  --team-blue:#4da3ff; --team-blue-deep:#1e3a8a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;padding:24px 28px 40px}
+a{color:var(--accent)}
+
+/* ═══ 页眉 ═══ */
+.page-head{max-width:1180px;margin:0 auto 20px}
+.page-head h1{font-size:24px;letter-spacing:1px}
+.page-head h1 .en{color:var(--dim);font-size:14px;font-weight:normal;margin-left:10px}
+.page-head p{color:var(--sub);font-size:13px;margin-top:6px;line-height:1.7}
+.page-head .tools{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
+.mock-wrap{max-width:1180px;margin:0 auto;display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start}
+.mock-col{display:flex;flex-direction:column;align-items:center;gap:10px}
+.mock-label{color:var(--dim);font-size:12px;letter-spacing:2px}
+
+/* ═══ 9:16 手机框 ═══ */
+.phone{width:400px;height:780px;background:var(--bg);border:9px solid var(--bezel);
+  border-radius:38px;overflow:hidden;position:relative;box-shadow:0 18px 50px rgba(0,0,0,.55);
+  display:flex;flex-direction:column;padding:12px 12px 10px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.game-title{font-size:15px;font-weight:700;letter-spacing:1px}
+.round-badge{background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+  padding:3px 9px;font-size:11px;color:var(--gold);letter-spacing:1px;white-space:nowrap}
+.score-chip{display:flex;align-items:center;gap:6px;background:var(--panel2);
+  border:1px solid var(--line);border-radius:10px;padding:3px 9px;font-size:12px;font-weight:700}
+.score-chip .r{color:var(--team-red)} .score-chip .b{color:var(--team-blue)}
+.score-chip .streak{font-size:10px;color:var(--gold)}
+
+/* 倒计时 */
+.countdown-row{display:flex;align-items:baseline;gap:6px;justify-content:center;margin-top:8px}
+.cd-num{font-size:40px;font-weight:800;color:var(--gold);line-height:1;
+  text-shadow:0 0 18px rgba(var(--glow-rgb),.45)}
+.cd-unit{color:var(--sub);font-size:12px}
+.cd-progress{height:6px;background:var(--cell-bg);border-radius:99px;margin-top:6px;overflow:hidden}
+.cd-progress-fill{height:100%;width:35%;border-radius:99px;
+  background:linear-gradient(90deg,var(--gold-mid),var(--gold));transition:width .5s linear}
+
+/* 战场 */
+.battle{margin-top:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px}
+.camps{display:flex;align-items:stretch;gap:8px}
+.camp{flex:1;border-radius:10px;padding:7px 9px;border:1px solid}
+.camp.red{background:linear-gradient(160deg,rgba(248,113,113,.16),rgba(248,113,113,.05));border-color:rgba(248,113,113,.4)}
+.camp.blue{background:linear-gradient(200deg,rgba(77,163,255,.16),rgba(77,163,255,.05));border-color:rgba(77,163,255,.4);text-align:right}
+.camp .name{font-size:13px;font-weight:700}
+.camp.red .name{color:var(--team-red)} .camp.blue .name{color:var(--team-blue)}
+.camp .cnt{font-size:20px;font-weight:800;margin-top:1px}
+.camp.blue .cnt{color:var(--text)}
+.camp .cnt small{font-size:11px;color:var(--sub);font-weight:normal}
+.avatars{display:flex;margin-top:5px;height:20px}
+.camp.blue .avatars{justify-content:flex-end}
+.av{width:20px;height:20px;border-radius:50%;border:2px solid var(--panel);margin-left:-6px;
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+.camp.red .av:first-child{margin-left:0} .camp.blue .av:last-child{margin-left:-6px}
+.av.more{background:var(--panel2)!important;color:var(--sub);border:1px solid var(--line);font-size:9px}
+.vs{display:flex;align-items:center;font-size:12px;font-weight:800;color:var(--dim)}
+
+/* 战线绳 */
+.rope-wrap{margin-top:10px}
+.rope-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-bottom:4px}
+.rope-meta b{color:var(--sub)}
+.rope-track{position:relative;height:30px;border-radius:99px;overflow:hidden;
+  border:1px solid var(--line2);background:var(--cell-bg)}
+.rope-red{position:absolute;left:0;top:0;bottom:0;width:62%;
+  background:linear-gradient(90deg,var(--team-red-deep),var(--team-red));transition:width .6s ease}
+.rope-blue{position:absolute;right:0;top:0;bottom:0;width:38%;
+  background:linear-gradient(270deg,var(--team-blue-deep),var(--team-blue));transition:width .6s ease}
+.rope-knot{position:absolute;left:62%;top:0;bottom:0;width:5px;background:#f5e7c8;margin-left:-2.5px;
+  box-shadow:0 0 12px rgba(var(--glow-rgb),.8);transition:left .6s ease;z-index:3}
+.rope-center{position:absolute;left:50%;top:-2px;bottom:-2px;width:0;
+  border-left:2px dashed rgba(255,255,255,.35);z-index:2}
+.rope-flag{position:absolute;left:62%;top:-24px;transform:translateX(-50%);font-size:15px;z-index:4;
+  transition:left .6s ease;filter:drop-shadow(0 0 6px rgba(var(--glow-rgb),.7))}
+.rope-scale{display:flex;justify-content:space-between;font-size:9px;color:var(--dim);margin-top:3px}
+.rope-scale .warn{color:var(--gold)}
+
+/* 能量槽 */
+.energy{display:flex;flex-direction:column;gap:6px;margin-top:9px}
+.ebar{display:flex;align-items:center;gap:8px}
+.ebar .tag{width:52px;font-size:11px;font-weight:700}
+.ebar.red .tag{color:var(--team-red)} .ebar.blue .tag{color:var(--team-blue)}
+.ebar .track{flex:1;height:12px;background:var(--cell-bg);border-radius:99px;overflow:hidden;border:1px solid var(--line2)}
+.ebar .fill{height:100%;border-radius:99px;transition:width .5s}
+.ebar.red .fill{background:linear-gradient(90deg,var(--team-red-deep),var(--team-red))}
+.ebar.blue .fill{background:linear-gradient(270deg,var(--team-blue-deep),var(--team-blue))}
+.ebar .pct{width:64px;font-size:10px;color:var(--sub);text-align:right}
+.ebar.red.charged .fill{box-shadow:0 0 14px rgba(248,113,113,.9)}
+
+/* 教学行 */
+.howto{margin-top:9px;text-align:center;font-size:11px;color:var(--sub);line-height:1.6}
+.howto b{color:var(--gold)}
+
+/* 弹幕流 */
+.feed{margin-top:9px;background:var(--cell-bg);border:1px solid var(--line2);border-radius:12px;
+  padding:6px 9px;height:92px;overflow:hidden;display:flex;flex-direction:column;gap:3px}
+.feed .item{font-size:11px;color:var(--sub);display:flex;gap:6px;align-items:center;animation:fadeIn .35s}
+.feed .item .who{color:var(--text);font-weight:600}
+.feed .item.hot{color:var(--gold)}
+.feed .item .tr{color:var(--team-red)} .feed .item .tb{color:var(--team-blue)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* 双榜单 */
+.boards{display:flex;gap:8px;margin-top:9px;flex:1;min-height:0}
+.board{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:7px 9px;display:flex;flex-direction:column}
+.board h3{font-size:11px;color:var(--gold);letter-spacing:2px;margin-bottom:5px;font-weight:700}
+.board .rows{display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.row{display:flex;align-items:center;gap:6px;font-size:11px;padding:2.5px 4px;border-radius:6px;background:var(--panel2)}
+.row .rk{width:16px;height:16px;border-radius:4px;display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;background:var(--cell-bg);color:var(--dim);flex:none}
+.row.r1 .rk{background:var(--gold);color:#17130d}
+.row.r2 .rk{background:#c9d2e3;color:#17130d}
+.row.r3 .rk{background:#b07a3a;color:#17130d}
+.row .nm{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .sc{color:var(--gold);font-weight:700}
+.row .sub{color:var(--dim);font-size:10px}
+
+/* 结算横幅（预览开关控制） */
+.result-banner{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;
+  background:rgba(5,7,11,.72);backdrop-filter:blur(2px)}
+.result-banner.show{display:flex}
+.result-card{width:82%;background:linear-gradient(160deg,#2a1c10,#1c150c);border:1px solid rgba(var(--glow-rgb),.55);
+  border-radius:16px;padding:20px 16px;text-align:center;box-shadow:0 0 40px rgba(var(--glow-rgb),.28)}
+.result-title{font-size:13px;letter-spacing:6px;color:var(--sub)}
+.result-win{font-size:30px;font-weight:800;margin:8px 0 4px;color:var(--team-red);
+  text-shadow:0 0 22px rgba(248,113,113,.6)}
+.result-mvp{font-size:12px;color:var(--gold)}
+.result-stat{margin-top:8px;font-size:11px;color:var(--sub);line-height:1.8}
+
+/* ═══ 控制台草图 ═══ */
+.console{width:640px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;
+  box-shadow:0 18px 50px rgba(0,0,0,.45)}
+.console h2{font-size:15px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.console h2 .live{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.35}}
+.sec{margin-top:12px;border-top:1px dashed var(--line2);padding-top:10px}
+.sec h4{font-size:11px;color:var(--dim);letter-spacing:2px;margin-bottom:8px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:5px 10px;font-size:12px;color:var(--sub)}
+.chip b{color:var(--text)} .chip .rr{color:var(--team-red);font-weight:700} .chip .bb{color:var(--team-blue);font-weight:700}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;
+  padding:7px 14px;font-size:12.5px;cursor:pointer}
+.btn.primary{background:linear-gradient(160deg,var(--gold-mid),var(--gold));color:#17130d;border:none;font-weight:700}
+.btn.warn{color:var(--team-red);border-color:rgba(248,113,113,.45)}
+.sliders{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.slider label{font-size:11.5px;color:var(--sub);display:flex;justify-content:space-between;margin-bottom:4px}
+.slider label b{color:var(--text)}
+.slider input[type=range]{width:100%;accent-color:var(--gold)}
+.cfg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cfg{background:var(--panel2);border:1px solid var(--line2);border-radius:9px;padding:6px 9px}
+.cfg label{font-size:10px;color:var(--dim);display:block}
+.cfg .val{font-size:13px;font-weight:700;margin-top:2px;display:flex;align-items:center;gap:6px}
+.cfg .val .on{color:var(--green);font-size:12px}
+.hist{font-size:12px;color:var(--sub);line-height:2}
+.hist .win{color:var(--gold);font-weight:600}
+.hist .mvp{color:var(--accent)}
+.foot-note{max-width:1180px;margin:26px auto 0;color:var(--dim);font-size:12px;line-height:1.9;
+  border-top:1px solid var(--line2);padding-top:14px}
+.foot-note b{color:var(--sub)}
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <h1>红蓝大作战 · 界面草图<span class="en">Red vs Blue · Tug-of-War Mockup v0.1</span></h1>
+  <p>左侧为 9:16 展示屏（OBS 投屏 / 竖屏直播伴侣），右侧为主播控制台（框架壳 iframe 内嵌）。数据均为演示假数据，动效仅示意实际节奏：弹幕拉动战线 → 点赞充能 → 能量满触发「全军冲锋」。配套方案文档见 <a href="./新玩法调研与红蓝大作战方案.md">新玩法调研与红蓝大作战方案.md</a>。</p>
+  <div class="tools">
+    <button class="btn primary" onclick="document.getElementById('resultBanner').classList.toggle('show')">👁 预览结算横幅</button>
+  </div>
+</div>
+
+<div class="mock-wrap">
+
+  <!-- ═══════════ 展示屏 stage ═══════════ -->
+  <div class="mock-col">
+    <div class="mock-label">展示屏 stage.html（9:16）</div>
+    <div class="phone">
+
+      <div class="top">
+        <div class="game-title">红蓝大作战 · 直播互动</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <div class="score-chip"><span class="r">红 2</span><span style="color:var(--dim)">:</span><span class="b">1 蓝</span></div>
+          <div class="round-badge">ROUND 8</div>
+        </div>
+      </div>
+
+      <div class="countdown-row"><span class="cd-num" id="cdNum">47</span><span class="cd-unit">秒</span></div>
+      <div class="cd-progress"><div class="cd-progress-fill" id="cdFill"></div></div>
+
+      <!-- 战场 -->
+      <div class="battle">
+        <div class="camps">
+          <div class="camp red">
+            <div class="name">🔥 猛虎营（红）</div>
+            <div class="cnt" id="redCnt">128 <small>人</small></div>
+            <div class="avatars">
+              <div class="av" style="background:#b91c1c">龙</div>
+              <div class="av" style="background:#dc2626">伟</div>
+              <div class="av" style="background:#ef4444">梅</div>
+              <div class="av" style="background:#f87171">刚</div>
+              <div class="av more">+123</div>
+            </div>
+          </div>
+          <div class="vs">VS</div>
+          <div class="camp blue">
+            <div class="name">飞鲨营（蓝）🌊</div>
+            <div class="cnt" id="blueCnt">96 <small>人</small></div>
+            <div class="avatars">
+              <div class="av more">+90</div>
+              <div class="av" style="background:#2563eb">峰</div>
+              <div class="av" style="background:#3b82f6">婷</div>
+              <div class="av" style="background:#60a5fa">磊</div>
+              <div class="av" style="background:#93c5fd">雪</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 战线绳 -->
+        <div class="rope-wrap">
+          <div class="rope-meta"><span>🚩 <b>红方底线</b></span><span style="color:var(--gold)">战线：<b id="posTxt">红 62%</b></span><span><b>蓝方底线</b> 🚩</span></div>
+          <div class="rope-track">
+            <div class="rope-red" id="ropeRed"></div>
+            <div class="rope-blue" id="ropeBlue"></div>
+            <div class="rope-center"></div>
+            <div class="rope-knot" id="ropeKnot"></div>
+            <div class="rope-flag" id="ropeFlag">⚔️⚑</div>
+          </div>
+          <div class="rope-scale"><span>0% 红方底线</span><span class="warn">▲ 蓝胜线 10%</span><span style="color:var(--dim)">50%</span><span class="warn">红胜线 90% ▲</span><span>100% 蓝方底线</span></div>
+        </div>
+
+        <!-- 能量槽 -->
+        <div class="energy">
+          <div class="ebar red" id="ebarRed"><span class="tag">红能量</span><div class="track"><div class="fill" id="eFillRed" style="width:72%"></div></div><span class="pct" id="ePctRed">72% · 冲锋!</span></div>
+          <div class="ebar blue"><span class="tag">蓝能量</span><div class="track"><div class="fill" id="eFillBlue" style="width:41%"></div></div><span class="pct" id="ePctBlue">41%</span></div>
+        </div>
+      </div>
+
+      <div class="howto">弹幕发 <b>红</b> / <b>蓝</b> 加入阵营并推动战线 · 点赞为队伍<b>充能</b> · 能量满触发<b>全军冲锋</b></div>
+
+      <!-- 战报流 -->
+      <div class="feed" id="feed"></div>
+
+      <!-- 双榜单 -->
+      <div class="boards">
+        <div class="board">
+          <h3>本轮输出 Top5</h3>
+          <div class="rows">
+            <div class="row r1"><span class="rk">1</span><span class="nm">小龙</span><span class="sub">拉 34 格</span><span class="sc">+231</span></div>
+            <div class="row r2"><span class="rk">2</span><span class="nm">阿伟</span><span class="sub">赞 51</span><span class="sc">+198</span></div>
+            <div class="row r3"><span class="rk">3</span><span class="nm">梅子</span><span class="sub">拉 21 格</span><span class="sc">+156</span></div>
+            <div class="row"><span class="rk">4</span><span class="nm">大山</span><span class="sub">拉 17 格</span><span class="sc">+120</span></div>
+            <div class="row"><span class="rk">5</span><span class="nm">小雪</span><span class="sub">拉 15 格</span><span class="sc">+104</span></div>
+          </div>
+        </div>
+        <div class="board">
+          <h3>总排行榜</h3>
+          <div class="rows">
+            <div class="row r1"><span class="rk">1</span><span class="nm">小龙</span><span class="sub">胜 12</span><span class="sc">2680</span></div>
+            <div class="row r2"><span class="rk">2</span><span class="nm">阿伟</span><span class="sub">胜 9</span><span class="sc">2240</span></div>
+            <div class="row r3"><span class="rk">3</span><span class="nm">梅子</span><span class="sub">胜 8</span><span class="sc">2010</span></div>
+            <div class="row"><span class="rk">4</span><span class="nm">峰哥</span><span class="sub">胜 6</span><span class="sc">1735</span></div>
+            <div class="row"><span class="rk">5</span><span class="nm">小雪</span><span class="sub">胜 5</span><span class="sc">1560</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 结算横幅（页首按钮预览） -->
+      <div class="result-banner" id="resultBanner">
+        <div class="result-card">
+          <div class="result-title">本 局 结 算</div>
+          <div class="result-win">🔥 猛虎营 获胜！</div>
+          <div class="result-mvp">MVP：小龙 · 阿伟 · 梅子</div>
+          <div class="result-stat">红队全员 +80 分（MVP 再 +200/150/100）<br>蓝队参与奖 +20 分 · 红队 连胜 ×1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ 主播控制台 control ═══════════ -->
+  <div class="mock-col" style="align-items:stretch">
+    <div class="mock-label" style="text-align:center">主播控制台 control.html（嵌主播台框架）</div>
+    <div class="console">
+      <h2><span class="live"></span>红蓝大作战 · 控制台 <span style="color:var(--dim);font-size:11px;font-weight:normal">⚔️ 对抗中 · 第 8 局</span></h2>
+
+      <div class="sec">
+        <h4>实时状态</h4>
+        <div class="chips">
+          <div class="chip">阶段 <b>对抗期</b></div>
+          <div class="chip">剩余 <b id="ctrlCd">47s</b></div>
+          <div class="chip">红 <b class="rr">128 人</b> · 蓝 <b class="bb">96 人</b></div>
+          <div class="chip">战线 <b class="rr" id="ctrlPos">红 +12%</b></div>
+          <div class="chip">冲锋 <b>红 1 次</b> / 蓝 0 次</div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h4>运行控制</h4>
+        <div class="btn-row">
+          <button class="btn primary">▶ 开始一轮</button>
+          <button class="btn">⏸ 暂停</button>
+          <button class="btn">⏭ 手动开新局</button>
+          <button class="btn warn">■ 结束游戏</button>
+          <button class="btn">✏️ 改阵营名</button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h4>战场平衡（救场微调，实时生效）</h4>
+        <div class="sliders">
+          <div class="slider"><label>红队推力系数 <b>×1.0</b></label><input type="range" min="50" max="200" value="100"></div>
+          <div class="slider"><label>蓝队推力系数 <b>×1.3</b>（背水一战）</label><input type="range" min="50" max="200" value="130"></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h4>游戏配置</h4>
+        <div class="cfg-grid">
+          <div class="cfg"><label>组队时长</label><div class="val">15 秒</div></div>
+          <div class="cfg"><label>对抗时长</label><div class="val">120 秒</div></div>
+          <div class="cfg"><label>拉动限频</label><div class="val">2 秒/条</div></div>
+          <div class="cfg"><label>点赞充能</label><div class="val">3 赞 = 1 能量</div></div>
+          <div class="cfg"><label>冲锋阈值 / 推力</label><div class="val">50 / 12 格</div></div>
+          <div class="cfg"><label>背水一战</label><div class="val"><span class="on">✔ 开启</span> ×1.3</div></div>
+          <div class="cfg"><label>礼物召唤</label><div class="val"><span class="on">✔ 开启</span></div></div>
+          <div class="cfg"><label>胜方分 / 败方分</label><div class="val">80 / 20</div></div>
+          <div class="cfg"><label>MVP 分（1/2/3 名）</label><div class="val">200/150/100</div></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h4>模拟观众（联调）</h4>
+        <div class="btn-row">
+          <input class="btn" style="flex:1;min-width:140px;background:var(--cell-bg);cursor:text;color:var(--sub)" value="昵称：路人甲">
+          <button class="btn">发「红」</button>
+          <button class="btn">发「蓝」</button>
+          <button class="btn">模拟点赞 ×10</button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h4>战报 / 历史</h4>
+        <div class="hist">
+          第 7 局 · <span class="win">飞鲨营（蓝）胜</span> · 冲锋 蓝 2 次 · MVP <span class="mvp">峰哥 / 婷婷 / 磊子</span><br>
+          第 6 局 · <span class="win">猛虎营（红）胜</span> · 冲锋 红 3 次 · MVP <span class="mvp">小龙 / 阿伟 / 大山</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="foot-note">
+  <b>草图说明</b>：① 战线绳中间亮色「结」为旗标位置，两端 10%/90% 为胜负线，被推近时底线告警闪烁；② 能量槽由队伍成员点赞累计，满格自动「全军冲锋」一次性推进 12 格（全屏特效位）；③ 弹幕流实时播报入队 / 拉动 / 充能 / 冲锋事件，主播照屏口播即可；④ 本页为静态草图 + 演示动效，正式版复用 base.css 主题体系（支持换肤）与全局排行榜组件。Demo 动效：倒计时在跑、红队能量充满后触发一次冲锋。
+</div>
+
+<script>
+/* ═══ 演示动效（正式实现由后端 SSE 状态驱动） ═══ */
+const $=id=>document.getElementById(id);
+let cd=47, cdTotal=135, pos=62, eRed=72, eBlue=41, redN=128, blueN=96;
+
+function render(){
+  $('cdNum').textContent=cd;
+  $('cdFill').style.width=(cd/cdTotal*100)+'%';
+  $('ropeRed').style.width=pos+'%'; $('ropeBlue').style.width=(100-pos)+'%';
+  $('ropeKnot').style.left=pos+'%'; $('ropeFlag').style.left=pos+'%';
+  $('posTxt').textContent='红 '+Math.round(pos)+'%';
+  $('ctrlPos').textContent='红 +'+Math.round(pos-50)+'%';
+  $('eFillRed').style.width=eRed+'%'; $('ePctRed').textContent=Math.round(eRed)+'%'+(eRed>=95?' · 冲锋!':'');
+  $('eFillBlue').style.width=eBlue+'%'; $('ePctBlue').textContent=Math.round(eBlue)+'%';
+  $('ctrlCd').textContent=cd+'s';
+}
+function feed(html,hot){
+  const f=$('feed'),d=document.createElement('div');
+  d.className='item'+(hot?' hot':''); d.innerHTML=html; f.appendChild(d);
+  while(f.children.length>9) f.removeChild(f.firstChild);
+}
+const NAMES=['大山','小雪','峰哥','婷婷','磊子','汤圆','柚子','老猫','阿K','奶茶'];
+const rand=a=>a[Math.floor(Math.random()*a.length)];
+setInterval(()=>{ // 主循环 1s
+  cd--; if(cd<0){cd=cdTotal;feed('▶️ <span class="who">第 9 局</span> 开始，快发 红 / 蓝 加入阵营！',true)}
+  pos+= (Math.random()*1.6-0.7)+(pos>70?-0.5:pos<55?0.5:0); pos=Math.min(78,Math.max(48,pos));
+  eBlue=Math.min(60,eBlue+Math.random()*1.2);
+  if(Math.random()<0.35){ Math.random()<0.55?redN++:blueN++;
+    $('redCnt').innerHTML=redN+' <small>人</small>'; $('blueCnt').innerHTML=blueN+' <small>人</small>'; }
+  eRed+=1.6; // 红队充能加快，演示冲锋
+  if(eRed>=100){ // 冲锋
+    eRed=0; pos=Math.min(92,pos+7);
+    feed('⚔️ <span class="who">猛虎营</span> 全军冲锋！战线推进 7 格！',true);
+    $('ebarRed').classList.add('charged'); setTimeout(()=>$('ebarRed').classList.remove('charged'),1500);
+  }
+  render();
+},1000);
+
+setInterval(()=>{ // 战报轮播 2.2s
+  const n=rand(NAMES),r=Math.random();
+  if(r<0.3) feed('🔥 <span class="who">'+n+'</span> 加入了<span class="tr">红队</span>');
+  else if(r<0.5) feed('🌊 <span class="who">'+n+'</span> 加入了<span class="tb">蓝队</span>');
+  else if(r<0.75) feed('👍 <span class="who">'+n+'</span> 点赞充能 +3');
+  else if(r<0.9) feed('🪢 <span class="who">'+n+'</span> 拉动战线 <span class="tr">+1 格</span>');
+  else feed('🎁 <span class="who">'+n+'</span> 召唤 <b>浣熊大将军</b> 助战！');
+},2200);
+
+feed('🔥 <span class="who">小龙</span> 加入了<span class="tr">红队</span>');
+feed('🪢 <span class="who">阿伟</span> 拉动战线 <span class="tr">+1 格</span>');
+feed('⚔️ <span class="who">猛虎营</span> 全军冲锋！战线推进 7 格！',true);
+render();
+</script>
+</body>
+</html>

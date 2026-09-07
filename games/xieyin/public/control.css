@@ -1,0 +1,14 @@
+/* ══════════════════════════════════════════════════════════════════
+   control.css — 谐音梗猜词 · 控制台补充样式
+   ══════════════════════════════════════════════════════════════════ */
+
+.cfg-row .cc-title { font-size: 13px; color: var(--dim); margin: 6px 0 8px; }
+.cfg-row label { display: inline-flex; align-items: center; gap: 6px; margin: 0 14px 8px 0; font-size: 13px; }
+.cfg-row input[type="number"], .cfg-row input[type="text"] { width: 84px; }
+.cfg-row select { min-width: 110px; }
+.cfg-break { border-top: 1px dashed var(--line); margin: 10px 0; }
+
+.ctl-history { display: flex; flex-direction: column; gap: 6px; max-height: 240px; overflow: auto; }
+
+.theme-row { margin-top: 10px; }
+.ctl-pw-row { margin-top: 10px; }

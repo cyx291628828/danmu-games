@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成语接龙 · 直播互动 · 展示屏</title>
+<link rel="stylesheet" href="/common/base.css">
+<link rel="stylesheet" href="stage.css">
+</head>
+<body data-view="stage">
+
+<!-- ═══════════ 展示屏 stage（9:16 竖屏投屏 / OBS 浏览器源） ═══════════ -->
+<div id="view-stage">
+  <div class="phone phone-cy" id="cyPhone" style="display:none;">
+    <header class="top">
+      <div class="game-title">成语接龙 · 直播互动</div>
+      <div class="round-badge" id="cyBadge">盖楼 0 层</div>
+    </header>
+
+    <div class="cy-cd">
+      <span id="cyCdNum" class="cy-cd-num">--</span>
+      <span class="cy-cd-unit">秒</span>
+    </div>
+    <div class="cy-prog">
+      <div class="cy-prog-track"><div class="cy-prog-fill" id="cyProgFill"></div></div>
+    </div>
+    <div class="cy-goal">
+      <div class="cy-goal-title" id="cyGoalTitle">等待开局…</div>
+      <div class="cy-goal-sub" id="cyGoalSub">弹幕发 4 字成语即可盖楼</div>
+      <div class="cy-goal-jy" id="cyGoalJy" style="display:none"></div>
+    </div>
+
+    <!-- 实时发送（固定高度，位于主体上方） -->
+    <div class="cy-feed" id="cyFeed"></div>
+
+    <!-- 计分规则说明（动态显示配置值） -->
+    <div class="cy-foot" id="cyFoot"></div>
+
+    <!-- 适配度-系数 -->
+    <div class="cy-legend">
+      <span><span class="cy-tag cy-tag-same">同字</span><b>×1.0</b></span>
+      <span><span class="cy-tag cy-tag-tone">同音</span><b>×0.75</b></span>
+      <span><span class="cy-tag cy-tag-rhyme">谐韵</span><b>×0.5</b></span>
+    </div>
+
+    <div class="cy-body">
+      <div class="cy-col">
+        <div class="cy-col-title">积木大厦 · <span id="cyFloorCount">0</span> 层</div>
+        <div class="cy-tower" id="cyTower"></div>
+      </div>
+      <div class="cy-col">
+        <div class="cy-col-title">排行榜</div>
+        <div class="cy-board" id="cyBoard"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="/common/core.js"></script>
+<script src="stage.js"></script>
+</body>
+</html>

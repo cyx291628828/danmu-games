@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>赛马竞猜 · 控制台</title>
+<link rel="stylesheet" href="/common/base.css">
+<link rel="stylesheet" href="control.css">
+</head>
+<body data-view="game-control">
+
+<!-- ═══════════ 赛马竞猜 · 主播台控制台（嵌在主播台框架 iframe 中，也可独立打开） ═══════════
+     按功能分组（.ctl-group 公共样式）：
+     局面控制 / 接入与模拟 / 实时状态 / 本局投注 / 结算与战报 / 钱包工具 /
+     模拟观众押注 / AI 语音播报 / 游戏配置 / 历史战报 / 榜单
+-->
+<section class="ctl-panel">
+  <h1 class="ctl-game-title">🐎 赛马竞猜 · 控制台</h1>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">🎯 局面控制</div>
+    <div class="btn-row">
+      <button id="btnStart" class="btn primary">开新一局（下注）</button>
+      <button id="btnSkipBet" class="btn">跳过下注·立即开赛</button>
+      <button id="btnPause" class="btn">暂停</button>
+      <button id="btnResume" class="btn">继续</button>
+      <button id="btnEnd" class="btn warn">结束并退还注额</button>
+      <button id="btnReport" class="btn accent">🔊 播报战报</button>
+      <span id="narStatus" class="nar-status"></span>
+    </div>
+    <div class="ctl-hint">下注期可随时「跳过」提前开赛；「结束」会把本局所有人的注额原额退回钱包，不会吞筹码。</div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">📡 接入与模拟 <span class="ctl-group-flag">模拟事件与真实弹幕走同一条管线</span></div>
+    <!-- 直播间筛选 + 模拟观众套件（common core.js mountFeedTools 渲染） -->
+    <div id="ctlFeedTools"></div>
+    <div class="ctl-pw-row" data-power-pin></div>
+    <!-- 展示屏主题选择器：core.js 自动挂载 -->
+    <div class="theme-row" data-theme-picker data-game="race"></div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">📊 实时状态</div>
+    <div id="ctlStatus" class="ctl-status">状态: 空闲</div>
+    <div class="rc-stats">
+      <div class="rc-stat"><span class="k">彩池</span><span class="v" id="stPool">0</span></div>
+      <div class="rc-stat"><span class="k">上局滚存</span><span class="v" id="stCarry">0</span></div>
+      <div class="rc-stat"><span class="k">本局注额</span><span class="v" id="stStaked">0</span></div>
+      <div class="rc-stat"><span class="k">注数</span><span class="v" id="stBets">0</span></div>
+      <div class="rc-stat"><span class="k">下注人数</span><span class="v" id="stBettors">0</span></div>
+      <div class="rc-stat"><span class="k">剩余</span><span class="v" id="stRemain">--</span></div>
+    </div>
+    <div class="rc-track-mini" id="miniTrack"></div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">🎭 模拟观众押注 <span class="ctl-group-flag">快速把彩池做起来</span></div>
+    <div class="sim-row">
+      <label>昵称 <input id="simBetName" type="text" placeholder="模拟观众" value="模拟观众"></label>
+      <label>马号
+        <select id="simBetHorse"></select>
+      </label>
+      <label>注数 <input id="simBetCount" type="number" min="1" max="5" value="1"></label>
+      <button id="btnSimBet" class="btn secondary">模拟押注</button>
+      <button id="btnSimBetAll" class="btn secondary tiny">随机撒 5 注</button>
+    </div>
+    <div class="ctl-hint">模拟押注走与真实弹幕完全相同的下注管线（含余额校验、限流、注数上限），可用于验证派彩逻辑。</div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">💰 钱包工具 <span class="ctl-group-flag">筹码仅本玩法流通，与荣誉分不可互兑</span></div>
+    <div class="sim-row">
+      <label>查询昵称 <input id="walletName" type="text" placeholder="输入观众昵称关键字"></label>
+      <button id="btnWalletQuery" class="btn secondary">查询</button>
+      <button id="btnResetWallet" class="btn warn">全部重置为开户筹码</button>
+    </div>
+    <div id="walletResult" class="wallet-result">
+      <div class="ctl-hint">输入昵称点「查询」，可对单个观众手动加减筹码（如活动赠送、误扣补偿）。</div>
+    </div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">🔊 AI 语音播报 <span class="ctl-group-flag">通用模块 · 一次配置，所有游戏通用</span></div>
+    <!-- 播报面板由 common/public/broadcast.js 渲染 -->
+    <div id="bcPanel"></div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">⚙️ 游戏配置</div>
+    <div class="cfg-row" id="cfgForm">
+      <!-- 配置表单由 control.js 动态生成（按功能分组） -->
+    </div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">🏁 本局结算</div>
+    <div id="ctlResult" class="ctl-history"></div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">🏆 榜单</div>
+    <div class="rc-boards">
+      <div class="rc-board">
+        <div class="rc-board-title">💎 筹码富家榜</div>
+        <div id="walletBoard" class="rc-board-body"></div>
+      </div>
+      <div class="rc-board">
+        <div class="rc-board-title">🏅 总荣誉榜（跨游戏）</div>
+        <div id="honorBoard" class="rc-board-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">🕘 历史战报</div>
+    <div id="ctlHistory" class="ctl-history"></div>
+  </div>
+</section>
+
+<script src="/common/core.js"></script>
+<script src="/common/broadcast.js"></script>
+<script src="control.js"></script>
+</body>
+</html>

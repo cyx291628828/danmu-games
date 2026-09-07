@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>谐音梗猜词 · 图片效果预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+    min-height: 100vh; color: #eee; padding: 40px 20px;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  h1 { text-align: center; font-size: 30px; margin-bottom: 8px; color: #ffd166; }
+  .sub { text-align: center; color: #8d99ae; font-size: 14px; margin-bottom: 36px; line-height: 1.8; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 28px; }
+  .card {
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+    border-radius: 20px; padding: 24px; backdrop-filter: blur(6px);
+  }
+  .card.wide { grid-column: 1 / -1; }
+  .head { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+  .num { font-size: 13px; color: #8d99ae; }
+  .badge { font-size: 12px; padding: 3px 12px; border-radius: 999px; font-weight: bold; }
+  .badge.ty  { background: #2a9d8f33; color: #7ee8d3; border: 1px solid #2a9d8f; }
+  .badge.xy  { background: #e76f5133; color: #ffb4a2; border: 1px solid #e76f51; }
+  .badge.cy  { background: #b5890033; color: #ffd166; border: 1px solid #b58900; }
+  .imgs { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 18px; }
+  .thing { text-align: center; }
+  .thing img {
+    width: 130px; height: 130px; border-radius: 18px; object-fit: cover;
+    background: #fff; border: 3px solid rgba(255,255,255,.25);
+    box-shadow: 0 6px 18px rgba(0,0,0,.35);
+  }
+  .card.wide .thing img { width: 150px; height: 150px; }
+  .thing .cap { margin-top: 8px; font-size: 13px; color: #cfd8e3; }
+  .thing .cap b { color: #ffd166; font-size: 14px; }
+  .plus { font-size: 30px; color: #8d99ae; font-weight: 300; }
+  .arrow { font-size: 26px; color: #ffd166; }
+  .ans {
+    text-align: center; background: rgba(255,209,102,.1); border: 1px dashed rgba(255,209,102,.4);
+    border-radius: 14px; padding: 14px;
+  }
+  .ans .word { font-size: 30px; font-weight: 900; color: #fff; letter-spacing: 6px; }
+  .ans .word.cy { letter-spacing: 3px; }
+  .ans .py { font-size: 14px; color: #ffd166; margin-top: 4px; }
+  .ans .map { font-size: 13px; color: #a8b2c1; margin-top: 6px; }
+  .footer { text-align: center; color: #6c7a89; font-size: 13px; margin-top: 40px; line-height: 2; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎯 谐音梗猜词 · 图片效果预览</h1>
+  <p class="sub">
+    图片由免费 AI 生图（Flux 模型）批量生成，512×512，统一提示词 + 个别形状修正，共 16 张 · 用时约 1 分钟 · 单张成本 0 元<br>
+    每张图对应答案的一个字（图下标注：事物 + 拼音），按顺序连读即得答案
+  </p>
+
+  <div class="grid" id="grid"></div>
+
+  <p class="footer">
+    出题逻辑：答案按字拆拼音 → 从"可画事物字典"找同音/谐音事物 → 每字一图<br>
+    本页 7 道均为自动配图成功样例 · 素材目录 res/xieyin_demo/
+  </p>
+</div>
+
+<script>
+const PUZZLES = [
+  { imgs: ['camera','fish'], caps: [['相机','xiāng'],['鱼','yú']],
+    word: '相遇', py: 'xiāng yù', type: 'ty', typeLabel: '同音', map: '相机＝相 · 鱼＝鱼（读音全同）' },
+  { imgs: ['honey','moon'], caps: [['蜂蜜','mì'],['月亮','yuè']],
+    word: '蜜月', py: 'mì yuè', type: 'ty', typeLabel: '同音', map: '蜂蜜＝蜜 · 月亮＝月（读音全同）' },
+  { imgs: ['mountain','sheep'], caps: [['山','shān'],['绵羊','yáng']],
+    word: '山羊', py: 'shān yáng', type: 'ty', typeLabel: '同音', map: '山＝山 · 羊＝羊（读音全同，送分题）' },
+  { imgs: ['pear','pearl'], caps: [['梨','lí'],['珍珠','zhēn']],
+    word: '立正', py: 'lì zhèng', type: 'xy', typeLabel: '谐音', map: '梨≈立（lí/lì） · 珍≈正（zhēn/zhèng，n/eng 谐音）' },
+  { imgs: ['eye','bolt'], caps: [['眼睛','yǎn'],['闪电（雷）','léi']],
+    word: '眼泪', py: 'yǎn lèi', type: 'xy', typeLabel: '谐音', map: '眼＝眼 · 雷≈泪（léi/lèi，同音不同调）' },
+  { imgs: ['fire','apple'], caps: [['火焰','huǒ'],['苹果（果）','guǒ']],
+    word: '火锅', py: 'huǒ guō', type: 'xy', typeLabel: '谐音', map: '火＝火 · 果≈锅（guǒ/guō）' },
+  { imgs: ['monkey','milk','car','mountain'], caps: [['猴子','hóu'],['牛奶','nǎi'],['车（象棋读 jū）','jū'],['山','shān']],
+    word: '后来居上', py: 'hòu lái jū shàng', type: 'cy', typeLabel: '四字成语', wide: true,
+    map: '猴≈后（hóu/hòu） · 奶≈来（nǎi/lái，n/l 谐音） · 车＝居（jū，象棋读法） · 山≈上（shān/shàng）' },
+];
+
+const badge = t => `<span class="badge ${t.type}">${t.typeLabel}</span>`;
+document.getElementById('grid').innerHTML = PUZZLES.map((p, i) => `
+  <div class="card${p.wide ? ' wide' : ''}">
+    <div class="head"><span class="num">谜题 ${i + 1}</span>${badge(p)}</div>
+    <div class="imgs">
+      ${p.imgs.map((f, j) => `
+        ${j > 0 ? '<span class="plus">＋</span>' : ''}
+        <div class="thing">
+          <img src="${f}.png" alt="${p.caps[j][0]}">
+          <div class="cap"><b>${p.caps[j][0]}</b><br>${p.caps[j][1]}</div>
+        </div>`).join('')}
+    </div>
+    <div class="ans">
+      <div class="word${p.wide ? ' cy' : ''}">${[...p.word].join(' ')}</div>
+      <div class="py">${p.word} · ${p.py}</div>
+      <div class="map">${p.map}</div>
+    </div>
+  </div>`).join('');
+</script>
+</body>
+</html>

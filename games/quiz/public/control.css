@@ -1,0 +1,61 @@
+/* ══════════════════════════════════════════════════════════════════
+   control.css — 答题竞猜 · 主播台专属样式（games/quiz/public）
+   主播台只引 /common/base.css，本文件补题库多选下拉等专属样式
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── 题库多选下拉（分类 / 难度） ── */
+/* .cfg-row 是 flex-wrap 容器：不显式给宽度的话 .ms 会被压到内容最小宽度，
+   而面板用 left:0;right:0 贴着按钮，就会跟着变窄、文字看不全 */
+.ms { position: relative; flex: 0 1 200px; }
+
+.ms-btn {
+  width: 100%; text-align: left; cursor: pointer;
+  padding: 7px 10px; border-radius: 8px; font-size: 13px;
+  background: var(--cell-bg); color: var(--text);
+  border: 1px solid var(--line);
+  display: flex; align-items: center; gap: 6px;
+}
+.ms-btn:hover { border-color: var(--accent); }
+.ms-btn .ms-label {
+  flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ms-btn .ms-caret { flex: 0 0 auto; color: var(--dim); font-size: 9px; }
+
+/* 面板不再与按钮同宽（去掉 right:0）：改为按内容撑开，保证选项文字完整 */
+.ms-panel {
+  position: absolute; z-index: 60; top: calc(100% + 4px); left: 0;
+  min-width: 100%; width: max-content; max-width: 320px;
+  max-height: 236px; overflow-y: auto;
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 10px; padding: 6px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+}
+.ms-panel.hidden { display: none; }
+
+.ms-row {
+  display: flex; align-items: center; gap: 7px;
+  padding: 5px 7px; border-radius: 7px;
+  font-size: 12.5px; color: var(--text); cursor: pointer;
+}
+.ms-row:hover { background: var(--cell-bg); }
+.ms-row input { accent-color: var(--accent); cursor: pointer; flex: 0 0 auto; }
+.ms-row .ms-nm { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ms-row .ms-ct { flex: 0 0 auto; color: var(--dim); font-size: 11px; font-variant-numeric: tabular-nums; }
+
+/* 「全部」行：与下方选项分隔 */
+.ms-row.ms-all {
+  font-weight: 600; border-bottom: 1px solid var(--line);
+  margin-bottom: 4px; padding-bottom: 7px; border-radius: 7px 7px 0 0;
+}
+
+.ms-hint { margin-top: 5px; font-size: 11px; color: var(--dim); }
+.ms-hint b { color: var(--gold); font-variant-numeric: tabular-nums; }
+
+/* ── 语音设置（语速/音高滑块） ── */
+.cfg-range { display: flex; align-items: center; gap: 8px; width: 100%; }
+.cfg-range input[type="range"] { flex: 1; min-width: 120px; accent-color: var(--accent); cursor: pointer; }
+.tts-val {
+  flex: 0 0 auto; min-width: 34px; text-align: right;
+  font-variant-numeric: tabular-nums; font-weight: 600; color: var(--gold);
+  font-size: 12px;
+}

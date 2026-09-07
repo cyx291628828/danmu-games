@@ -1,0 +1,56 @@
+/* ══════════════════════════════════════════════════════════════════
+   control.css — 主播台框架壳样式（host/public）
+   只管框架：左侧导航 + 顶部弹幕接入栏 + iframe 游戏控制台容器
+   ══════════════════════════════════════════════════════════════════ */
+.ctl-layout { display: flex; min-height: 100dvh; }
+.ctl-side {
+  flex: 0 0 212px; padding: 20px 10px;
+  background: var(--panel); border-right: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 14px;
+}
+.ctl-side-title { font-size: 15px; font-weight: 500; color: var(--text); padding: 0 12px; }
+.ctl-nav { display: flex; flex-direction: column; gap: 4px; }
+.ctl-nav-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; border-radius: 8px; cursor: pointer;
+  font-size: 14px; color: var(--text); white-space: nowrap;   /* 名称永不换行 */
+}
+.ctl-nav-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.ctl-nav-item:hover { background: var(--panel2); }
+.ctl-nav-item-active { background: var(--panel2); border: 1px solid var(--accent); }
+.ctl-nav-item-off { opacity: .55; }
+.ctl-nav-item-off .ctl-nav-icon { filter: grayscale(1); }
+/* 导航电源按钮：⏻=开启中（点击关闭） ◉=已关闭（点击开启） */
+.ctl-pw {
+  flex: 0 0 auto; width: 20px; height: 20px; line-height: 18px;
+  margin-left: 2px; padding: 0; border: 1px solid var(--line2); border-radius: 6px;
+  background: transparent; color: var(--green); cursor: pointer; font-size: 11px;
+}
+.ctl-nav-item-off .ctl-pw { color: var(--dim); border-style: dashed; }
+.ctl-nav-icon { width: 20px; text-align: center; }
+/* 导航状态点：绿=进行中（呼吸闪烁）· 蓝=暂停 · 金=结算中/已结算 · 灰=空闲 */
+.ctl-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); margin-left: auto; flex: 0 0 auto; }
+.ctl-dot-live { background: var(--green); box-shadow: 0 0 6px rgba(52, 211, 153, 0.8); animation: dotPulse 1.6s ease-in-out infinite; }
+.ctl-dot-paused { background: var(--accent); }
+.ctl-dot-revealed { background: var(--gold); }
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.78); }
+}
+
+.ctl-main { flex: 1; min-width: 0; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+/* 弹幕接入信息条（框架级，切换游戏不变） */
+.ctl-danmu-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 8px 14px; }
+.ctl-danmu-bar .ctl-conn { font-size: 13px; font-weight: 600; color: var(--accent); }
+.ctl-danmu-bar .ctl-stage-link { font-size: 12px; color: var(--sub); }
+.ctl-danmu-bar .ctl-stage-link a { color: var(--accent); text-decoration: none; font-weight: 500; }
+.ctl-danmu-bar .ctl-stage-link a:hover { text-decoration: underline; }
+.ctl-danmu-bar .ctl-tip { padding: 0; font-size: 12px; color: var(--sub); }
+.ctl-danmu-bar .ctl-tip b { color: var(--accent); }
+
+/* 游戏控制台 iframe：撑满剩余空间，页面内部自行滚动 */
+.game-frame {
+  flex: 1; min-height: 0; width: 100%;
+  border: 1px solid var(--line); border-radius: 14px;
+  background: var(--bg);
+}

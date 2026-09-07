@@ -1,0 +1,50 @@
+{
+  "roundIntervalSec": 220,
+  "resultShowSec": 10,
+  "autoNextRound": true,
+  "guessPattern": "loose",
+  "rateLimitSec": 1,
+  "maxGuessesPerUserPerRound": 40,
+  "baseScorePerWin": 100,
+  "digitCount": 4,
+  "answerRevealSec": [
+    150,
+    180,
+    -1,
+    -1
+  ],
+  "clueCond": [
+    {
+      "mode": "time",
+      "value": 60
+    },
+    {
+      "mode": "time",
+      "value": 100
+    },
+    {
+      "mode": "likes",
+      "value": 30
+    },
+    {
+      "mode": "likes",
+      "value": 60
+    }
+  ],
+  "answerLeadingZero": false,
+  "allowedRoomId": "",
+  "clueDelaySec": 0,
+  "clueIntervalSec": 25,
+  "clueMaxCount": 4,
+  "clueRevealSec": null,
+  "aiBroadcast": "off",
+  "aiApiUrl": "",
+  "aiApiKey": "",
+  "aiModel": "gpt-4o-mini",
+  "aiTimeoutSec": 8,
+  "bcAutoSpeak": true,
+  "bcEnabled": {},
+  "port": 18080,
+  "host": "0.0.0.0",
+  "displayMode": "stage"
+}

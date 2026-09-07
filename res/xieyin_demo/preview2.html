@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>谐音梗猜词 · 参考风格复刻（SVG 代码绘制版）</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"Microsoft YaHei","PingFang SC",sans-serif;
+    background:linear-gradient(135deg,#1a1a2e 0%,#16213e 60%,#0f3460 100%);
+    min-height:100vh; color:#eee; padding:40px 20px; }
+  .wrap { max-width:1180px; margin:0 auto; }
+  h1 { text-align:center; font-size:28px; color:#ffd166; margin-bottom:10px; }
+  .sub { text-align:center; color:#8d99ae; font-size:14px; line-height:1.9; margin-bottom:36px; }
+  .duo { display:flex; gap:40px; justify-content:center; flex-wrap:wrap; align-items:flex-start; }
+  .sample { text-align:center; }
+  .pcard { background:#fff; border-radius:26px; padding:12px; width:500px;
+    box-shadow:0 14px 40px rgba(0,0,0,.45); display:inline-block; text-align:left; }
+  .pcard svg.panel { width:100%; display:block; }
+  .ansline { margin-top:16px; font-size:16px; color:#ffd166; font-weight:bold; }
+  .expl { margin-top:6px; font-size:13.5px; color:#a8b2c1; line-height:1.8; max-width:500px; }
+  .aifail { margin-top:26px; padding:14px; border:1px dashed #e76f51; border-radius:14px;
+    display:flex; gap:14px; align-items:center; justify-content:flex-start; }
+  .aifail img { width:130px; border-radius:10px; display:block; }
+  .aifail .t { color:#ffb4a2; font-size:13px; line-height:1.8; text-align:left; }
+  .aifail b { color:#ff6b6b; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎯 参考图风格复刻 · SVG 代码绘制</h1>
+  <p class="sub">
+    版式：上下双格 +「这是XX / 这是＿＿」+ 成语标签进度点 · 画风：粗描边扁平贴纸（纯代码绘制，非 AI）<br>
+    优势：物体数量精确可控、画风 100% 统一、零成本秒出、永不翻车
+  </p>
+
+  <div class="duo">
+    <!-- ============ 样题A：缺一不可 ============ -->
+    <div class="sample">
+      <div class="pcard">
+        <svg class="panel" viewBox="0 0 470 268">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#fdf6a3" stroke="#2f2f45" stroke-width="3"/>
+          <g transform="translate(163,52)">
+            <g transform="translate(6,84)">
+              <rect width="150" height="44" rx="10" fill="#4a7fd4" stroke="#2f2f45" stroke-width="5"/>
+              <rect x="124" y="7" width="20" height="30" rx="5" fill="#fff" stroke="#2f2f45" stroke-width="4"/>
+              <rect x="30" y="15" width="42" height="14" rx="4" fill="#fff" opacity=".95"/>
+            </g>
+            <g transform="translate(14,42)">
+              <rect width="150" height="44" rx="10" fill="#f2b134" stroke="#2f2f45" stroke-width="5"/>
+              <rect x="124" y="7" width="20" height="30" rx="5" fill="#fff" stroke="#2f2f45" stroke-width="4"/>
+              <rect x="30" y="15" width="42" height="14" rx="4" fill="#fff" opacity=".95"/>
+            </g>
+            <g transform="translate(0,0)">
+              <rect width="150" height="44" rx="10" fill="#e35d5d" stroke="#2f2f45" stroke-width="5"/>
+              <rect x="124" y="7" width="20" height="30" rx="5" fill="#fff" stroke="#2f2f45" stroke-width="4"/>
+              <circle cx="62" cy="17" r="4" fill="#2f2f45"/>
+              <circle cx="88" cy="17" r="4" fill="#2f2f45"/>
+              <path d="M62,26 Q75,37 88,26" stroke="#2f2f45" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <circle cx="50" cy="25" r="6" fill="#f7a6a6" opacity=".75"/>
+              <circle cx="100" cy="25" r="6" fill="#f7a6a6" opacity=".75"/>
+            </g>
+          </g>
+          <text x="235" y="238" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是<tspan fill="#2f2f45">Book</tspan></text>
+        </svg>
+        <svg class="panel" viewBox="0 0 470 268" style="margin-top:10px;">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#aee0f5" stroke="#2f2f45" stroke-width="3"/>
+          <g transform="translate(168,88)">
+            <g transform="translate(8,44)">
+              <rect width="150" height="44" rx="10" fill="#4a7fd4" stroke="#2f2f45" stroke-width="5"/>
+              <rect x="124" y="7" width="20" height="30" rx="5" fill="#fff" stroke="#2f2f45" stroke-width="4"/>
+              <rect x="30" y="15" width="42" height="14" rx="4" fill="#fff" opacity=".95"/>
+            </g>
+            <g transform="translate(0,0)">
+              <rect width="150" height="44" rx="10" fill="#f2b134" stroke="#2f2f45" stroke-width="5"/>
+              <rect x="124" y="7" width="20" height="30" rx="5" fill="#fff" stroke="#2f2f45" stroke-width="4"/>
+              <rect x="30" y="15" width="42" height="14" rx="4" fill="#fff" opacity=".95"/>
+            </g>
+          </g>
+          <text x="150" y="238" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是</text>
+          <g fill="#2f2f45">
+            <rect x="185" y="228" width="30" height="6" rx="3"/><rect x="225" y="228" width="30" height="6" rx="3"/>
+            <rect x="265" y="228" width="30" height="6" rx="3"/><rect x="305" y="228" width="30" height="6" rx="3"/>
+          </g>
+        </svg>
+        <div style="padding:12px 8px 4px; display:flex; align-items:center; gap:16px;">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#8c7ae6"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">成语</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16">
+            <circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/>
+            <circle cx="60" cy="8" r="6" fill="#f6c344"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/>
+            <circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/>
+            <circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/>
+          </svg>
+        </div>
+      </div>
+      <div class="ansline">答案：缺一不可</div>
+      <div class="expl">3 本书 → 2 本书 ＝「缺一」，Book 谐音「不可」→ 缺一 + 不可</div>
+
+      <div class="aifail">
+        <img src="ai_book3.png" alt="AI直出3本书">
+        <img src="ai_book2.png" alt="AI直出2本书">
+        <div class="t"><b>AI 直出同题（免费 Flux）：</b><br>书数不对、画成书架、底色跑偏、无法控制<br>「恰好 3 本 vs 2 本」——数量类谜面是扩散模型硬伤</div>
+      </div>
+    </div>
+
+    <!-- ============ 样题B：七上八下 ============ -->
+    <div class="sample">
+      <div class="pcard">
+        <svg class="panel" viewBox="0 0 470 268">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#ffe0b2" stroke="#2f2f45" stroke-width="3"/>
+          <g fill="#ff9f43" stroke="#2f2f45" stroke-width="5" stroke-linejoin="round">
+            <g transform="translate(95,34)"><path d="M28,0 L56,30 L40,30 L40,64 L16,64 L16,30 L0,30 Z"/></g>
+            <g transform="translate(165,34)"><path d="M28,0 L56,30 L40,30 L40,64 L16,64 L16,30 L0,30 Z"/></g>
+            <g transform="translate(235,34)"><path d="M28,0 L56,30 L40,30 L40,64 L16,64 L16,30 L0,30 Z"/></g>
+            <g transform="translate(305,34)"><path d="M28,0 L56,30 L40,30 L40,64 L16,64 L16,30 L0,30 Z"/></g>
+            <g transform="translate(130,124)"><path d="M28,0 L56,30 L40,30 L40,64 L16,64 L16,30 L0,30 Z"/></g>
+            <g transform="translate(200,124)"><path d="M28,0 L56,30 L40,30 L40,64 L16,64 L16,30 L0,30 Z"/></g>
+            <g transform="translate(270,124)"><path d="M28,0 L56,30 L40,30 L40,64 L16,64 L16,30 L0,30 Z"/></g>
+          </g>
+          <text x="235" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是 7UP</text>
+        </svg>
+        <svg class="panel" viewBox="0 0 470 268" style="margin-top:10px;">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#c8f0d8" stroke="#2f2f45" stroke-width="3"/>
+          <g fill="#54a0ff" stroke="#2f2f45" stroke-width="5" stroke-linejoin="round">
+            <g transform="translate(95,34)"><path d="M28,64 L0,34 L16,34 L16,0 L40,0 L40,34 L56,34 Z"/></g>
+            <g transform="translate(165,34)"><path d="M28,64 L0,34 L16,34 L16,0 L40,0 L40,34 L56,34 Z"/></g>
+            <g transform="translate(235,34)"><path d="M28,64 L0,34 L16,34 L16,0 L40,0 L40,34 L56,34 Z"/></g>
+            <g transform="translate(305,34)"><path d="M28,64 L0,34 L16,34 L16,0 L40,0 L40,34 L56,34 Z"/></g>
+            <g transform="translate(130,124)"><path d="M28,64 L0,34 L16,34 L16,0 L40,0 L40,34 L56,34 Z"/></g>
+            <g transform="translate(200,124)"><path d="M28,64 L0,34 L16,34 L16,0 L40,0 L40,34 L56,34 Z"/></g>
+            <g transform="translate(270,124)"><path d="M28,64 L0,34 L16,34 L16,0 L40,0 L40,34 L56,34 Z"/></g>
+          </g>
+          <text x="150" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是</text>
+          <g fill="#2f2f45"><rect x="195" y="230" width="34" height="6" rx="3"/><rect x="239" y="230" width="34" height="6" rx="3"/><rect x="283" y="230" width="34" height="6" rx="3"/><rect x="327" y="230" width="34" height="6" rx="3"/></g>
+        </svg>
+        <div style="padding:12px 8px 4px; display:flex; align-items:center; gap:16px;">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#8c7ae6"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">成语</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16">
+            <circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/>
+            <circle cx="60" cy="8" r="6" fill="#f6c344"/><circle cx="85" cy="8" r="6" fill="#f6c344"/>
+            <circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/>
+            <circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/>
+          </svg>
+        </div>
+      </div>
+      <div class="ansline">答案：七上八下</div>
+      <div class="expl">7 个向上箭头，UP＝上 →「7 上」；8 个向下箭头 →「8 下」（箭头数量由代码精确控制）</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

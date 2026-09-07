@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>弹幕数独 · 界面草图（Mockup）</title>
+<style>
+/* ═══ 设计令牌：与 danmu-games/common/public/base.css 暗金主题一致 ═══ */
+:root{
+  --bg:#0e1117; --panel:#171c26; --panel2:#1e2532; --line:#2a3344; --line2:#222b3b;
+  --text:#f2f4f8; --sub:#98a2b3; --dim:#78839a;
+  --accent:#4da3ff; --gold:#ffc53d; --green:#34d399; --red:#f87171;
+  --gold-mid:#ffb02e; --bezel:#05070b; --cell-bg:#10141d;
+  --glow-rgb:255,197,61;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;padding:24px 28px 40px}
+a{color:var(--accent)}
+
+/* ═══ 页眉 ═══ */
+.page-head{max-width:1180px;margin:0 auto 20px}
+.page-head h1{font-size:24px;letter-spacing:1px}
+.page-head h1 .en{color:var(--dim);font-size:14px;font-weight:normal;margin-left:10px}
+.page-head p{color:var(--sub);font-size:13px;margin-top:6px;line-height:1.7}
+.page-head .tools{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
+.mock-wrap{max-width:1180px;margin:0 auto;display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start}
+.mock-col{display:flex;flex-direction:column;align-items:center;gap:10px}
+.mock-label{color:var(--dim);font-size:12px;letter-spacing:2px}
+
+/* ═══ 9:16 手机框 ═══ */
+.phone{width:400px;height:780px;background:var(--bg);border:9px solid var(--bezel);
+  border-radius:38px;overflow:hidden;position:relative;box-shadow:0 18px 50px rgba(0,0,0,.55);
+  display:flex;flex-direction:column;padding:12px 12px 10px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.game-title{font-size:15px;font-weight:700;letter-spacing:1px}
+.round-badge{background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+  padding:3px 9px;font-size:11px;color:var(--gold);letter-spacing:1px;white-space:nowrap}
+
+/* 状态行：倒计时 / 进度 / 点赞充能 */
+.stat-row{display:flex;align-items:center;gap:8px;margin-top:7px}
+.stat{display:flex;align-items:center;gap:4px;background:var(--panel2);border:1px solid var(--line);
+  border-radius:10px;padding:3px 8px;font-size:11px;color:var(--sub);white-space:nowrap}
+.stat b{color:var(--text);font-size:12px}
+.stat .cd-b{color:var(--gold);font-size:14px;font-weight:800;
+  text-shadow:0 0 12px rgba(var(--glow-rgb),.4);font-variant-numeric:tabular-nums}
+.stat.like{flex:1;min-width:0}
+.stat.like .mini{flex:1;height:6px;background:var(--cell-bg);border-radius:99px;overflow:hidden;min-width:24px}
+.stat.like .mini i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold-mid),var(--gold));
+  border-radius:99px;transition:width .4s}
+.stat.like.charged{border-color:rgba(var(--glow-rgb),.6)}
+.stat.like.charged .mini i{box-shadow:0 0 8px rgba(var(--glow-rgb),.8)}
+.stat.like.flash{animation:likeFlash .5s}
+@keyframes likeFlash{50%{background:rgba(var(--glow-rgb),.18)}}
+.prog{height:6px;background:var(--cell-bg);border-radius:99px;margin-top:6px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--gold-mid),var(--gold));transition:width .5s}
+
+/* ═══ 数独盘面 ═══ */
+.board-wrap{width:348px;margin:8px auto 0;flex:none;
+  display:grid;grid-template-columns:14px 1fr;grid-template-rows:14px 1fr;gap:3px}
+.bcorner{grid-area:1/1}
+.bcol-labels{grid-area:1/2;display:grid;grid-template-columns:repeat(9,1fr);gap:2px;padding:0 2px}
+.brow-labels{grid-area:2/1;display:grid;grid-template-rows:repeat(9,1fr);gap:2px;padding:2px 0}
+.bcol-labels span,.brow-labels span{display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:600;color:var(--dim);font-variant-numeric:tabular-nums}
+.board{grid-area:2/2;aspect-ratio:1;position:relative;
+  display:grid;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(9,1fr);
+  gap:2px;background:var(--line2);border:2px solid var(--line);border-radius:6px;padding:0}
+.bdiv{position:absolute;background:#46536b;z-index:3;pointer-events:none}
+.bdiv.v{top:0;bottom:0;width:3px}
+.bdiv.h{left:0;right:0;height:3px}
+.cell{position:relative;background:var(--cell-bg);display:flex;align-items:center;justify-content:center;border-radius:2px}
+.cell.alt{background:#131826}
+.cell .num{font-size:18px;font-weight:800;line-height:1}
+.cell.given .num{color:var(--text)}
+.cell.filled{background:rgba(var(--glow-rgb),.10)}
+.cell.alt.filled{background:rgba(var(--glow-rgb),.13)}
+.cell.filled .num{color:var(--gold);text-shadow:0 0 8px rgba(var(--glow-rgb),.45)}
+/* 观众头像角标：默认右上角（可配置左上），小圆不遮数字 */
+.cell .cav{position:absolute;top:-2px;right:-2px;width:14px;height:14px;border-radius:50%;
+  border:1.5px solid var(--bg);display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;color:#fff;overflow:hidden;z-index:2}
+.cell .cav img{width:100%;height:100%;object-fit:cover}
+/* 触发来源徽章：👍 点赞触发 / 🎁 礼物触发 / 💡 提示，右下角小标 */
+.cell .cbadge{position:absolute;bottom:-2px;right:-2px;width:11px;height:11px;border-radius:50%;
+  background:var(--panel);border:1px solid var(--line);font-size:7px;line-height:9px;
+  text-align:center;z-index:2}
+.cell.pop .num{animation:cellPop .55s cubic-bezier(.2,1.5,.4,1)}
+.cell.pop{animation:cellBgPop .8s}
+@keyframes cellPop{0%{transform:scale(.2)}60%{transform:scale(1.35)}100%{transform:scale(1)}}
+@keyframes cellBgPop{0%{background:rgba(var(--glow-rgb),.65)}100%{}}
+.cell.bad{animation:cellBad .6s}
+@keyframes cellBad{0%,60%{background:rgba(248,113,113,.5)}100%{}}
+.cell.dup{box-shadow:inset 0 0 0 2px rgba(var(--glow-rgb),.5)}
+
+/* 教学行 */
+.howto{margin-top:8px;text-align:center;font-size:10.5px;color:var(--sub);line-height:1.55}
+.howto b{color:var(--gold)}
+
+/* 下部：操作记录 | 排行榜（与猜数字 stage 同版式：左右各半） */
+.lower{display:flex;gap:8px;margin-top:8px;flex:1;min-height:0}
+.col-log,.col-board{display:flex;flex-direction:column;min-width:0}
+.col-log{flex:0 0 50%}
+.col-board{flex:1}
+.col-log h3,.col-board h3{font-size:10.5px;color:var(--sub);font-weight:400;
+  margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.col-log h3 small,.col-board h3 small{color:var(--dim);font-size:9px}
+.log-box{flex:1;min-height:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:6px 8px;overflow:hidden;display:flex;flex-direction:column;gap:3px}
+.log-box .item{font-size:10px;color:var(--sub);display:flex;gap:4px;align-items:flex-start;
+  animation:fadeIn .35s;line-height:1.4}
+.log-box .item .t{color:var(--dim);font-size:9px;flex:none;font-variant-numeric:tabular-nums;padding-top:1px}
+.log-box .item .who{color:var(--text);font-weight:600}
+.log-box .item.hot{color:var(--gold)}
+.log-box .item.err{color:var(--red)}
+.log-box .item .pos{color:var(--accent);font-weight:600}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.lb-box{flex:1;min-height:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:6px 8px;overflow:hidden;display:flex;flex-direction:column}
+.lb-box .rows{display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.lb-box .row{display:flex;align-items:center;gap:6px;font-size:11px;padding:2px 5px;border-radius:6px;background:var(--panel2)}
+.lb-box .rk{width:16px;height:16px;border-radius:4px;display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;background:var(--cell-bg);color:var(--dim);flex:none}
+.lb-box .row.r1 .rk{background:var(--gold);color:#17130d}
+.lb-box .row.r2 .rk{background:#c9d2e3;color:#17130d}
+.lb-box .row.r3 .rk{background:#b07a3a;color:#17130d}
+.lb-box .av{width:16px;height:16px;border-radius:50%;flex:none;display:flex;align-items:center;
+  justify-content:center;font-size:9px;font-weight:700;color:#fff;overflow:hidden}
+.lb-box .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-box .mv{flex:none;width:26px;text-align:right;color:var(--gold);font-weight:700;font-size:10px}
+.lb-box .sc{color:var(--gold);font-weight:700;flex:none;font-variant-numeric:tabular-nums}
+.lb-box .row.r1{background:linear-gradient(90deg,rgba(var(--glow-rgb),.14),transparent 72%)}
+.lb-box .row.r1 .nm{color:var(--gold)}
+.lb-box .row.enter{animation:lbSlideUp .35s ease}
+@keyframes lbSlideUp{from{transform:translateY(14px);opacity:.4}to{transform:translateY(0);opacity:1}}
+
+/* 结算横幅（预览开关控制） */
+.result-banner{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;
+  background:rgba(5,7,11,.78);backdrop-filter:blur(2px)}
+.result-banner.show{display:flex}
+.result-card{width:82%;background:linear-gradient(160deg,#2a1c10,#1c150c);border:1px solid rgba(var(--glow-rgb),.55);
+  border-radius:16px;padding:20px 16px;text-align:center;box-shadow:0 0 40px rgba(var(--glow-rgb),.28);
+  animation:bannerIn .5s cubic-bezier(.2,1.4,.4,1)}
+@keyframes bannerIn{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+.result-title{font-size:13px;letter-spacing:6px;color:var(--sub)}
+.result-win{font-size:26px;font-weight:800;margin:8px 0 4px;color:var(--gold);
+  text-shadow:0 0 22px rgba(var(--glow-rgb),.6)}
+/* 结算 Top5 榜单（MVP 皇冠 + 每人填对/错填数） */
+.result-top5{margin:10px auto 4px;width:88%;display:flex;flex-direction:column;gap:4px}
+.r5-row{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:4px 8px;
+  font-size:11px;color:var(--sub);text-align:left}
+.r5-row.mvp{background:linear-gradient(90deg,rgba(var(--glow-rgb),.2),transparent 75%);
+  border-color:rgba(var(--glow-rgb),.5)}
+.r5-row .rk{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;background:rgba(0,0,0,.3);color:var(--dim);flex:none}
+.r5-row.m1 .rk{background:var(--gold);color:#17130d}
+.r5-row.m2 .rk{background:#c9d2e3;color:#17130d}
+.r5-row.m3 .rk{background:#b07a3a;color:#17130d}
+.r5-row .av{width:16px;height:16px;border-radius:50%;flex:none;display:flex;align-items:center;
+  justify-content:center;font-size:9px;font-weight:700;color:#fff}
+.r5-row .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:var(--text);font-weight:600}
+.r5-row.mvp .nm{color:var(--gold)}
+.r5-row .stt{flex:none;white-space:nowrap}
+.r5-row .stt b{color:var(--green)} .r5-row .stt b.bd{color:var(--red)}
+.r5-row .sc{flex:none;color:var(--gold);font-weight:700}
+.result-stat{margin-top:8px;font-size:11px;color:var(--sub);line-height:1.8}
+
+/* ═══ 控制台草图 ═══ */
+.console{width:640px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;
+  box-shadow:0 18px 50px rgba(0,0,0,.45)}
+.console h2{font-size:15px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.console h2 .live{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.35}}
+.sec{margin-top:12px;border-top:1px dashed var(--line2);padding-top:10px}
+.sec h4{font-size:11px;color:var(--dim);letter-spacing:2px;margin-bottom:8px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:5px 10px;font-size:12px;color:var(--sub)}
+.chip b{color:var(--text)} .chip .gd{color:var(--gold);font-weight:700}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;
+  padding:7px 14px;font-size:12.5px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:linear-gradient(160deg,var(--gold-mid),var(--gold));color:#17130d;border:none;font-weight:700}
+.btn.warn{color:var(--red);border-color:rgba(248,113,113,.45)}
+.cfg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cfg{background:var(--panel2);border:1px solid var(--line2);border-radius:9px;padding:6px 9px}
+.cfg label{font-size:10px;color:var(--dim);display:block}
+.cfg .val{font-size:13px;font-weight:700;margin-top:2px;display:flex;align-items:center;gap:6px}
+.cfg .val .on{color:var(--green);font-size:12px}
+.sim-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sim-row input{background:var(--cell-bg);border:1px solid var(--line);border-radius:9px;color:var(--text);
+  padding:7px 10px;font-size:12.5px}
+.sim-row .in-name{width:110px} .sim-row .in-dm{width:90px}
+.sim-row input::placeholder{color:var(--dim)}
+.ctl-log{display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--sub);
+  max-height:150px;overflow-y:auto;line-height:1.5}
+.ctl-log .lt{color:var(--dim);font-size:10.5px;font-variant-numeric:tabular-nums;margin-right:4px}
+.ctl-log .who{color:var(--text);font-weight:600}
+.ctl-log .hot{color:var(--gold)} .ctl-log .err{color:var(--red)} .ctl-log .pos{color:var(--accent);font-weight:600}
+.hist{font-size:12px;color:var(--sub);line-height:2}
+.hist .win{color:var(--gold);font-weight:600}
+.hist .mvp{color:var(--accent)}
+.foot-note{max-width:1180px;margin:26px auto 0;color:var(--dim);font-size:12px;line-height:1.9;
+  border-top:1px solid var(--line2);padding-top:14px}
+.foot-note b{color:var(--sub)}
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <h1>弹幕数独 · 界面草图<span class="en">Danmu Sudoku · Mockup v0.1</span></h1>
+  <p>左侧为 9:16 展示屏（OBS 投屏 / 竖屏直播伴侣），右侧为主播控制台。玩法：盘面左侧为字母行号 A-I，观众弹幕发 <b>行×列×数</b>（如 A33 = A行3列填3）抢填数独，填对 +x 分并在格子上留下头像角标；单人点赞满 N 自动随机填 1 格、送礼随机连填 m 格（都记在触发观众名下并计分）。下方为演示假数据，自动播放填盘动效直到通关结算，结算面板展示本局 Top5。</p>
+  <div class="tools">
+    <button class="btn primary" onclick="toggleDemo()">⏸ 暂停 / 继续演示</button>
+    <button class="btn" onclick="previewBanner()">👁 预览结算横幅</button>
+    <button class="btn" onclick="manualHint()">💡 模拟主播提示一格</button>
+  </div>
+</div>
+
+<div class="mock-wrap">
+
+  <!-- ═══════════ 展示屏 stage ═══════════ -->
+  <div class="mock-col">
+    <div class="mock-label">展示屏 stage.html（9:16）</div>
+    <div class="phone">
+
+      <div class="top">
+        <div class="game-title">弹幕数独 · 直播互动</div>
+        <div class="round-badge" id="roundBadge">ROUND 12 · 中等</div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat"><span>⏱</span><b class="cd-b" id="cdTxt">4:52</b></div>
+        <div class="stat">已填 <b id="fillTxt">58</b>/81</div>
+        <div class="stat like" id="likeStat">
+          <span>👍</span><span class="who" id="likerName">--</span><b id="likeTxt">0</b>/30
+          <div class="mini"><i id="likeFill"></i></div>
+        </div>
+      </div>
+      <div class="prog"><i id="progFill"></i></div>
+
+      <!-- 数独盘面：带行列坐标标记 -->
+      <div class="board-wrap">
+        <div class="bcorner"></div>
+        <div class="bcol-labels" id="colLabels"></div>
+        <div class="brow-labels" id="rowLabels"></div>
+        <div class="board" id="board">
+          <div class="bdiv v" style="left:calc((100% - 16px)/3 + 3.5px)"></div>
+          <div class="bdiv v" style="left:calc((100% - 16px)/3*2 + 9.5px)"></div>
+          <div class="bdiv h" style="top:calc((100% - 16px)/3 + 3.5px)"></div>
+          <div class="bdiv h" style="top:calc((100% - 16px)/3*2 + 9.5px)"></div>
+        </div>
+      </div>
+
+      <div class="howto">
+        弹幕发 <b>行×列×数</b>：A33 = A行3列填 3 · 填对 <b>+10 分</b> 留头像<br>
+        个人点赞满 <b>30</b> → 随机填 1 格 👍 · 送礼 → 随机连填 <b>3</b> 格 🎁 · 每 <b>20</b> 秒系统自动落 1 格 ⚙️
+      </div>
+
+      <!-- 下部：操作记录 | 排行榜（左右各半，同猜数字 stage 版式） -->
+      <div class="lower">
+        <section class="col-log">
+          <h3>操作记录</h3>
+          <div class="log-box" id="feed"></div>
+        </section>
+        <section class="col-board">
+          <h3>MVP 排行榜 <small>按MVP次数排序</small></h3>
+          <div class="lb-box"><div class="rows" id="lbRows"></div></div>
+        </section>
+      </div>
+
+      <!-- 结算横幅（通关 / 页首按钮预览）：Top5 榜单，第一名 MVP -->
+      <div class="result-banner" id="resultBanner">
+        <div class="result-card">
+          <div class="result-title" id="resTitle">本 局 通 关</div>
+          <div class="result-win" id="resWin">🧩 数独完成！</div>
+          <div class="result-top5" id="top5Box"></div>
+          <div class="result-stat" id="mvpStat">用时 2分41秒 · 弹幕填 12 · 点赞填 4 · 礼物填 3<br>MVP +50 分 · 参与观众均有积分入账</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ 主播控制台 control ═══════════ -->
+  <div class="mock-col" style="align-items:stretch">
+    <div class="mock-label" style="text-align:center">主播控制台 control.html（嵌主播台框架）</div>
+    <div class="console">
+      <h2><span class="live"></span>弹幕数独 · 控制台 <span style="color:var(--dim);font-size:11px;font-weight:normal" id="ctrlPhase">🧩 进行中 · 第 12 局</span></h2>
+
+      <div class="sec">
+        <h4>实时状态</h4>
+        <div class="chips">
+          <div class="chip">剩余 <b id="ctrlCd">4:52</b></div>
+          <div class="chip">已填 <b id="ctrlFill">58</b>/81 · 空 <b id="ctrlEmpty">23</b> 格</div>
+          <div class="chip">弹幕填 <b class="gd" id="ctrlDm">0</b> · 点赞填 <b class="gd" id="ctrlLike">0</b> · 礼物填 <b class="gd" id="ctrlGift">0</b> · 自动填 <b class="gd" id="ctrlAuto">0</b></div>
+          <div class="chip">错填 <b id="ctrlWrong">0</b>（忽略+记录）</div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h4>运行控制</h4>
+        <div class="btn-row">
+          <button class="btn primary" onclick="newRound(true)">▶ 开新一局</button>
+          <button class="btn" onclick="toggleDemo()">⏸ 暂停</button>
+          <button class="btn" onclick="manualHint()">💡 提示一格</button>
+          <button class="btn" onclick="skipRound()">⏭ 跳过本局</button>
+          <button class="btn warn" onclick="showBanner(true)">■ 结束游戏</button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h4>游戏配置（应用后实时生效并写回 config.json）</h4>
+        <div class="cfg-grid">
+          <div class="cfg"><label>难度（空格数）</label><div class="val">中等 · 23 格</div></div>
+          <div class="cfg"><label>每填对得分 x</label><div class="val">+10 分</div></div>
+          <div class="cfg"><label>弹幕限频</label><div class="val">2 秒/人</div></div>
+          <div class="cfg"><label>点赞阈值 N（单人累计）</label><div class="val">30 赞 → 随机 1 格</div></div>
+          <div class="cfg"><label>礼物触发 m</label><div class="val">随机连填 3 格</div></div>
+          <div class="cfg"><label>自动填数间隔</label><div class="val">20 秒/格（0=关）</div></div>
+          <div class="cfg"><label>错填处理</label><div class="val"><span class="on">忽略 + 日志</span></div></div>
+          <div class="cfg"><label>头像角标位置</label><div class="val">右上角（可切左上）</div></div>
+          <div class="cfg"><label>同数字高亮</label><div class="val"><span class="on">✔ 开启</span></div></div>
+          <div class="cfg"><label>每局时长</label><div class="val">6 分钟</div></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h4>模拟观众（联调）</h4>
+        <div class="sim-row">
+          <input class="in-name" id="simName" placeholder="昵称" value="路人甲">
+          <input class="in-dm" id="simDm" placeholder="如 A33">
+          <button class="btn" onclick="simDanmu()">发弹幕填格</button>
+          <button class="btn" onclick="simLike(10)">模拟点赞 ×10</button>
+          <button class="btn" onclick="simGift()">模拟送礼</button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h4>操作日志（完整版）</h4>
+        <div class="ctl-log" id="ctlLog"></div>
+      </div>
+
+      <div class="sec">
+        <h4>历史对局</h4>
+        <div class="hist">
+          第 11 局 · <span class="win">2分41秒通关</span> · MVP <span class="mvp">小龙（+120）</span> · 点赞触发 4 · 礼物触发 3<br>
+          第 10 局 · <span class="win">3分08秒通关</span> · MVP <span class="mvp">阿伟（+100）</span> · 点赞触发 5 · 礼物触发 2
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="foot-note">
+  <b>草图说明</b>：① 盘面边缘带<b>行列坐标（行 A-I / 列 1-9）</b>，观众照坐标发「行×列×数」（如 A33）抢填，只有<b>正确</b>的数才会落格：数字金色高亮 + 观众头像圆标挂在格子<b>右上角</b>（14px，不遮数字，可在配置切左上角）；② 格子右下角小徽章标记来源：👍=单人点赞满 N 随机填入、🎁=送礼随机连填 m 格、💡=主播提示、⚙️=系统自动填数，前两者记在触发观众名下并按 x 分/格计分；③ 填错不落格，仅红闪 + 日志记录（可配置忽略/扣分）；④ 状态行的「👍 进度条」展示当前累计点赞最接近阈值的观众，每次点赞的记录与累计进度也写入操作日志，满格即触发随机填；⑤ 下部「操作记录 | MVP 排行榜」左右各半（与猜数字 stage 同版式）：<b>日志最新在顶部</b>，<b>排行榜按 MVP 次数排序</b>（👑 次数 + 数独总积分两列），观众可照屏核对，控制台另存完整带时间戳日志；⑥ 每隔 N 秒（默认 60s，可配 0=关闭）系统自动落 1 个正确数，防止冷场，不记分；⑦ 通关弹结算横幅：<b>本局 Top5 榜单</b>（第一名 👑 MVP，每人显示填对数与错填数）+ 用时 / 各来源填格数；⑧ 正式版复用 base.css 主题体系（11 套换肤）、全局排行榜与获胜横幅组件，数独由「随机终盘 + 挖洞（唯一解校验）」生成，配置项落 games/sudoku/config.json 并同步 CONFIG.md。演示为自动播放：弹幕填格每 1.4s 一次，含填错演示。
+</div>
+
+<script>
+/* ═══ 演示引擎（正式实现由后端 SSE 状态驱动，此处为纯前端假数据） ═══ */
+const $=id=>document.getElementById(id);
+
+/* 经典终盘 + 挖洞盘面（58 个提示数 / 23 空格，中等难度） */
+const SOL=['534678912','672195348','198342567','859761423','426853791','713924856','961537284','287419635','345286179'];
+const GIV=['534078910','602105348','098302507','850761420','406853701','710920056','061037280','207419030','345006179'];
+const LIKE_N=30, GIFT_M=3, SCORE_X=10, AUTO_SEC=20;
+const NAMES=['小龙','阿伟','梅子','大山','小雪','峰哥','婷婷','磊子','汤圆','柚子','老猫','阿K','奶茶','圆圆','果子'];
+const COLORS=['#b91c1c','#dc2626','#ef4444','#f87171','#2563eb','#3b82f6','#60a5fa','#059669','#10b981',
+  '#d97706','#f59e0b','#a855f7','#c084fc','#ec4899','#14b8a6','#0d9488','#7c3aed','#be185d'];
+const rand=a=>a[Math.floor(Math.random()*a.length)];
+const colorOf=n=>COLORS[[...n].reduce((s,c)=>s+c.charCodeAt(0),0)%COLORS.length];
+const fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+
+let perm=[],cells=[],round=12,cd=292,cdTotal=360;
+let filled=0,scores={},roundScores={},wrongs={},paused=false,timers=[];
+let st={dm:0,like:0,gift:0,auto:0,hint:0,wrong:0};
+let likeMap={},liker=null;
+
+function buildBoard(){
+  const b=$('board');
+  b.querySelectorAll('.cell').forEach(e=>e.remove());
+  if(!$('colLabels').children.length){
+    for(let k=1;k<=9;k++){
+      const c=document.createElement('span');c.textContent=k;$('colLabels').appendChild(c);
+      const r=document.createElement('span');r.textContent=String.fromCharCode(64+k);$('rowLabels').appendChild(r);
+    }
+  }
+  cells=[];
+  for(let r=0;r<9;r++)for(let c=0;c<9;c++){
+    const d=document.createElement('div');
+    const br=Math.floor(r/3),bc=Math.floor(c/3);
+    d.className='cell'+((br+bc)%2?' alt':'');
+    const g=GIV[r][c]!=='0';
+    d.innerHTML='<span class="num">'+(g?digit(SOL[r][c]):'')+'</span>';
+    d.dataset.r=r; d.dataset.c=c;
+    if(g) d.classList.add('given'), filled++;
+    b.appendChild(d); cells.push(d);
+  }
+  updateProgress();
+}
+/* 数字重排：每局对终盘做一次 1-9 置换，同一张草图能无限开新局 */
+function digit(v){return String(perm[+v-1])}
+function shufflePerm(){
+  perm=[1,2,3,4,5,6,7,8,9];
+  for(let i=perm.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[perm[i],perm[j]]=[perm[j],perm[i]]}
+}
+function cellAt(r,c){return cells[r*9+c]}
+function empties(){return cells.filter(c=>!c.classList.contains('given')&&!c.classList.contains('filled'))}
+
+function fillCell(cell,name,badge,src){
+  const r=+cell.dataset.r+1,c=+cell.dataset.c+1,v=digit(SOL[cell.dataset.r][cell.dataset.c]);
+  cell.classList.add('filled','pop');
+  cell.querySelector('.num').textContent=v;
+  const ava=document.createElement('span'); ava.className='cav';
+  ava.style.background=colorOf(name); ava.textContent=name[0];
+  cell.appendChild(ava);
+  if(badge){const b=document.createElement('span');b.className='cbadge';b.textContent=badge;cell.appendChild(b)}
+  setTimeout(()=>cell.classList.remove('pop'),850);
+  /* 同数字高亮 */
+  cells.forEach(x=>{if(x.querySelector('.num').textContent===v)x.classList.add('dup')});
+  setTimeout(()=>cells.forEach(x=>x.classList.remove('dup')),1100);
+  filled++;
+  if(name){
+    const s=scores[name]||(scores[name]={n:0,cnt:0});s.n+=SCORE_X;s.cnt++;   // 累计榜（本局+往局）
+    const rs=roundScores[name]||(roundScores[name]={n:0,cnt:0});rs.n+=SCORE_X;rs.cnt++;   // 本局榜（结算 Top5）
+    renderLb(name);
+  }
+  updateProgress();
+  return String.fromCharCode(64+r)+c+'='+v;
+}
+
+/* ── 日志（最新在顶部） ── */
+function log(html,cls){
+  const f=$('feed'),d=document.createElement('div');
+  d.className='item'+(cls?' '+cls:'');
+  d.innerHTML='<span class="t">'+fmt(cdTotal-cd)+'</span><span>'+html+'</span>';
+  f.prepend(d); while(f.children.length>24)f.lastChild.remove();
+  const l=document.createElement('div');
+  l.innerHTML='<span class="lt">['+fmt(cdTotal-cd)+']</span>'+html;
+  $('ctlLog').prepend(l);
+  while($('ctlLog').children.length>60)$('ctlLog').lastChild.remove();
+}
+function posHtml(p){return '<span class="pos">'+p+'</span>'}
+
+/* ── MVP 排行榜（按 MVP 次数排序，同次数按积分；仅新进 Top5 播放入场动画） ── */
+let prevTop5=[];
+let mvpCnt={};   // 累计 MVP 次数（通关 MVP +1）
+function renderLb(enterName){
+  const rows=Object.entries(scores)
+    .sort((a,b)=>(mvpCnt[b[0]]||0)-(mvpCnt[a[0]]||0)||b[1].n-a[1].n).slice(0,5);
+  $('lbRows').innerHTML=rows.map(([n,s],i)=>
+    '<div class="row'+(i<3?' r'+(i+1):'')+((n===enterName&&!prevTop5.includes(n))?' enter':'')+'">'
+    +'<span class="rk">'+(i+1)+'</span>'
+    +'<span class="av" style="background:'+colorOf(n)+'">'+n[0]+'</span>'
+    +'<span class="nm">'+n+'</span>'
+    +'<span class="mv">'+(mvpCnt[n]?'👑'+mvpCnt[n]:'—')+'</span>'
+    +'<span class="sc">'+s.n+'</span></div>').join('');
+  prevTop5=rows.map(r=>r[0]);
+}
+
+/* ── 状态渲染 ── */
+function updateProgress(){
+  $('fillTxt').textContent=filled;
+  $('progFill').style.width=(filled/81*100)+'%';
+  $('ctrlFill').textContent=filled; $('ctrlEmpty').textContent=81-filled;
+  $('ctrlDm').textContent=st.dm; $('ctrlLike').textContent=st.like;
+  $('ctrlGift').textContent=st.gift; $('ctrlWrong').textContent=st.wrong;
+  const au=$('ctrlAuto'); if(au)au.textContent=st.auto;
+}
+function renderLike(){
+  const v=liker?likeMap[liker]:0;
+  $('likerName').textContent=liker||'--';
+  $('likeTxt').textContent=Math.min(v,LIKE_N);
+  $('likeFill').style.width=Math.min(v/LIKE_N*100,100)+'%';
+  $('likeStat').classList.toggle('charged',v>=LIKE_N*0.8);
+}
+
+/* ── 事件：弹幕填 / 填错 / 点赞 / 礼物 / 提示 ── */
+function tryDanmu(name){
+  if(!empties().length)return;
+  if(Math.random()<0.18){ // 演示填错：红闪不落格
+    const cell=rand(empties()),r=+cell.dataset.r+1,c=+cell.dataset.c+1;
+    cell.classList.add('bad');setTimeout(()=>cell.classList.remove('bad'),650);
+    st.wrong++;wrongs[name]=(wrongs[name]||0)+1;updateProgress();
+    log('❌ <span class="who">'+name+'</span> 填 '+posHtml(String.fromCharCode(64+r)+c)+' 不对，已忽略','err');
+    return;
+  }
+  const cell=rand(empties());
+  const p=fillCell(cell,name,null,'dm'); st.dm++;updateProgress();
+  log('✍️ <span class="who">'+name+'</span> 弹幕填对 '+posHtml(p)+' <b>+'+SCORE_X+'</b>');
+}
+function likeFill(name){
+  if(!empties().length)return;
+  const cell=rand(empties());
+  const p=fillCell(cell,name,'👍','like'); st.like++;updateProgress();
+  log('👍 <span class="who">'+name+'</span> 点赞满 '+LIKE_N+'，随机填入 '+posHtml(p)+' <b>+'+SCORE_X+'</b>','hot');
+  $('likeStat').classList.add('flash');setTimeout(()=>$('likeStat').classList.remove('flash'),550);
+}
+function giftBurst(name){
+  const n=Math.min(GIFT_M,empties().length);
+  if(!n)return;
+  const ps=[];
+  for(let i=0;i<n;i++)setTimeout(()=>{
+    if(!empties().length)return;
+    const cell=rand(empties());
+    ps.push(fillCell(cell,name,'🎁','gift')); st.gift++;updateProgress();
+  },i*450);
+  setTimeout(()=>{
+    log('🎁 <span class="who">'+name+'</span> 送出礼物，随机连填 '+n+' 格：'+ps.map(posHtml).join('、')+' <b>+'+SCORE_X*n+'</b>','hot');
+  },n*450+80);
+}
+function manualHint(){
+  if(!empties().length)return;
+  const cell=rand(empties());
+  const p=fillCell(cell,'主播','💡','hint'); st.hint++;updateProgress();
+  log('💡 主播提示一格 '+posHtml(p)+'（不计分）','hot');
+}
+/* 系统自动填数：每 AUTO_SEC 秒落一个正确数（不记分，来源徽章 ⚙️） */
+let autoTick=0;
+function autoFill(){
+  if(!empties().length)return;
+  const cell=rand(empties());
+  const p=fillCell(cell,null,'⚙️','auto'); st.auto++;updateProgress();
+  log('⚙️ 系统自动填入 '+posHtml(p)+'（每 '+AUTO_SEC+'s 自动）');
+}
+
+/* ── 主循环 ── */
+function tick(){
+  cd--;
+  if(cd<=0){cd=0;log('⏰ 时间到，本局结束','hot');finish(false);return}
+  $('cdTxt').textContent=fmt(cd);$('ctrlCd').textContent=fmt(cd);
+  /* 点赞：随机观众累计，满 N 触发随机填；进度实时进日志 */
+  if(!liker||Math.random()<0.15){liker=rand(NAMES);likeMap[liker]=likeMap[liker]||0}
+  const add=2+Math.floor(Math.random()*4);
+  likeMap[liker]+=add;
+  if(Math.random()<0.3)log('👍 <span class="who">'+liker+'</span> 点赞 +'+add+'（累计 '+likeMap[liker]+'/'+LIKE_N+'）');
+  renderLike();
+  if(likeMap[liker]>=LIKE_N){likeFill(liker);likeMap[liker]=0;liker=null;renderLike()}
+  /* 礼物：约每 14s 一次连填 */
+  if(Math.random()<1/14)giftBurst(rand(NAMES));
+  /* 系统自动填数 */
+  if(++autoTick>=AUTO_SEC){autoTick=0;autoFill()}
+}
+function startLoops(){
+  stopLoops();
+  timers.push(setInterval(tick,1000));
+  timers.push(setInterval(()=>{if(Math.random()<0.85)tryDanmu(rand(NAMES))},1400));
+}
+function stopLoops(){timers.forEach(clearInterval);timers=[]}
+function toggleDemo(){
+  paused=!paused;
+  if(paused){stopLoops();log('⏸ 演示已暂停（正式版为暂停游戏）')}
+  else{startLoops();log('▶️ 演示继续')}
+}
+
+/* ── 开局 / 结算 ── */
+function newRound(manual){
+  stopLoops();
+  filled=0;st={dm:0,like:0,gift:0,hint:0,wrong:0};
+  roundScores={};wrongs={};prevTop5=[];
+  likeMap={};liker=null;
+  shufflePerm();buildBoard();renderLike();
+  cd=cdTotal;$('cdTxt').textContent=fmt(cd);$('ctrlCd').textContent=fmt(cd);
+  showBanner(false);
+  log('▶️ <span class="who">第 '+(round)+' 局</span> 开局！快发「行×列×数」抢填，如 A33 = A行3列填3','hot');
+  renderLb();
+  startLoops();
+}
+/* 结算 Top5：本局填对榜（roundScores）+ 按人错填数（wrongs），第一名 👑 MVP */
+function top5Html(){
+  const rows=Object.entries(roundScores).sort((a,b)=>b[1].n-a[1].n).slice(0,5);
+  if(!rows.length)return '<div style="text-align:center;color:var(--dim);font-size:11px;padding:6px 0">本局暂无观众填格</div>';
+  return rows.map(([n,s],i)=>{
+    const w=wrongs[n]||0;
+    return '<div class="r5-row'+(i<3?' m'+(i+1):'')+(i===0?' mvp':'')+'">'
+      +'<span class="rk">'+(i+1)+'</span>'
+      +'<span class="av" style="background:'+colorOf(n)+'">'+n[0]+'</span>'
+      +'<span class="nm">'+(i===0?'👑 ':'')+n+'</span>'
+      +'<span class="stt">对 <b>'+s.cnt+'</b> · 错 <b class="bd">'+w+'</b></span>'
+      +'<span class="sc">+'+s.n+'</span></div>';
+  }).join('');
+}
+function finish(complete){
+  stopLoops();
+  $('resTitle').textContent=complete?'本 局 通 关':'本 局 结 束';
+  $('resWin').textContent=complete?'🧩 数独完成！':'⏰ 时间到';
+  $('top5Box').innerHTML=top5Html();
+  const top=Object.entries(roundScores).sort((a,b)=>b[1].n-a[1].n)[0];
+  $('mvpStat').innerHTML='用时 '+fmt(cdTotal-cd)+' · 弹幕填 '+st.dm+' · 点赞填 '+st.like+' · 礼物填 '+st.gift+(st.hint?' · 提示 '+st.hint:'')+(st.wrong?' · 错填 '+st.wrong:'')
+    +'<br>'+(complete?'MVP 额外 +50 分 · 本局参与观众积分已入总榜':'本局未完成，已填格积分保留');
+  showBanner(true);
+  if(complete){
+    log('🏁 <span class="who">数独通关！</span>用时 '+fmt(cdTotal-cd)+'，MVP <span class="who">'+(top?top[0]:'-')+'</span>','hot');
+    if(top){mvpCnt[top[0]]=(mvpCnt[top[0]]||0)+1;renderLb()}   // MVP 次数 +1，榜单重排
+  }
+  setTimeout(()=>{round++;$('roundBadge').textContent='ROUND '+round+' · 中等';$('ctrlPhase').textContent='🧩 进行中 · 第 '+round+' 局';newRound(false)},9000);
+}
+function showBanner(show){$('resultBanner').classList.toggle('show',show)}
+function previewBanner(){
+  $('resTitle').textContent='本 局 通 关';
+  $('resWin').textContent='🧩 数独完成！';
+  $('top5Box').innerHTML=top5Html();
+  $('mvpStat').innerHTML='本局已进行 '+fmt(cdTotal-cd)+' · 弹幕填 '+st.dm+' · 点赞填 '+st.like+' · 礼物填 '+st.gift+' · 错填 '+st.wrong
+    +'<br>通关后 MVP 额外 +50 分 · 参与观众均有积分入账';
+  showBanner(true);
+}
+function skipRound(){log('⏭ 主播跳过本局，开新一局');round++;$('roundBadge').textContent='ROUND '+round+' · 中等';$('ctrlPhase').textContent='🧩 进行中 · 第 '+round+' 局';newRound(false)}
+
+/* ── 控制台模拟观众 ── */
+function simDanmu(){
+  const name=$('simName').value.trim()||'路人甲';
+  const dm=$('simDm').value.trim().toUpperCase();
+  let r,c,v,m=dm.match(/^([A-I])([1-9])\s*(?:填|=)?\s*([1-9])$/);
+  if(m){r=m[1].charCodeAt(0)-65;c=+m[2]-1;v=+m[3];}
+  else if(/^[1-9]{3}$/.test(dm)){r=+dm[0]-1;c=+dm[1]-1;v=+dm[2];}
+  else{log('⚠️ <span class="who">'+name+'</span> 弹幕「'+(dm||'空')+'」无法解析（如 A33 或 357）','err');return}
+  const pos=String.fromCharCode(65+r)+(c+1);
+  const cell=cellAt(r,c);
+  if(cell.classList.contains('given')||cell.classList.contains('filled')){
+    log('❌ <span class="who">'+name+'</span> 填 '+posHtml(pos)+' 已有数字，无效','err');return;
+  }
+  if(digit(SOL[r][c])!=v){
+    cell.classList.add('bad');setTimeout(()=>cell.classList.remove('bad'),650);
+    st.wrong++;wrongs[name]=(wrongs[name]||0)+1;updateProgress();
+    log('❌ <span class="who">'+name+'</span> 填 '+posHtml(pos)+'='+v+' 不对，已忽略','err');return;
+  }
+  const p=fillCell(cell,name,null,'dm');st.dm++;updateProgress();
+  log('✍️ <span class="who">'+name+'</span> 弹幕填对 '+posHtml(p)+' <b>+'+SCORE_X+'</b>');
+}
+function simLike(n){
+  const name=$('simName').value.trim()||'路人甲';
+  likeMap[name]=(likeMap[name]||0)+n;
+  liker=name;renderLike();
+  log('👍 <span class="who">'+name+'</span> 点赞 +'+n+'（累计 '+likeMap[name]+'/'+LIKE_N+'）');
+  if(likeMap[name]>=LIKE_N){likeFill(name);likeMap[name]=0;renderLike()}
+}
+function simGift(){giftBurst($('simName').value.trim()||'路人甲')}
+
+/* ── 启动：预置往局积分与 MVP 次数，让榜单有历史感 ── */
+[['小龙',24],['阿伟',20],['梅子',17],['大山',13],['小雪',11],['峰哥',8],['婷婷',5]].forEach(([n,c])=>scores[n]={n:c*SCORE_X,cnt:c});
+[['小龙',3],['阿伟',2],['梅子',2],['大山',1],['小雪',1],['峰哥',1],['婷婷',1]].forEach(([n,m])=>mvpCnt[n]=m);
+renderLb();
+newRound(false);
+</script>
+</body>
+</html>

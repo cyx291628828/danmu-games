@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>谐音梗猜词 · SVG 方向扩展（6 个新机制）</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"Microsoft YaHei","PingFang SC",sans-serif;
+    background:linear-gradient(135deg,#1a1a2e 0%,#16213e 60%,#0f3460 100%);
+    min-height:100vh; color:#eee; padding:40px 20px; }
+  .wrap { max-width:1180px; margin:0 auto; }
+  h1 { text-align:center; font-size:28px; color:#ffd166; margin-bottom:10px; }
+  .sub { text-align:center; color:#8d99ae; font-size:14px; line-height:1.9; margin-bottom:36px; }
+  .grid { display:grid; grid-template-columns:repeat(2, 500px); gap:44px; justify-content:center; }
+  .pcard { background:#fff; border-radius:26px; padding:12px; width:500px;
+    box-shadow:0 14px 40px rgba(0,0,0,.45); }
+  .pcard svg.panel { width:100%; display:block; }
+  .ansline { margin-top:14px; font-size:17px; color:#ffd166; font-weight:bold; }
+  .expl { margin-top:5px; font-size:13.5px; color:#a8b2c1; line-height:1.8; margin-bottom:6px; }
+  .tag { display:inline-block; font-size:12px; color:#7ee8d3; border:1px solid #2a9d8f;
+    background:#2a9d8f33; border-radius:999px; padding:2px 10px; margin-left:8px; vertical-align:2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎯 SVG 绘制 · 6 个出题方向</h1>
+  <p class="sub">同一画风（粗描边扁平贴纸），六种不同谜题机制<br>谜面规则：只有上格显示提示「这是XXX」，下格一律只显示「这是____」，答案由观众看图自己拼出来</p>
+
+  <div class="grid">
+
+    <!-- ======== 1. 三长两短 · 纯数量 ======== -->
+    <div>
+      <div class="pcard">
+        <svg class="panel" viewBox="0 0 470 268">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#fdf6a3" stroke="#2f2f45" stroke-width="3"/>
+          <g stroke="#2f2f45" stroke-width="5">
+            <rect x="110" y="42" width="250" height="38" rx="12" fill="#e35d5d"/>
+            <rect x="110" y="94" width="250" height="38" rx="12" fill="#ff9f43"/>
+            <rect x="110" y="146" width="250" height="38" rx="12" fill="#54a0ff"/>
+          </g>
+          <text x="235" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是 3 长</text>
+        </svg>
+        <svg class="panel" viewBox="0 0 470 268" style="margin-top:10px;">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#aee0f5" stroke="#2f2f45" stroke-width="3"/>
+          <g stroke="#2f2f45" stroke-width="5">
+            <rect x="185" y="78" width="100" height="38" rx="12" fill="#ff9f43"/>
+            <rect x="185" y="130" width="100" height="38" rx="12" fill="#54a0ff"/>
+          </g>
+          <text x="150" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是</text>
+          <g fill="#2f2f45"><rect x="195" y="230" width="34" height="6" rx="3"/><rect x="239" y="230" width="34" height="6" rx="3"/><rect x="283" y="230" width="34" height="6" rx="3"/><rect x="327" y="230" width="34" height="6" rx="3"/></g>
+        </svg>
+        <div style="padding:12px 8px 4px; display:flex; align-items:center; gap:16px;">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#8c7ae6"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">成语</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#f6c344"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：三长两短<span class="tag">纯数量</span></div>
+      <div class="expl">3 根长的 + 2 根短的 → 三「长」两「短」，最直白的数数题，门槛最低</div>
+    </div>
+
+    <!-- ======== 2. 九牛一毛 · 悬殊对比 ======== -->
+    <div>
+      <div class="pcard">
+        <svg class="panel" viewBox="0 0 470 268">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#fcd5ce" stroke="#2f2f45" stroke-width="3"/>
+          <g id="cow">
+            <g transform="translate(83,42)"><circle cx="6" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><circle cx="50" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><rect x="2" y="6" width="52" height="46" rx="15" fill="#fff" stroke="#2f2f45" stroke-width="4.5"/><circle cx="17" cy="24" r="3.2" fill="#2f2f45"/><circle cx="39" cy="24" r="3.2" fill="#2f2f45"/><ellipse cx="28" cy="40" rx="13" ry="8.5" fill="#f8b3b3" stroke="#2f2f45" stroke-width="3.5"/><circle cx="23" cy="40" r="1.8" fill="#2f2f45"/><circle cx="33" cy="40" r="1.8" fill="#2f2f45"/></g>
+            <g transform="translate(213,42)"><circle cx="6" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><circle cx="50" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><rect x="2" y="6" width="52" height="46" rx="15" fill="#fff" stroke="#2f2f45" stroke-width="4.5"/><circle cx="17" cy="24" r="3.2" fill="#2f2f45"/><circle cx="39" cy="24" r="3.2" fill="#2f2f45"/><ellipse cx="28" cy="40" rx="13" ry="8.5" fill="#f8b3b3" stroke="#2f2f45" stroke-width="3.5"/><circle cx="23" cy="40" r="1.8" fill="#2f2f45"/><circle cx="33" cy="40" r="1.8" fill="#2f2f45"/></g>
+            <g transform="translate(343,42)"><circle cx="6" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><circle cx="50" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><rect x="2" y="6" width="52" height="46" rx="15" fill="#fff" stroke="#2f2f45" stroke-width="4.5"/><circle cx="17" cy="24" r="3.2" fill="#2f2f45"/><circle cx="39" cy="24" r="3.2" fill="#2f2f45"/><ellipse cx="28" cy="40" rx="13" ry="8.5" fill="#f8b3b3" stroke="#2f2f45" stroke-width="3.5"/><circle cx="23" cy="40" r="1.8" fill="#2f2f45"/><circle cx="33" cy="40" r="1.8" fill="#2f2f45"/></g>
+            <g transform="translate(83,102)"><circle cx="6" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><circle cx="50" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><rect x="2" y="6" width="52" height="46" rx="15" fill="#fff" stroke="#2f2f45" stroke-width="4.5"/><circle cx="17" cy="24" r="3.2" fill="#2f2f45"/><circle cx="39" cy="24" r="3.2" fill="#2f2f45"/><ellipse cx="28" cy="40" rx="13" ry="8.5" fill="#f8b3b3" stroke="#2f2f45" stroke-width="3.5"/><circle cx="23" cy="40" r="1.8" fill="#2f2f45"/><circle cx="33" cy="40" r="1.8" fill="#2f2f45"/></g>
+            <g transform="translate(213,102)"><circle cx="6" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><circle cx="50" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><rect x="2" y="6" width="52" height="46" rx="15" fill="#fff" stroke="#2f2f45" stroke-width="4.5"/><circle cx="17" cy="24" r="3.2" fill="#2f2f45"/><circle cx="39" cy="24" r="3.2" fill="#2f2f45"/><ellipse cx="28" cy="40" rx="13" ry="8.5" fill="#f8b3b3" stroke="#2f2f45" stroke-width="3.5"/><circle cx="23" cy="40" r="1.8" fill="#2f2f45"/><circle cx="33" cy="40" r="1.8" fill="#2f2f45"/></g>
+            <g transform="translate(343,102)"><circle cx="6" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><circle cx="50" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><rect x="2" y="6" width="52" height="46" rx="15" fill="#fff" stroke="#2f2f45" stroke-width="4.5"/><circle cx="17" cy="24" r="3.2" fill="#2f2f45"/><circle cx="39" cy="24" r="3.2" fill="#2f2f45"/><ellipse cx="28" cy="40" rx="13" ry="8.5" fill="#f8b3b3" stroke="#2f2f45" stroke-width="3.5"/><circle cx="23" cy="40" r="1.8" fill="#2f2f45"/><circle cx="33" cy="40" r="1.8" fill="#2f2f45"/></g>
+            <g transform="translate(83,162)"><circle cx="6" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><circle cx="50" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><rect x="2" y="6" width="52" height="46" rx="15" fill="#fff" stroke="#2f2f45" stroke-width="4.5"/><circle cx="17" cy="24" r="3.2" fill="#2f2f45"/><circle cx="39" cy="24" r="3.2" fill="#2f2f45"/><ellipse cx="28" cy="40" rx="13" ry="8.5" fill="#f8b3b3" stroke="#2f2f45" stroke-width="3.5"/><circle cx="23" cy="40" r="1.8" fill="#2f2f45"/><circle cx="33" cy="40" r="1.8" fill="#2f2f45"/></g>
+            <g transform="translate(213,162)"><circle cx="6" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><circle cx="50" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><rect x="2" y="6" width="52" height="46" rx="15" fill="#fff" stroke="#2f2f45" stroke-width="4.5"/><circle cx="17" cy="24" r="3.2" fill="#2f2f45"/><circle cx="39" cy="24" r="3.2" fill="#2f2f45"/><ellipse cx="28" cy="40" rx="13" ry="8.5" fill="#f8b3b3" stroke="#2f2f45" stroke-width="3.5"/><circle cx="23" cy="40" r="1.8" fill="#2f2f45"/><circle cx="33" cy="40" r="1.8" fill="#2f2f45"/></g>
+            <g transform="translate(343,162)"><circle cx="6" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><circle cx="50" cy="12" r="7" fill="#f2b134" stroke="#2f2f45" stroke-width="4"/><rect x="2" y="6" width="52" height="46" rx="15" fill="#fff" stroke="#2f2f45" stroke-width="4.5"/><circle cx="17" cy="24" r="3.2" fill="#2f2f45"/><circle cx="39" cy="24" r="3.2" fill="#2f2f45"/><ellipse cx="28" cy="40" rx="13" ry="8.5" fill="#f8b3b3" stroke="#2f2f45" stroke-width="3.5"/><circle cx="23" cy="40" r="1.8" fill="#2f2f45"/><circle cx="33" cy="40" r="1.8" fill="#2f2f45"/></g>
+          </g>
+          <text x="235" y="244" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是 9 牛</text>
+        </svg>
+        <svg class="panel" viewBox="0 0 470 268" style="margin-top:10px;">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#c8f0d8" stroke="#2f2f45" stroke-width="3"/>
+          <path d="M225,70 Q180,110 235,150 Q285,185 230,215" stroke="#2f2f45" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <path d="M238,72 Q196,110 246,148" stroke="#8d99ae" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/>
+          <text x="150" y="246" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是</text>
+          <g fill="#2f2f45"><rect x="195" y="236" width="34" height="6" rx="3"/><rect x="239" y="236" width="34" height="6" rx="3"/><rect x="283" y="236" width="34" height="6" rx="3"/><rect x="327" y="236" width="34" height="6" rx="3"/></g>
+        </svg>
+        <div style="padding:12px 8px 4px; display:flex; align-items:center; gap:16px;">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#8c7ae6"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">成语</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#f6c344"/><circle cx="85" cy="8" r="6" fill="#f6c344"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：九牛一毛<span class="tag">悬殊对比</span></div>
+      <div class="expl">9 头牛 vs 1 根毛——两格数量悬殊越大，节目效果越好；牛头是组件复制的</div>
+    </div>
+
+    <!-- ======== 3. 不三不四 · 否定式 ======== -->
+    <div>
+      <div class="pcard">
+        <svg class="panel" viewBox="0 0 470 268">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#fdf6a3" stroke="#2f2f45" stroke-width="3"/>
+          <g stroke="#2f2f45" stroke-width="5">
+            <g transform="translate(143,88)"><circle r="24" fill="#e35d5d"/><path d="M-2,-24 Q-4,-34 6,-36" stroke="#57a05c" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="10" cy="-28" rx="8" ry="4.5" fill="#57a05c" stroke="#2f2f45" stroke-width="3"/></g>
+            <g transform="translate(235,88)"><circle r="24" fill="#e35d5d"/><path d="M-2,-24 Q-4,-34 6,-36" stroke="#57a05c" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="10" cy="-28" rx="8" ry="4.5" fill="#57a05c" stroke="#2f2f45" stroke-width="3"/></g>
+            <g transform="translate(327,88)"><circle r="24" fill="#e35d5d"/><path d="M-2,-24 Q-4,-34 6,-36" stroke="#57a05c" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="10" cy="-28" rx="8" ry="4.5" fill="#57a05c" stroke="#2f2f45" stroke-width="3"/></g>
+          </g>
+          <g stroke="#ff4d4d" stroke-width="9" stroke-linecap="round" opacity=".92">
+            <line x1="128" y1="42" x2="342" y2="136"/><line x1="342" y1="42" x2="128" y2="136"/>
+          </g>
+          <text x="235" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是 3</text>
+        </svg>
+        <svg class="panel" viewBox="0 0 470 268" style="margin-top:10px;">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#aee0f5" stroke="#2f2f45" stroke-width="3"/>
+          <g stroke="#2f2f45" stroke-width="5">
+            <g transform="translate(107,88)"><circle r="24" fill="#f2b134"/><path d="M-2,-24 Q-4,-34 6,-36" stroke="#57a05c" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="10" cy="-28" rx="8" ry="4.5" fill="#57a05c" stroke="#2f2f45" stroke-width="3"/></g>
+            <g transform="translate(192,88)"><circle r="24" fill="#f2b134"/><path d="M-2,-24 Q-4,-34 6,-36" stroke="#57a05c" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="10" cy="-28" rx="8" ry="4.5" fill="#57a05c" stroke="#2f2f45" stroke-width="3"/></g>
+            <g transform="translate(277,88)"><circle r="24" fill="#f2b134"/><path d="M-2,-24 Q-4,-34 6,-36" stroke="#57a05c" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="10" cy="-28" rx="8" ry="4.5" fill="#57a05c" stroke="#2f2f45" stroke-width="3"/></g>
+            <g transform="translate(362,88)"><circle r="24" fill="#f2b134"/><path d="M-2,-24 Q-4,-34 6,-36" stroke="#57a05c" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="10" cy="-28" rx="8" ry="4.5" fill="#57a05c" stroke="#2f2f45" stroke-width="3"/></g>
+          </g>
+          <g stroke="#ff4d4d" stroke-width="9" stroke-linecap="round" opacity=".92">
+            <line x1="88" y1="42" x2="382" y2="136"/><line x1="382" y1="42" x2="88" y2="136"/>
+          </g>
+          <text x="150" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是</text>
+          <g fill="#2f2f45"><rect x="195" y="230" width="34" height="6" rx="3"/><rect x="239" y="230" width="34" height="6" rx="3"/><rect x="283" y="230" width="34" height="6" rx="3"/><rect x="327" y="230" width="34" height="6" rx="3"/></g>
+        </svg>
+        <div style="padding:12px 8px 4px; display:flex; align-items:center; gap:16px;">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#8c7ae6"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">成语</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#f6c344"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：不三不四<span class="tag">否定式</span></div>
+      <div class="expl">红叉代表否定：打了叉的「这是3」「这是4」→ 不是三、不是四，一个红叉就是新机制</div>
+    </div>
+
+    <!-- ======== 4. 五颜六色 · 双关 ======== -->
+    <div>
+      <div class="pcard">
+        <svg class="panel" viewBox="0 0 470 268">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#fcd5ce" stroke="#2f2f45" stroke-width="3"/>
+          <g stroke="#2f2f45" stroke-width="4.5">
+            <g transform="translate(51,86)"><circle r="26" fill="#e35d5d"/><circle cx="-9" cy="-5" r="3" fill="#2f2f45" stroke="none"/><circle cx="9" cy="-5" r="3" fill="#2f2f45" stroke="none"/><path d="M-9,7 Q0,15 9,7" stroke="#2f2f45" stroke-width="3.5" fill="none" stroke-linecap="round"/></g>
+            <g transform="translate(143,86)"><circle r="26" fill="#ff9f43"/><circle cx="-9" cy="-5" r="3" fill="#2f2f45" stroke="none"/><circle cx="9" cy="-5" r="3" fill="#2f2f45" stroke="none"/><path d="M-9,7 Q0,15 9,7" stroke="#2f2f45" stroke-width="3.5" fill="none" stroke-linecap="round"/></g>
+            <g transform="translate(235,86)"><circle r="26" fill="#57a05c"/><circle cx="-9" cy="-5" r="3" fill="#2f2f45" stroke="none"/><circle cx="9" cy="-5" r="3" fill="#2f2f45" stroke="none"/><path d="M-9,7 Q0,15 9,7" stroke="#2f2f45" stroke-width="3.5" fill="none" stroke-linecap="round"/></g>
+            <g transform="translate(327,86)"><circle r="26" fill="#54a0ff"/><circle cx="-9" cy="-5" r="3" fill="#2f2f45" stroke="none"/><circle cx="9" cy="-5" r="3" fill="#2f2f45" stroke="none"/><path d="M-9,7 Q0,15 9,7" stroke="#2f2f45" stroke-width="3.5" fill="none" stroke-linecap="round"/></g>
+            <g transform="translate(419,86)"><circle r="26" fill="#8c7ae6"/><circle cx="-9" cy="-5" r="3" fill="#2f2f45" stroke="none"/><circle cx="9" cy="-5" r="3" fill="#2f2f45" stroke="none"/><path d="M-9,7 Q0,15 9,7" stroke="#2f2f45" stroke-width="3.5" fill="none" stroke-linecap="round"/></g>
+          </g>
+          <text x="235" y="200" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是 5 颜</text>
+        </svg>
+        <svg class="panel" viewBox="0 0 470 268" style="margin-top:10px;">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#aee0f5" stroke="#2f2f45" stroke-width="3"/>
+          <g stroke="#2f2f45" stroke-width="4.5">
+            <rect x="43"  y="62" width="54" height="54" rx="12" fill="#e35d5d"/>
+            <rect x="115" y="62" width="54" height="54" rx="12" fill="#ff9f43"/>
+            <rect x="187" y="62" width="54" height="54" rx="12" fill="#f6c344"/>
+            <rect x="259" y="62" width="54" height="54" rx="12" fill="#57a05c"/>
+            <rect x="331" y="62" width="54" height="54" rx="12" fill="#54a0ff"/>
+            <rect x="403" y="62" width="54" height="54" rx="12" fill="#8c7ae6"/>
+          </g>
+          <text x="150" y="200" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是</text>
+          <g fill="#2f2f45"><rect x="195" y="190" width="34" height="6" rx="3"/><rect x="239" y="190" width="34" height="6" rx="3"/><rect x="283" y="190" width="34" height="6" rx="3"/><rect x="327" y="190" width="34" height="6" rx="3"/></g>
+        </svg>
+        <div style="padding:12px 8px 4px; display:flex; align-items:center; gap:16px;">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#8c7ae6"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">成语</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#f6c344"/><circle cx="85" cy="8" r="6" fill="#f6c344"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：五颜六色<span class="tag">双关</span></div>
+      <div class="expl">颜＝脸面：5 张「脸」＋6 种「色」，一字双关，观众反应过来会心一笑</div>
+    </div>
+
+    <!-- ======== 5. 一见钟情 · 物件代字 ======== -->
+    <div>
+      <div class="pcard">
+        <svg class="panel" viewBox="0 0 470 268">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#fdf6a3" stroke="#2f2f45" stroke-width="3"/>
+          <text x="150" y="150" text-anchor="middle" font-size="72" font-weight="900" fill="#2f2f45">1</text>
+          <g transform="translate(255,110)">
+            <ellipse cx="0" cy="0" rx="62" ry="40" fill="#fff" stroke="#2f2f45" stroke-width="5"/>
+            <circle cx="0" cy="0" r="22" fill="#54a0ff" stroke="#2f2f45" stroke-width="4"/>
+            <circle cx="0" cy="0" r="9" fill="#2f2f45"/>
+            <circle cx="7" cy="-7" r="4" fill="#fff"/>
+            <path d="M-62,-26 Q0,-52 62,-26" stroke="#2f2f45" stroke-width="5" fill="none" stroke-linecap="round"/>
+          </g>
+          <text x="235" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是 1 眼</text>
+        </svg>
+        <svg class="panel" viewBox="0 0 470 268" style="margin-top:10px;">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#fcd5ce" stroke="#2f2f45" stroke-width="3"/>
+          <g transform="translate(160,118)">
+            <circle cx="-26" cy="-30" r="13" fill="#f2b134" stroke="#2f2f45" stroke-width="4.5"/>
+            <circle cx="26" cy="-30" r="13" fill="#f2b134" stroke="#2f2f45" stroke-width="4.5"/>
+            <circle r="40" fill="#fff" stroke="#2f2f45" stroke-width="5"/>
+            <line x1="0" y1="0" x2="0" y2="-24" stroke="#2f2f45" stroke-width="5" stroke-linecap="round"/>
+            <line x1="0" y1="0" x2="16" y2="10" stroke="#ff4d4d" stroke-width="5" stroke-linecap="round"/>
+            <circle r="4" fill="#2f2f45"/>
+            <line x1="-20" y1="46" x2="-28" y2="60" stroke="#2f2f45" stroke-width="5" stroke-linecap="round"/>
+            <line x1="20" y1="46" x2="28" y2="60" stroke="#2f2f45" stroke-width="5" stroke-linecap="round"/>
+          </g>
+          <g transform="translate(320,118)">
+            <path d="M0,46 C-38,20 -46,-6 -26,-18 C-12,-26 0,-14 0,-2 C0,-14 12,-26 26,-18 C46,-6 38,20 0,46 Z" fill="#e35d5d" stroke="#2f2f45" stroke-width="5" stroke-linejoin="round"/>
+          </g>
+          <text x="150" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是</text>
+          <g fill="#2f2f45"><rect x="195" y="230" width="34" height="6" rx="3"/><rect x="239" y="230" width="34" height="6" rx="3"/><rect x="283" y="230" width="34" height="6" rx="3"/><rect x="327" y="230" width="34" height="6" rx="3"/></g>
+        </svg>
+        <div style="padding:12px 8px 4px; display:flex; align-items:center; gap:16px;">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#8c7ae6"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">成语</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#f6c344"/><circle cx="85" cy="8" r="6" fill="#d9d9e3"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：一见钟情<span class="tag">物件代字</span></div>
+      <div class="expl">1 只眼＝「一见」；钟＋❤＝「钟情」——用图直接代替谜底里的字，谐音梗的核心玩法</div>
+    </div>
+
+    <!-- ======== 6. 画蛇添足 · 故事变化 ======== -->
+    <div>
+      <div class="pcard">
+        <svg class="panel" viewBox="0 0 470 268">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#c8f0d8" stroke="#2f2f45" stroke-width="3"/>
+          <path d="M110,120 C150,62 215,62 255,105 C295,148 345,148 368,112" stroke="#2f2f45" stroke-width="21" fill="none" stroke-linecap="round"/>
+          <path d="M110,120 C150,62 215,62 255,105 C295,148 345,148 368,112" stroke="#57a05c" stroke-width="12" fill="none" stroke-linecap="round"/>
+          <g transform="translate(108,120)">
+            <circle r="17" fill="#57a05c" stroke="#2f2f45" stroke-width="5"/>
+            <circle cx="-4" cy="-4" r="2.8" fill="#2f2f45"/>
+            <path d="M-16,2 L-32,8 M-32,8 L-38,4 M-32,8 L-37,12" stroke="#ff4d4d" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </g>
+          <text x="235" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是蛇</text>
+        </svg>
+        <svg class="panel" viewBox="0 0 470 268" style="margin-top:10px;">
+          <rect x="4" y="4" width="462" height="260" rx="10" fill="#ffe0b2" stroke="#2f2f45" stroke-width="3"/>
+          <path d="M110,120 C150,62 215,62 255,105 C295,148 345,148 368,112" stroke="#2f2f45" stroke-width="21" fill="none" stroke-linecap="round"/>
+          <path d="M110,120 C150,62 215,62 255,105 C295,148 345,148 368,112" stroke="#57a05c" stroke-width="12" fill="none" stroke-linecap="round"/>
+          <g transform="translate(108,120)">
+            <circle r="17" fill="#57a05c" stroke="#2f2f45" stroke-width="5"/>
+            <circle cx="-4" cy="-4" r="2.8" fill="#2f2f45"/>
+            <path d="M-16,2 L-32,8 M-32,8 L-38,4 M-32,8 L-37,12" stroke="#ff4d4d" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </g>
+          <g stroke="#2f2f45" stroke-width="7" stroke-linecap="round" fill="none">
+            <path d="M170,86 L162,116 M162,116 L154,124 M162,116 L168,126"/>
+            <path d="M228,74 L228,104 M228,104 L220,112 M228,104 L236,112"/>
+            <path d="M292,120 L300,150 M300,150 L292,158 M300,150 L310,154"/>
+            <path d="M348,136 L358,164 M358,164 L350,172 M358,164 L368,168"/>
+          </g>
+          <text x="150" y="240" text-anchor="middle" font-size="30" font-weight="900" fill="#2f2f45">这是</text>
+          <g fill="#2f2f45"><rect x="195" y="230" width="34" height="6" rx="3"/><rect x="239" y="230" width="34" height="6" rx="3"/><rect x="283" y="230" width="34" height="6" rx="3"/><rect x="327" y="230" width="34" height="6" rx="3"/></g>
+        </svg>
+        <div style="padding:12px 8px 4px; display:flex; align-items:center; gap:16px;">
+          <svg width="52" height="34" viewBox="0 0 52 34"><rect width="52" height="34" rx="8" fill="#8c7ae6"/><text x="26" y="23" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">成语</text></svg>
+          <svg width="200" height="16" viewBox="0 0 200 16"><circle cx="10" cy="8" r="6" fill="#f6c344"/><circle cx="35" cy="8" r="6" fill="#f6c344"/><circle cx="60" cy="8" r="6" fill="#f6c344"/><circle cx="85" cy="8" r="6" fill="#f6c344"/><circle cx="110" cy="8" r="6" fill="#d9d9e3"/><circle cx="135" cy="8" r="6" fill="#d9d9e3"/><circle cx="160" cy="8" r="6" fill="#d9d9e3"/><circle cx="185" cy="8" r="6" fill="#bfbfd4"/></svg>
+        </div>
+      </div>
+      <div class="ansline">答案：画蛇添足<span class="tag">故事变化</span></div>
+      <div class="expl">上下格「同一物体＋一个变化」：蛇多了脚 → 添足；成语故事类都能这么画</div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

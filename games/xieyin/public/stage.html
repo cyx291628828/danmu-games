@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>谐音梗猜词 · 直播互动 · 展示屏</title>
+<link rel="stylesheet" href="/common/base.css">
+<link rel="stylesheet" href="stage.css">
+</head>
+<body data-view="stage">
+
+<!-- ═══════════ 展示屏 stage（9:16 竖屏投屏 / OBS 浏览器源） ═══════════ -->
+<div id="view-stage">
+  <div class="phone phone-xy" id="xyPhone" style="display:none;">
+    <header class="top">
+      <div class="game-title">🎯 谐音梗猜词</div>
+      <div class="round-badge" id="xyBadge">第 0 关</div>
+    </header>
+
+    <!-- 倒计时 + 进度条 -->
+    <div class="xy-cd">
+      <span id="xyCdNum" class="xy-cd-num">--</span>
+      <span class="xy-cd-unit">秒</span>
+      <span class="xy-cat" id="xyCat">--</span>
+    </div>
+    <div class="xy-prog">
+      <div class="xy-prog-track"><div class="xy-prog-fill" id="xyProgFill"></div></div>
+    </div>
+
+    <!-- 双格谜题卡 -->
+    <div class="xy-pcard" id="xyCard">
+      <div class="xy-panel" id="xyTop">
+        <div class="xy-art" id="xyTopArt"></div>
+        <div class="xy-cap" id="xyTopCap"></div>
+      </div>
+      <div class="xy-panel" id="xyBot">
+        <div class="xy-art" id="xyBotArt"></div>
+        <div class="xy-cap" id="xyBotCap"></div>
+      </div>
+    </div>
+
+    <!-- 揭示答案条（揭晓时出现） -->
+    <div class="xy-answer" id="xyAnswer" style="display:none">
+      <span class="xy-answer-word" id="xyAnswerWord"></span>
+      <span class="xy-answer-py" id="xyAnswerPy"></span>
+    </div>
+    <!-- 获胜横幅 -->
+    <div class="xy-winner" id="xyWinner" style="display:none"></div>
+    <!-- 解读 -->
+    <div class="xy-expl" id="xyExpl" style="display:none"></div>
+
+    <!-- 排行区 -->
+    <div class="xy-body">
+      <div class="xy-col">
+        <div class="xy-col-title">本场英雄榜</div>
+        <div class="xy-board" id="xyHeroes"></div>
+      </div>
+      <div class="xy-col">
+        <div class="xy-col-title">总排行榜</div>
+        <div class="xy-board" id="xyBoard"></div>
+      </div>
+    </div>
+
+    <div class="xy-foot">看图猜词 · 弹幕直接发答案 · 首个答对得分</div>
+  </div>
+
+  <!-- 烟花容器 -->
+  <div id="xyFwBox" class="fw-box"></div>
+</div>
+
+<script src="/common/core.js"></script>
+<script src="stage.js"></script>
+</body>
+</html>

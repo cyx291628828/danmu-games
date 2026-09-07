@@ -1,0 +1,470 @@
+/* ══════════════════════════════════════════════════════════════════
+   stage.css — 赛马竞猜 · 展示屏样式（games/race/public）
+   共用 common/base.css 的主题变量（--bg/--panel/--gold…），11 套主题自动适配。
+   本文件重点：下注板 ⇄ 赛道双态、点赞助威面板、全屏特效（闪光/金币雨/彩带/骑士冲锋/头奖滚存）
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ───────── 布局：纵向弹性，主区自适应，永不溢出 ───────── */
+.phone { gap: 6px; }
+.top { flex: 0 0 auto; }
+.game-title { font-size: 18px; font-weight: 700; }
+.top-right { display: flex; gap: 6px; align-items: center; }
+.chip {
+  background: var(--panel2); border: 1px solid var(--line); border-radius: 10px;
+  padding: 3px 9px; font-size: 12px; color: var(--sub); white-space: nowrap;
+}
+.chip b { color: var(--gold); font-variant-numeric: tabular-nums; }
+.chip.carry { border-color: var(--gold); color: var(--gold); animation: carryPulse 1.6s infinite; }
+.chip.carry b { color: var(--gold); }
+@keyframes carryPulse { 50% { box-shadow: 0 0 12px rgba(var(--glow-rgb), .55); } }
+
+/* ───────── 倒计时 ───────── */
+.countdown-row {
+  flex: 0 0 auto; display: flex; align-items: baseline; justify-content: center; gap: 10px;
+}
+.cd-num {
+  font-size: 40px; font-weight: 800; color: var(--gold); line-height: 1;
+  text-shadow: 0 0 18px rgba(var(--glow-rgb), .45); font-variant-numeric: tabular-nums;
+}
+.cd-unit { color: var(--sub); font-size: 13px; }
+.phase-tag {
+  font-size: 12px; color: var(--sub); background: var(--panel2);
+  border: 1px solid var(--line); border-radius: 99px; padding: 3px 11px;
+}
+.phase-tag.race { color: var(--gold); border-color: rgba(var(--glow-rgb), .5); }
+.phase-tag.sprint { color: #fff; background: var(--red); border-color: var(--red); animation: sprintPulse .8s infinite; }
+@keyframes sprintPulse { 50% { transform: scale(1.06); box-shadow: 0 0 16px rgba(248, 113, 113, .7); } }
+.cd-progress {
+  flex: 0 0 auto; height: 6px; background: var(--cell-bg);
+  border-radius: 99px; overflow: hidden;
+}
+.cd-fill {
+  height: 100%; width: 0; border-radius: 99px;
+  background: linear-gradient(90deg, var(--gold-mid), var(--gold));
+  transition: width .18s linear;
+}
+.cd-fill.sprint { background: linear-gradient(90deg, #f87171, #fbbf24); }
+
+/* ───────── 核心区容器（下注板 / 赛道 二选一） ───────── */
+.board-box, .track-box {
+  flex: 1 1 auto; min-height: 0;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+  padding: 9px; display: flex; flex-direction: column; gap: 6px; overflow: hidden;
+}
+.pool-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11px; color: var(--dim); padding: 0 2px; gap: 8px;
+}
+.pool-row .pot { color: var(--gold); font-weight: 800; font-size: 14px; font-variant-numeric: tabular-nums; }
+
+/* ───────── 下注板 ───────── */
+.horse-rows { display: flex; flex-direction: column; gap: 5px; flex: 1 1 auto; min-height: 0; }
+.horse-row {
+  flex: 1 1 0; min-height: 0; display: flex; align-items: center; gap: 8px;
+  background: var(--panel2); border: 1px solid var(--line2); border-radius: 10px; padding: 4px 9px;
+  position: relative; overflow: hidden;
+}
+.horse-row.fav { border-color: rgba(var(--glow-rgb), .55); }
+.horse-row .hr-flash { position: absolute; inset: 0; background: rgba(var(--glow-rgb), .22); opacity: 0; }
+.horse-row.hit .hr-flash { animation: hrFlash .7s ease; }
+@keyframes hrFlash { 0% { opacity: 1; } 100% { opacity: 0; } }
+.horse-no {
+  flex: none; width: 26px; height: 26px; border-radius: 8px; color: #17130d;
+  display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px;
+}
+.horse-info { flex: 1 1 auto; min-width: 0; }
+.horse-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.horse-meta { font-size: 10px; color: var(--dim); margin-top: 1px; white-space: nowrap; }
+.heat-wrap { flex: 0 1 92px; min-width: 40px; }
+.heat-bar { height: 9px; background: var(--cell-bg); border-radius: 99px; overflow: hidden; }
+.heat-fill { height: 100%; border-radius: 99px; transition: width .5s ease; }
+.odds { flex: none; width: 62px; text-align: right; }
+.odds .x { font-size: 20px; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; }
+.odds .x.bump { animation: oddsBump .45s ease; }
+@keyframes oddsBump { 40% { transform: scale(1.35); filter: brightness(1.4); } }
+.odds .lbl { font-size: 9px; color: var(--dim); }
+
+/* ───────── 赛道 ───────── */
+.track-head { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--dim); padding: 0 2px; }
+.lanes { display: flex; flex-direction: column; gap: 5px; flex: 1 1 auto; min-height: 0; }
+.lane {
+  position: relative; flex: 1 1 0; min-height: 34px;
+  background: var(--cell-bg); border: 1px solid var(--line2); border-radius: 10px; overflow: hidden;
+}
+.lane .ground {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, transparent 0 26px, rgba(255, 255, 255, .04) 26px 52px);
+}
+.lane.racing .ground { animation: groundMove .55s linear infinite; }
+@keyframes groundMove { to { transform: translateX(-52px); } }
+/* 位置由 stage.js 写入的 --p（0~1）驱动：左留 2% 起跑线，右留 14% 给终点格旗 */
+.lane .runner {
+  position: absolute; top: 50%; left: 0; left: calc(2% + var(--p, 0) * 84%);
+  transform: translate(0, -50%);
+  display: flex; align-items: center; gap: 3px; white-space: nowrap; z-index: 3;
+  transition: left .22s linear;
+}
+.lane .runner .em { font-size: 21px; filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .6)); }
+.lane .runner .nm {
+  font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 8px;
+  color: #17130d; max-width: 92px; overflow: hidden; text-overflow: ellipsis;
+}
+.lane .runner.run .em { animation: gallop .38s ease-in-out infinite; }
+.lane .runner.burst .em { animation: gallop .22s ease-in-out infinite; filter: drop-shadow(0 0 8px currentColor); }
+@keyframes gallop { 50% { transform: translateX(4px) scale(1.14) rotate(-4deg); } }
+.lane.burst { border-color: var(--gold); box-shadow: 0 0 16px rgba(var(--glow-rgb), .45) inset; }
+.lane .boost-tag {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  font-size: 10px; font-weight: 800; color: var(--gold); z-index: 3;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .8);
+}
+.lane .lead-crown { position: absolute; right: 6px; top: 2px; font-size: 12px; z-index: 3; }
+.lane .pop {
+  position: absolute; z-index: 4; font-size: 15px; font-weight: 900; color: var(--gold);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, .9); pointer-events: none;
+  animation: popUp 1s ease-out forwards;
+}
+@keyframes popUp {
+  0% { transform: translate(-50%, 0) scale(.6); opacity: 0; }
+  25% { transform: translate(-50%, -12px) scale(1.25); opacity: 1; }
+  100% { transform: translate(-50%, -40px) scale(1); opacity: 0; }
+}
+.lane.winner-lane { border-color: var(--gold); box-shadow: 0 0 18px rgba(var(--glow-rgb), .5); }
+.finish-line {
+  position: absolute; right: 0; top: 0; bottom: 0; width: 11px; z-index: 2;
+  background: repeating-linear-gradient(45deg, #fff 0 5px, #111 5px 10px); opacity: .85;
+}
+
+/* ───────── 助威 / 礼物面板 ───────── */
+.cheer-panel {
+  flex: 0 0 auto; background: var(--panel); border: 1px solid var(--line);
+  border-radius: 12px; padding: 7px 9px; display: flex; flex-direction: column; gap: 4px;
+}
+.cheer-head { display: flex; align-items: center; justify-content: space-between; }
+.cheer-title { font-size: 12px; font-weight: 800; color: var(--gold); letter-spacing: 1px; }
+.cheer-rule { font-size: 11px; color: var(--sub); }
+.cheer-rule.sprint { color: #fff; background: var(--red); border-radius: 99px; padding: 1px 8px; animation: sprintPulse .8s infinite; }
+.cheer-rows { display: flex; flex-direction: column; gap: 3px; }
+.cheer-row { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--sub); }
+.cheer-row .avatar { flex: 0 0 18px; width: 18px; height: 18px; font-size: 11px; }
+.cheer-row .cn { flex: 0 1 auto; max-width: 78px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); font-weight: 600; }
+.cheer-row .ch { flex: none; font-size: 10px; padding: 0 5px; border-radius: 6px; color: #17130d; font-weight: 800; }
+.cheer-bar { flex: 1 1 auto; height: 8px; background: var(--cell-bg); border-radius: 99px; overflow: hidden; }
+.cheer-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--gold-mid), var(--gold)); transition: width .4s; }
+.cheer-row .cl { flex: none; font-variant-numeric: tabular-nums; color: var(--gold); font-weight: 700; }
+.cheer-empty { font-size: 11px; color: var(--dim); }
+.gift-row { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--sub); }
+.gift-ico { display: flex; gap: 2px; align-items: center; }
+.gift-ico img { width: 20px; height: 20px; object-fit: contain; }
+.gift-txt b { color: var(--gold); }
+
+/* ───────── 教学行 / 战报流 ───────── */
+.howto {
+  flex: 0 0 auto; text-align: center; font-size: 12px; color: var(--sub); line-height: 1.5;
+}
+.howto b { color: var(--gold); font-size: 13px; }
+.feed {
+  flex: 0 1 auto; min-height: 54px; max-height: 104px; overflow: hidden;
+  background: var(--cell-bg); border: 1px solid var(--line2); border-radius: 12px;
+  padding: 5px 9px; display: flex; flex-direction: column; gap: 2px;
+}
+.feed .item {
+  font-size: 11.5px; color: var(--sub); display: flex; gap: 5px; align-items: center;
+  animation: fadeIn .3s; min-width: 0; white-space: nowrap; overflow: hidden;
+}
+.feed .item .who { color: var(--text); font-weight: 600; }
+.feed .item.hot { color: var(--gold); font-weight: 600; }
+.feed .item.big { color: var(--red); font-weight: 700; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* ───────── 三榜单 ───────── */
+.boards { flex: 0 0 auto; display: flex; gap: 6px; }
+.board {
+  flex: 1; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+  padding: 6px 7px; display: flex; flex-direction: column; min-width: 0;
+}
+.board h3 { font-size: 10.5px; color: var(--gold); letter-spacing: 1px; margin-bottom: 4px; font-weight: 700; }
+.board .rows { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
+.row {
+  display: flex; align-items: center; gap: 4px; font-size: 10.5px;
+  padding: 2px 4px; border-radius: 6px; background: var(--panel2);
+}
+.row .rk {
+  flex: none; width: 15px; height: 15px; border-radius: 4px; font-size: 8.5px; font-weight: 700;
+  background: var(--cell-bg); color: var(--dim); display: flex; align-items: center; justify-content: center;
+}
+.row.r1 .rk { background: var(--gold); color: var(--on-chip); }
+.row.r2 .rk { background: var(--silver); color: var(--on-chip); }
+.row.r3 .rk { background: var(--bronze); color: var(--on-chip); }
+.row .nm { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
+.row .sc { flex: none; color: var(--gold); font-weight: 700; font-variant-numeric: tabular-nums; }
+.row.empty { background: transparent; color: var(--dim); justify-content: center; }
+
+/* ───────── 结算横幅 ───────── */
+.result-banner {
+  position: absolute; inset: 0; z-index: 60; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px;
+  background: rgba(var(--scrim-rgb), .84); border-radius: 26px; padding: 16px;
+}
+.result-card {
+  width: 88%; text-align: center; border-radius: 16px; padding: 16px 14px;
+  background: linear-gradient(160deg, var(--panel2), var(--panel));
+  border: 1px solid rgba(var(--glow-rgb), .55); box-shadow: 0 0 40px rgba(var(--glow-rgb), .28);
+  animation: cardIn .5s cubic-bezier(.2, 1.4, .4, 1); max-height: 100%; overflow: hidden;
+}
+@keyframes cardIn { 0% { transform: scale(.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+.result-title { font-size: 12px; letter-spacing: 6px; color: var(--sub); }
+.result-horse {
+  font-size: 30px; font-weight: 800; margin: 6px 0 2px; color: var(--gold);
+  text-shadow: 0 0 22px rgba(var(--glow-rgb), .6);
+}
+.result-odds { font-size: 14px; color: var(--accent); }
+.result-stat { margin-top: 6px; font-size: 11.5px; color: var(--sub); line-height: 1.8; }
+.result-winners {
+  margin-top: 8px; display: flex; flex-direction: column; gap: 2px;
+  max-height: 96px; overflow: hidden;
+}
+.result-winners .wr {
+  display: flex; align-items: center; gap: 6px; font-size: 11px;
+  background: var(--cell-bg); border-radius: 7px; padding: 3px 7px;
+}
+.result-winners .wr .avatar { flex: 0 0 17px; width: 17px; height: 17px; font-size: 10px; }
+.result-winners .wr .wn { flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+.result-winners .wr .wp { color: var(--gold); font-weight: 700; font-variant-numeric: tabular-nums; }
+.result-report {
+  margin-top: 8px; font-size: 12px; color: var(--text); line-height: 1.7;
+  background: var(--cell-bg); border: 1px solid var(--line2); border-radius: 10px; padding: 7px 9px;
+}
+.result-report:empty { display: none; }
+.result-report .rp-tag { color: var(--gold); font-weight: 700; }
+.result-next { font-size: 13px; font-weight: 600; color: var(--gold); font-variant-numeric: tabular-nums; }
+
+/* ───────── 全屏特效层 ───────── */
+.fx-layer { position: absolute; inset: 0; z-index: 70; pointer-events: none; overflow: hidden; border-radius: 26px; }
+.flash { position: absolute; inset: 0; z-index: 75; pointer-events: none; opacity: 0; border-radius: 26px; }
+.flash.on { animation: flashIn .55s ease-out; }
+.flash.gold { background: radial-gradient(circle at 50% 45%, rgba(255, 216, 120, .95), rgba(255, 160, 40, .35) 60%, transparent 78%); }
+.flash.white { background: radial-gradient(circle at 50% 45%, rgba(255, 255, 255, .95), rgba(255, 255, 255, .3) 55%, transparent 75%); }
+@keyframes flashIn { 0% { opacity: 0; } 12% { opacity: 1; } 100% { opacity: 0; } }
+
+.phone.shake { animation: shk .42s cubic-bezier(.36, .07, .19, .97); }
+@keyframes shk {
+  10%, 90% { transform: translate(-2px, 1px); }
+  20%, 80% { transform: translate(4px, -2px); }
+  30%, 50%, 70% { transform: translate(-6px, 2px); }
+  40%, 60% { transform: translate(6px, -1px); }
+}
+
+/* 金币雨 / 彩带 */
+.fx-coin {
+  position: absolute; top: -28px; font-size: 20px; will-change: transform;
+  animation: coinFall linear forwards;
+}
+@keyframes coinFall {
+  0% { transform: translateY(0) rotate(0); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateY(115%) rotate(720deg); opacity: .1; }
+}
+.fx-confetti {
+  position: absolute; top: -14px; width: 8px; height: 13px; border-radius: 2px;
+  animation: confFall linear forwards;
+}
+@keyframes confFall {
+  0% { transform: translateY(0) rotate(0); opacity: 1; }
+  100% { transform: translateY(115%) rotate(900deg); opacity: .15; }
+}
+/* 头像飞向赛道（点赞加速 / 礼物骑士） */
+.fx-fly {
+  position: absolute; z-index: 4; display: flex; align-items: center; gap: 3px;
+  font-size: 11px; font-weight: 800; color: var(--gold);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, .9); will-change: transform, opacity;
+  animation: flyTo .85s cubic-bezier(.3, .8, .3, 1) forwards;
+}
+.fx-fly .avatar { width: 20px; height: 20px; font-size: 11px; }
+@keyframes flyTo {
+  0% { transform: translate(0, 0) scale(.7); opacity: 0; }
+  20% { opacity: 1; transform: translate(calc(var(--tx) * .2), calc(var(--ty) * .2)) scale(1.1); }
+  100% { transform: translate(var(--tx), var(--ty)) scale(.6); opacity: 0; }
+}
+
+/* 全屏大字横幅（骑士冲锋 / 头奖滚存 / 反超） */
+.big-fx {
+  position: absolute; inset: 0; z-index: 78; display: none;
+  align-items: center; justify-content: center; pointer-events: none;
+}
+.big-fx.show { display: flex; }
+.big-fx-inner {
+  padding: 12px 26px; border-radius: 14px; font-size: 26px; font-weight: 900; letter-spacing: 3px;
+  color: #17130d; background: linear-gradient(120deg, var(--gold-mid), var(--gold));
+  box-shadow: 0 0 46px rgba(var(--glow-rgb), .75); white-space: nowrap;
+  animation: bigSweep 2s cubic-bezier(.2, 1.2, .3, 1) forwards;
+}
+.big-fx.dark .big-fx-inner {
+  color: var(--gold); background: rgba(var(--scrim-rgb), .9);
+  border: 2px solid var(--gold); font-size: 22px;
+}
+@keyframes bigSweep {
+  0% { transform: translateX(-120%) scale(.8); opacity: 0; }
+  18% { transform: translateX(0) scale(1.06); opacity: 1; }
+  72% { transform: translateX(0) scale(1); opacity: 1; }
+  100% { transform: translateX(130%) scale(.9); opacity: 0; }
+}
+
+/* AI 播报条（主播解说实时上屏） */
+.bc-bar {
+  position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 72;
+  display: flex; gap: 8px; align-items: flex-start;
+  background: rgba(var(--scrim-rgb), .88); border: 1px solid rgba(var(--glow-rgb), .4);
+  border-radius: 12px; padding: 7px 11px; font-size: 12px; color: var(--text); line-height: 1.6;
+  opacity: 0; transform: translateY(14px); transition: opacity .35s, transform .35s; pointer-events: none;
+}
+.bc-bar.show { opacity: 1; transform: none; }
+.bc-bar .bc-ico { flex: none; }
+
+.disclaimer {
+  position: absolute; right: 12px; bottom: 3px; font-size: 9px; color: var(--dim); opacity: .7;
+}
+
+/* 特效强度开关（主播台配置 fxLevel） */
+.phone[data-fx="simple"] .fx-layer,
+.phone[data-fx="off"] .fx-layer,
+.phone[data-fx="off"] .flash,
+.phone[data-fx="off"] .big-fx { display: none !important; }
+.phone[data-fx="simple"] .flash,
+.phone[data-fx="simple"] .big-fx { display: none !important; }
+
+/* ═══════════════ 炸裂特效增强（点赞欲 · 送礼欲核心视觉钩子） ═══════════════ */
+
+/* 尘土粒子：奔跑中的马脚下扬起尘土 */
+.fx-dust {
+  position: absolute; z-index: 5; border-radius: 50%;
+  background: rgba(190, 158, 106, .55); pointer-events: none;
+  animation: dustPuff .65s ease-out forwards;
+}
+@keyframes dustPuff {
+  0% { transform: translate(0, 0) scale(.4); opacity: .85; }
+  100% { transform: translate(var(--dx, -20px), -14px) scale(1.7); opacity: 0; }
+}
+
+/* 火焰粒子：冲刺中的马喷出火焰 */
+.fx-flame {
+  position: absolute; z-index: 5; border-radius: 50%;
+  filter: blur(1px); pointer-events: none;
+  animation: flameUp .6s ease-out forwards;
+}
+@keyframes flameUp {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(-8px, -28px) scale(.25); opacity: 0; }
+}
+
+/* 领先马：金拖尾 + 星光 */
+.lane .runner.leader .em {
+  filter: drop-shadow(0 0 10px var(--gold)) drop-shadow(0 0 24px rgba(var(--glow-rgb), .85));
+}
+.lane .runner.leader::after {
+  content: '✨'; position: absolute; right: -15px; font-size: 11px;
+  animation: twinkle .5s ease-in-out infinite;
+}
+@keyframes twinkle { 50% { opacity: .25; transform: scale(.7); } }
+
+/* 点赞风暴：全屏 ❤/👍 从四周汇聚再上升 */
+.fx-storm-like {
+  position: absolute; z-index: 6; font-weight: 900; will-change: transform, opacity;
+  text-shadow: 0 0 12px rgba(255, 255, 255, .85); pointer-events: none;
+  animation: stormIn 1.8s cubic-bezier(.2, .8, .3, 1) forwards;
+}
+@keyframes stormIn {
+  0% { transform: translate(0, 0) scale(.5); opacity: 0; }
+  18% { opacity: 1; transform: translate(calc(var(--cx) * .35), calc(var(--cy) * .35)) scale(1.2); }
+  55% { opacity: 1; transform: translate(var(--cx), var(--cy)) scale(1); }
+  100% { transform: translate(var(--cx), calc(var(--cy) + var(--rise))) scale(.7); opacity: 0; }
+}
+
+/* 骑士冲锋 / 头奖：扩散冲击波圆环 */
+.fx-shockwave {
+  position: absolute; z-index: 7; border: 4px solid var(--gold); border-radius: 50%;
+  transform: translate(-50%, -50%); pointer-events: none;
+  animation: shock .8s ease-out forwards;
+}
+@keyframes shock {
+  0% { width: 26px; height: 26px; opacity: .95; }
+  100% { width: 360px; height: 360px; opacity: 0; }
+}
+
+/* 礼物爆炸碎片 */
+.fx-gift-burst {
+  position: absolute; z-index: 6; pointer-events: none;
+  text-shadow: 0 0 10px rgba(255, 200, 80, .85);
+  animation: giftFly 1.05s cubic-bezier(.3, .7, .4, 1) forwards;
+}
+@keyframes giftFly {
+  0% { transform: translate(0, 0) scale(.6); opacity: 0; }
+  15% { opacity: 1; transform: translate(calc(var(--gx) * .25), calc(var(--gy) * .25)) scale(1.25); }
+  100% { transform: translate(var(--gx), var(--gy)) scale(.5); opacity: 0; }
+}
+
+/* 领先易主警报横幅 */
+.fx-alert {
+  position: absolute; top: 32%; left: 0; right: 0; z-index: 8;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  font-size: 24px; font-weight: 900; color: #fff; letter-spacing: 2px; white-space: nowrap;
+  text-shadow: 0 0 18px rgba(255, 70, 70, .95), 0 2px 8px rgba(0, 0, 0, .85);
+  animation: alertSweep 2.4s cubic-bezier(.2, 1, .3, 1) forwards; pointer-events: none;
+}
+.fx-alert i { width: 36px; height: 5px; border-radius: 99px; box-shadow: 0 0 14px currentColor; }
+@keyframes alertSweep {
+  0% { transform: translateX(-115%) scale(.8); opacity: 0; }
+  16% { transform: translateX(0) scale(1.12); opacity: 1; }
+  70% { transform: translateX(0) scale(1); opacity: 1; }
+  100% { transform: translateX(115%) scale(.85); opacity: 0; }
+}
+
+/* 慢动作：冲线瞬间马匹位移动画减速（photoFinish） */
+.lanes.slowmo .runner { transition: left 1.1s cubic-bezier(.2, .7, .3, 1); }
+.lanes.slowmo .lane .ground { animation-duration: 2.6s; }
+
+/* 获胜马放大金光（photoFinish 特写） */
+.lane .runner.zoom { z-index: 9; }
+.lane .runner.zoom .em {
+  transform: scale(2.2);
+  filter: drop-shadow(0 0 14px var(--wcolor, var(--gold))) drop-shadow(0 0 36px var(--wcolor, var(--gold)));
+  animation: none;
+}
+.lane .runner.zoom .nm { transform: scale(1.9); }
+
+/* 金色粒子瀑布（冲线/头奖奢华感） */
+.fx-gold {
+  position: absolute; top: -16px; width: 5px; height: 14px; z-index: 5;
+  background: linear-gradient(180deg, transparent, var(--gold));
+  border-radius: 2px; pointer-events: none;
+  animation: goldFall linear forwards;
+}
+@keyframes goldFall {
+  0% { transform: translateY(0); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translateY(var(--fh, 600px)) rotate(560deg); opacity: .15; }
+}
+
+/* 终点旗挥舞（冲线后） */
+.track-box.waving .finish-line {
+  animation: flagWave .45s ease-in-out 4; transform-origin: left bottom;
+}
+@keyframes flagWave { 50% { transform: skewY(18deg) scaleX(1.18); } }
+
+/* 彩池数字跳动 */
+.chip b.bump { animation: potBump .5s cubic-bezier(.2, 1.6, .4, 1); }
+.pool-row .pot.bump { animation: potBump .5s cubic-bezier(.2, 1.6, .4, 1); }
+@keyframes potBump { 40% { transform: scale(1.3); filter: brightness(1.5); } }
+
+/* 赛道速度线（比赛中两侧飞驰的动感） */
+.lane.racing::before, .lane.racing::after {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 3px; z-index: 1;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, .14), transparent);
+  opacity: 0;
+}
+.lane.racing::before { left: 12%; animation: speedline 1.1s linear infinite; }
+.lane.racing::after { right: 18%; animation: speedline .8s linear infinite .35s; }
+@keyframes speedline {
+  0% { transform: translateY(-100%); opacity: .9; }
+  100% { transform: translateY(100%); opacity: 0; }
+}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>猜数字 · 控制台</title>
+<link rel="stylesheet" href="/common/base.css">
+</head>
+<body data-view="game-control">
+
+<!-- ═══════════ 猜数字 · 主播台控制台（嵌在主播台框架 iframe 中，也可独立打开） ═══════════
+     按功能分组（.ctl-group 公共样式）：局面控制 / 接入与模拟 / 实时状态 / 游戏配置 / 最近揭晓 -->
+<section class="ctl-panel">
+  <h1 class="ctl-game-title">🔢 猜数字 · 控制台</h1>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">🎯 局面控制</div>
+    <div class="btn-row">
+      <button id="btnStart" class="btn primary">开始一轮</button>
+      <button id="btnPause" class="btn">暂停</button>
+      <button id="btnResume" class="btn">继续</button>
+      <button id="btnReveal" class="btn warn">立即揭晓</button>
+      <button id="btnNext" class="btn">立即下一轮</button>
+    </div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">📡 接入与模拟 <span class="ctl-group-flag">模拟事件与真实弹幕走同一条管线</span></div>
+    <!-- 直播间筛选 + 模拟观众套件（common core.js mountFeedTools 渲染） -->
+    <div id="ctlFeedTools"></div>
+    <div class="ctl-pw-row" data-power-pin></div>
+    <!-- 展示屏主题选择器：core.js 自动挂载（data-game 为无 URL 参数时的兜底） -->
+    <div class="theme-row" data-theme-picker data-game="guess"></div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">📊 实时状态</div>
+    <div id="ctlAnswer" class="ctl-answer">--</div>
+    <div id="ctlStatus" class="ctl-status">状态: 空闲</div>
+    <div id="ctlClues" class="ctl-clues" style="margin-top:8px"></div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">⚙️ 游戏配置</div>
+    <div class="cfg-row" id="cfgForm">
+      <!-- 配置表单由 control.js 动态生成（按功能分组） -->
+    </div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">🕘 最近揭晓</div>
+    <div id="ctlHistory" class="ctl-history"></div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">🤖 AI 语音播报 <span class="ctl-group-flag">通用播报中心：生成方式 / 逐点开关 / TTS 语速音色</span></div>
+    <!-- 通用 AI 播报面板（common broadcast.js mountPanel 渲染，全游戏共用） -->
+    <div id="bcPanel"></div>
+  </div>
+</section>
+
+<script src="/common/core.js"></script>
+<script src="/common/broadcast.js"></script>
+<script src="control.js"></script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>红蓝大作战 · 控制台</title>
+<link rel="stylesheet" href="/common/base.css">
+<style>
+.rb-status-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 0; }
+.rb-chip { background: var(--panel2); border: 1px solid var(--line); border-radius: 9px; padding: 5px 10px; font-size: 13px; color: var(--sub); }
+.rb-chip b { color: var(--text); }
+.rb-t-red { color: var(--red) !important; }
+.rb-t-blue { color: var(--accent) !important; }
+.rb-h-red { color: var(--red); }
+.rb-h-blue { color: var(--accent); }
+.ctl-group .ctl-status { margin-top: 8px; }
+</style>
+</head>
+<body data-view="game-control">
+
+<!-- ═══════════ 红蓝大作战 · 主播台控制台（嵌主播台框架 iframe，也可独立打开） ═══════════
+     按功能分组（.ctl-group 公共样式）：局面控制 / 接入与模拟 / 实时状态 / 阵营平衡 / 赛季 / 配置 / 战报 -->
+<section class="ctl-panel">
+  <h1 class="ctl-game-title">⚔️ 红蓝大作战 · 控制台</h1>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">🎯 局面控制</div>
+    <div class="btn-row">
+      <button id="btnStart" class="btn primary">⚔️ 开始一轮</button>
+      <button id="btnPause" class="btn">暂停</button>
+      <button id="btnResume" class="btn">继续</button>
+      <button id="btnReveal" class="btn warn">立即结算</button>
+      <button id="btnEnd" class="btn">结束</button>
+    </div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">📡 接入与模拟 <span class="ctl-group-flag">模拟事件与真实弹幕走同一条管线</span></div>
+    <!-- 直播间筛选 + 模拟观众套件（common core.js mountFeedTools 渲染） -->
+    <div id="ctlFeedTools"></div>
+    <div class="ctl-pw-row" data-power-pin></div>
+    <!-- 展示屏主题选择器 -->
+    <div class="theme-row" data-theme-picker data-game="redblue"></div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">📊 实时状态</div>
+    <div class="rb-status-row" id="rbStatusRow">
+      <div class="rb-chip" id="chipPhase">阶段: 空闲</div>
+      <div class="rb-chip" id="chipRemain">剩余 --</div>
+      <div class="rb-chip">红 <b class="rb-t-red" id="chipRed">0 人</b></div>
+      <div class="rb-chip">蓝 <b class="rb-t-blue" id="chipBlue">0 人</b></div>
+      <div class="rb-chip">战线 <b id="chipPos">50%</b></div>
+      <div class="rb-chip">战绩 <b id="chipSeries">0 : 0</b></div>
+    </div>
+    <div id="ctlStatus" class="ctl-status">状态: 空闲</div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">🛡 阵营与战场平衡 <span class="ctl-group-flag">实时生效</span></div>
+    <div class="cfg-row">
+      <label>红队名 <input id="cfgRedName" type="text" maxlength="12"></label>
+      <label>蓝队名 <input id="cfgBlueName" type="text" maxlength="12"></label>
+      <button id="btnTeams" class="btn tiny secondary">改阵营名</button>
+    </div>
+    <div class="cfg-row" style="margin-top:8px">
+      <label>红队推力 ×<span id="lblRedMult">1.0</span>
+        <input id="cfgRedMult" type="range" min="0.2" max="3" step="0.1" style="width:140px"></label>
+      <label>蓝队推力 ×<span id="lblBlueMult">1.0</span>
+        <input id="cfgBlueMult" type="range" min="0.2" max="3" step="0.1" style="width:140px"></label>
+      <button id="btnMult" class="btn tiny secondary">应用系数</button>
+      <span class="cfg-hint-inline">人少/落后一方可调高（背水一战会自动给落后方加成，无需手动救场时可保持 1.0）</span>
+    </div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">🏆 赛季战队 <span class="ctl-group-flag">跨场次功勋，入队即入伍</span></div>
+    <div class="cfg-row" id="seasonRow">
+      <div class="rb-chip" id="chipSeason">赛季 --</div>
+      <div class="rb-chip">红队功勋 <b class="rb-t-red" id="chipSeasonRed">--</b></div>
+      <div class="rb-chip">蓝队功勋 <b class="rb-t-blue" id="chipSeasonBlue">--</b></div>
+      <div class="rb-chip">名册 <b id="chipSeasonMembers">--</b></div>
+      <button id="btnNewSeason" class="btn warn">🏆 开启新赛季</button>
+    </div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">⚙️ 游戏配置</div>
+    <div class="cfg-row" id="cfgForm">
+      <!-- 由 control.js 动态生成（按功能分组） -->
+    </div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">🕘 战报 / 历史</div>
+    <div id="ctlHistory" class="ctl-history"></div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">🤖 AI 语音播报 <span class="ctl-group-flag">通用播报中心：生成方式 / 逐点开关 / TTS 语速音色</span></div>
+    <!-- 通用 AI 播报面板（common broadcast.js mountPanel 渲染，全游戏共用） -->
+    <div id="bcPanel"></div>
+  </div>
+</section>
+
+<script src="/common/core.js"></script>
+<script src="/common/broadcast.js"></script>
+<script src="control.js"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>弹幕五子棋 · 控制台</title>
+<link rel="stylesheet" href="/common/base.css">
+<link rel="stylesheet" href="control.css">
+</head>
+<body data-view="game-control">
+
+<!-- ═══════════ 弹幕五子棋 · 主播台控制台（嵌在主播台框架 iframe 中，也可独立打开） ═══════════ -->
+<section class="ctl-panel">
+  <h1 class="ctl-game-title">⚫ 弹幕五子棋 · 控制台</h1>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">🎯 局面控制</div>
+    <div class="btn-row">
+      <button id="btnStart" class="btn primary">开新一局（立即上座）</button>
+      <button id="btnPause" class="btn">暂停</button>
+      <button id="btnResume" class="btn">继续</button>
+      <button id="btnAutoMove" class="btn">🤖 托管一手</button>
+      <button id="btnHostUndo" class="btn">↩️ 主播悔棋</button>
+      <button id="btnForfeit" class="btn warn">当前方判负</button>
+      <button id="btnEndRound" class="btn warn">平局结束</button>
+    </div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">📡 接入与模拟 <span class="ctl-group-flag">模拟事件与真实弹幕走同一条管线</span></div>
+    <div id="ctlFeedTools"></div>
+    <div class="ctl-pw-row" data-power-pin></div>
+    <div class="theme-row" data-theme-picker data-game="gomoku"></div>
+  </div>
+
+  <div class="ctl-cols">
+    <div class="ctl-main">
+      <div class="ctl-group">
+        <div class="ctl-group-title">📊 实时状态</div>
+        <div id="ctlStatus" class="ctl-status">状态: 空闲</div>
+        <div class="stat-chips" id="statChips"></div>
+        <div class="seat-cards" id="seatCards"></div>
+      </div>
+
+      <div class="ctl-group">
+        <div class="ctl-group-title">♠️ 对局棋盘 <span class="ctl-group-flag">最后一手高亮 · 结算显示获胜连线</span></div>
+        <div id="ctlBoardWrap" class="ctl-board-wrap"></div>
+      </div>
+
+      <div class="ctl-group">
+        <div class="ctl-group-title">🪑 等候队列 <span class="ctl-group-flag">点赞 1:<b id="qLikePer">1</b> 转排序值 · 礼物 +<b id="qGiftSort">30</b>/件 · 每局结束队列第一上座</span></div>
+        <div class="queue-cols" id="queueCols"></div>
+      </div>
+
+      <div class="ctl-group">
+        <div class="ctl-group-title">⚙️ 游戏配置</div>
+        <div class="cfg-row" id="cfgForm"></div>
+      </div>
+
+      <div class="ctl-group">
+        <div class="ctl-group-title">📜 战报日志 <span class="ctl-group-flag">完整版</span></div>
+        <div id="feedLog" class="feed-log"></div>
+      </div>
+
+      <div class="ctl-group">
+        <div class="ctl-group-title">🕘 历史对局</div>
+        <div id="ctlHistory" class="ctl-history"></div>
+      </div>
+    </div>
+
+    <div class="ctl-side">
+      <div class="ctl-group">
+        <div class="ctl-group-title">🤖 AI 语音播报 <span class="ctl-group-flag">通用播报中心：生成方式 / 逐点开关 / TTS 语速音色</span></div>
+        <div id="bcPanel"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="/common/core.js"></script>
+<script src="/common/broadcast.js"></script>
+<script src="control.js"></script>
+</body>
+</html>

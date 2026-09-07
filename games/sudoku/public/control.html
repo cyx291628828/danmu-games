@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>弹幕数独 · 控制台</title>
+<link rel="stylesheet" href="/common/base.css">
+<style>
+/* 数独控制台专属：主播参考小盘（含答案，请勿投屏） + 实时统计 */
+.ctl-cols { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-start; }
+.ctl-main { flex: 1 1 380px; min-width: 0; }
+.ctl-side { flex: 0 0 240px; }
+.ref-board {
+  display: grid; grid-template-columns: repeat(9, 1fr); gap: 1px;
+  background: var(--line2); border: 1px solid var(--line); border-radius: 6px;
+  overflow: hidden; user-select: none;
+}
+.ref-board span {
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  background: var(--panel2); font-size: 14px; color: var(--text); font-variant-numeric: tabular-nums;
+}
+.ref-board span.hole { color: var(--accent); font-weight: 600; }
+.stat-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.stat-chip {
+  background: var(--panel2); border: 1px solid var(--line); border-radius: 8px;
+  padding: 4px 10px; font-size: 12px; color: var(--sub);
+}
+.stat-chip b { color: var(--text); }
+.stat-chip .gd { color: var(--warn-color, #fbbf24); }
+.op-log {
+  display: flex; flex-direction: column; gap: 3px;
+  font-size: 13px; color: var(--sub); line-height: 1.5;
+  max-height: 260px; overflow-y: auto;
+}
+.op-log .hot { color: var(--warn-color, #fbbf24); }
+.op-log .err { color: var(--red); }
+.op-log .who { color: var(--text); font-weight: 500; }
+.op-log .pos { color: var(--accent); }
+.op-log .lt { color: var(--dim); font-size: 11px; margin-right: 4px; font-variant-numeric: tabular-nums; }
+.half { display: flex; gap: 8px; align-items: center; padding: 6px 10px; background: var(--panel2); border-radius: 8px; }
+</style>
+</head>
+<body data-view="game-control">
+
+<!-- ═══════════ 弹幕数独 · 主播台控制台（嵌在主播台框架 iframe 中，也可独立打开） ═══════════
+     页面按功能分组（.ctl-group 公共样式）：局面控制 / 接入与模拟 / 实时状态 / 游戏配置 / 日志 / 历史 -->
+<section class="ctl-panel">
+  <h1 class="ctl-game-title">🧩 弹幕数独 · 控制台</h1>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">🎯 局面控制</div>
+    <div class="btn-row">
+      <button id="btnStart" class="btn primary">开新一局</button>
+      <button id="btnPause" class="btn">暂停</button>
+      <button id="btnResume" class="btn">继续</button>
+      <button id="btnHint" class="btn">💡 提示一格</button>
+      <button id="btnEnd" class="btn warn">提前结束本局</button>
+    </div>
+  </div>
+
+  <div class="ctl-group">
+    <div class="ctl-group-title">📡 接入与模拟 <span class="ctl-group-flag">模拟事件与真实弹幕走同一条管线</span></div>
+    <!-- 直播间筛选 + 模拟观众套件（common core.js mountFeedTools 渲染） -->
+    <div id="ctlFeedTools"></div>
+    <div class="ctl-pw-row" data-power-pin></div>
+    <!-- 展示屏主题选择器：core.js 自动挂载 -->
+    <div class="theme-row" data-theme-picker data-game="sudoku"></div>
+  </div>
+
+  <div class="ctl-cols">
+    <div class="ctl-main">
+      <div class="ctl-group">
+        <div class="ctl-group-title">📊 实时状态</div>
+        <div id="ctlStatus" class="ctl-status">状态: 空闲</div>
+        <div class="stat-chips" id="statChips"></div>
+      </div>
+
+      <div class="ctl-group">
+        <div class="ctl-group-title">⚙️ 游戏配置</div>
+        <div class="cfg-row" id="cfgForm">
+          <!-- 配置表单由 control.js 动态生成（按功能分组） -->
+        </div>
+      </div>
+
+      <div class="ctl-group">
+        <div class="ctl-group-title">📜 操作日志 <span class="ctl-group-flag">完整版</span></div>
+        <div id="opLog" class="op-log"></div>
+      </div>
+
+      <div class="ctl-group">
+        <div class="ctl-group-title">🕘 历史对局</div>
+        <div id="ctlHistory" class="ctl-history"></div>
+      </div>
+    </div>
+
+    <div class="ctl-side">
+      <div class="ctl-group">
+        <div class="ctl-group-title">🔑 主播参考 <span class="ctl-group-flag">完整答案 · 勿投屏</span></div>
+        <div id="refBoard" class="ref-board"></div>
+      </div>
+
+      <div class="ctl-group">
+        <div class="ctl-group-title">🤖 AI 语音播报 <span class="ctl-group-flag">通用播报中心：生成方式 / 逐点开关 / TTS 语速音色</span></div>
+        <!-- 通用 AI 播报面板（common broadcast.js mountPanel 渲染，全游戏共用） -->
+        <div id="bcPanel"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="/common/core.js"></script>
+<script src="/common/broadcast.js"></script>
+<script src="control.js"></script>
+</body>
+</html>
