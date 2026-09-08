@@ -67,13 +67,17 @@ function broadcast(gameId, event, data) {
   const payload = `event: ${event}\ndata: ${JSON.stringify(payloadData)}\n\n`;
   for (const c of sseClients) {
     if (c.game === '*' || !c.game || c.game === gameId) {
+      // 已断开/已结束的连接立即摘除：向已 end 的响应写入会以异步 error 事件形式爆进程
+      // （ERR_STREAM_WRITE_AFTER_END 不走同步 try/catch，兜底见 /api/events 的 res.on('error')）
+      if (c.res.destroyed || c.res.writableEnded) { sseClients.delete(c); continue; }
       // 慢客户端保护：积压超过 1MB 视为浏览器标签被节流/后台，直接断开让其自动重连
       // （EventSource 重连后会收到全量 state，不会漏状态；防止 Node 内存被无声吞噬）
       if (c.res.writableLength > 1 << 20) {
+        sseClients.delete(c);   // 先摘除，防止 end() 之后的下一轮广播写到已结束的流
         try { c.res.end(); } catch {}
         continue;
       }
-      try { c.res.write(payload); } catch {}
+      try { c.res.write(payload); } catch { sseClients.delete(c); }
     }
   }
 }
@@ -126,14 +130,21 @@ for (const g of games) if (!themes[g.id]) themes[g.id] = 'default';
 /** 主题对外键名：gameId → theme；缺省返回 'default' */
 function themeOf(gameId) { return themes[gameId] || 'default'; }
 
+/* ───────────── 观众时刻演出风格（按游戏托管，主播台「演出风格」选择器切换） ─────────────
+   momentSkins: { <gameId>: 'aurora'|'neon'|'meteor'|'scroll' }，缺省 aurora（流光）。
+   与 common/public/core.js 的 MOMENT_SKINS 列表保持同步。 */
+const VALID_MOMENT_SKINS = new Set(['aurora', 'neon', 'meteor', 'scroll']);
+const momentSkins = (hostCfg.momentSkins && typeof hostCfg.momentSkins === 'object') ? { ...hostCfg.momentSkins } : {};
+function momentSkinOf(gameId) { return VALID_MOMENT_SKINS.has(momentSkins[gameId]) ? momentSkins[gameId] : 'aurora'; }
+
 /** 游戏启用开关（关闭后不处理弹幕、清理定时器，导航显示已关闭） */
 const enabledMap = {};
 for (const g of games) enabledMap[g.id] = !(hostCfg.enabled && hostCfg.enabled[g.id] === false);
 
-/** 宿主配置统一落盘（activeGame / themes / enabled 同一文件原子持久化） */
+/** 宿主配置统一落盘（activeGame / themes / enabled / momentSkins 同一文件原子持久化） */
 function persistHost() {
   try {
-    fs.writeFileSync(HOST_CFG_PATH, JSON.stringify({ ...hostCfg, activeGame, themes, enabled: enabledMap }, null, 2));
+    fs.writeFileSync(HOST_CFG_PATH, JSON.stringify({ ...hostCfg, activeGame, themes, enabled: enabledMap, momentSkins }, null, 2));
   } catch (e) { warn('[host] 配置落盘失败:', e.message); }
 }
 
@@ -249,7 +260,35 @@ function dispatchDanmuEvent(msg) {
         inst.mod.handleDanmu(inst.ctx, msg);
       }
     } catch (e) { warn(`[danmu] 游戏 ${gid} 处理 ${msg.event} 异常:`, e.message); }
+
+    // 进场/关注/送礼 → 广播 moment 演出事件（展示屏侧边如画横幅；展示层独立于游戏是否实现对应接口）
+    if (msg.event !== 'chat' && msg.event !== 'like') {
+      try { broadcastMoment(gid, msg); } catch (e) { warn('[moment] 广播异常:', e.message); }
+    }
   }
+}
+
+/** 组装 moment 负载：观众昵称/头像 + 礼物信息 + 其在本玩法的排名/得分（排行榜可查时附带） */
+function broadcastMoment(gameId, msg) {
+  const uid = (msg.user && (msg.user.id || msg.user.displayId)) || (msg.user && msg.user.name) || '';
+  let gameInfo = null;
+  if (uid) {
+    const rec = leaderboard.gameTopList(gameId).find(r => r.key === uid);
+    if (rec) gameInfo = { rank: rec.rank, score: rec.totalScore };
+  }
+  broadcast(gameId, 'moment', {
+    type: msg.event,                       // enter | follow | gift
+    skin: momentSkinOf(gameId),            // 演出风格：展示屏据此切换卡片外观
+    user: {
+      name: (msg.user && msg.user.name) || '观众',
+      avatar: (msg.user && msg.user.avatar) || '',
+    },
+    giftName: msg.giftName || '',
+    giftCount: (Number(msg.giftCount) || 1) * (Number(msg.repeatCount) || 1),
+    giftImage: (typeof msg.giftImage === 'string' && msg.giftImage.startsWith('http')) ? msg.giftImage : '',
+    gameInfo,                              // { rank, score } | null —— 观众在本玩法的成绩
+    ts: Date.now(),
+  });
 }
 
 /* ───────────── 宿主级模拟观众动作（主播台「接入与模拟」面板共用） ─────────────
@@ -352,6 +391,7 @@ function onHttpRequest(req, res) {
           status: inst ? inst.state.status : 'idle',
           running: inst ? g.liveStatuses.includes(inst.state.status) : false,
           enabled: inst ? inst.enabled !== false : true,   // 关闭状态：导航显示已关闭
+          momentSkin: momentSkinOf(g.id),                 // 观众时刻演出风格（主播台选择器回填）
           // 运行中状态集合原样下发：主播台导航点据此分类（进行中/暂停/结算中）
           liveStatuses: g.liveStatuses,
           roundNo: inst ? inst.state.roundNo : 0,
@@ -374,6 +414,8 @@ function onHttpRequest(req, res) {
       Connection: 'keep-alive',
       'X-Accel-Buffering': 'no',
     });
+    // 写任何数据前先挂 error 监听：客户端在初始推送瞬间断开时，write 错误走异步事件而非同步 catch
+    res.on('error', () => {});   // 正式摘除在下方 client 注册处（sseClients.delete）
     if (game === '*' || game === 'all') {
       for (const inst of instances.values()) {
         try { res.write(`event: state\ndata: ${JSON.stringify({ ...inst.mod.publicState(inst.ctx), __game: inst.id, theme: themeOf(inst.id) })}\n\n`); } catch {}
@@ -392,7 +434,13 @@ function onHttpRequest(req, res) {
     const client = { res, game };
     sseClients.add(client);
     req.on('close', () => sseClients.delete(client));
-    const keep = setInterval(() => { try { res.write(': ping\n\n'); } catch { clearInterval(keep); } }, 15000);
+    // 安全兜底：向已断开/已结束的响应写入时，错误以异步 'error' 事件发出（不走同步 catch），
+    // 不挂监听会变成未处理异常直接崩掉宿主进程；这里静默摘除即可，EventSource 会自动重连
+    res.on('error', () => sseClients.delete(client));
+    const keep = setInterval(() => {
+      if (res.destroyed || res.writableEnded) { clearInterval(keep); sseClients.delete(client); return; }
+      try { res.write(': ping\n\n'); } catch { clearInterval(keep); sseClients.delete(client); }
+    }, 15000);
     req.on('close', () => clearInterval(keep));
     return;
   }
@@ -432,6 +480,16 @@ function onHttpRequest(req, res) {
           // 宿主级动作：模拟观众事件（弹幕/点赞/送礼/进场/关注），走与真实弹幕相同的分发管线，
           // 所有游戏零改动即可被模拟（各游戏按需实现 handleXxx，未实现的自然忽略）
           r = handleMockAction(game, cmd);
+        } else if (cmd.action === 'setMomentSkin') {
+          // 宿主级动作：按游戏保存观众时刻演出风格（展示屏卡片外观）
+          const s = String(cmd.skin || 'aurora');
+          if (!VALID_MOMENT_SKINS.has(s)) r = { ok: false, msg: `未知演出风格: ${s}` };
+          else {
+            momentSkins[game] = s;
+            persistHost();
+            info(`[moment] 「${inst.meta.name}」演出风格 → ${s}`);
+            r = { ok: true, msg: `「${inst.meta.name}」演出风格已切换` };
+          }
         } else if (cmd.action === 'setGameEnabled') {
           // 宿主级动作：关闭 = 停止弹幕分派 + 清理该游戏全部定时器；开启 = 恢复分派
           const target = instances.get(String(cmd.game || ''));

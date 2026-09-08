@@ -140,7 +140,6 @@ window.DG = (() => {
     const on = pwState.get(game) !== false;
     el.innerHTML = `<span class="power-pin" data-on="${on ? '1' : '0'}">
         <button class="btn tiny ${on ? 'warn' : 'primary'}" data-pw-act>${on ? '关闭游戏' : '开启游戏'}</button>
-        <span class="power-pin-tip">${on ? '关闭后该游戏不再执行（弹幕处理与定时器全停）' : '已关闭：弹幕处理与定时器已停止'}</span>
       </span>`;
     const btn = el.querySelector('[data-pw-act]');
     if (btn) btn.onclick = async () => {
@@ -183,7 +182,9 @@ window.DG = (() => {
 
   /* ───────────── SSE 订阅 ─────────────
    * game 传 '*' 订阅所有游戏的事件（主播台框架用）
-   * handlers: { onState(gameId, state), onGuess(gameId, entry), onNotice(gameId, notice), onError }
+   * handlers: { onState(gameId, state), onGuess(gameId, entry), onNotice(gameId, notice),
+   *             onMoment(gameId, moment), onError }
+   * moment = 观众时刻（进场/关注/送礼，宿主在弹幕转发到达时统一广播，含观众本玩法排名）
    * 返回 { close() }
    */
   function connectSSE(game, handlers = {}) {
@@ -202,6 +203,10 @@ window.DG = (() => {
     es.addEventListener('notice', e => {
       const n = JSON.parse(e.data);
       if (handlers.onNotice) handlers.onNotice(n.__game, n, e);
+    });
+    es.addEventListener('moment', e => {
+      const m = JSON.parse(e.data);
+      if (handlers.onMoment) handlers.onMoment(m.__game, m, e);
     });
     es.onerror = () => { if (handlers.onError) handlers.onError(); };
     return { close: () => es.close() };
@@ -253,48 +258,68 @@ window.DG = (() => {
    *   opts.sim.gift               模拟送礼：true / false
    *   opts.sim.enter              模拟进场：true / false
    *   opts.sim.follow             模拟关注：true / false
+   * 布局分行：名字一行 / 弹幕一行 / 点赞一行 / 送礼一行 / 进场+关注同行。
    * 模拟事件由宿主统一实现（mockChat/mockLike/mockGift/mockEnter/mockFollow），
    * 走与真实弹幕相同的分发管线 —— 新游戏只要实现 handleDanmu/handleLike 等
    * 标准事件接口即可被模拟，无需写任何 simulate 动作。
    */
+  /* 礼物下拉选项（对应 res/礼物资源/ 下的素材名；新增礼物素材后在此追加） */
+  const FEED_GIFTS = ['小心心', '玫瑰', '抖音', '啤酒', '666', '人气票', '你最好看', '同心结', '美味烧鸡'];
+
   function mountFeedTools(mountEl, game, opts = {}) {
     if (!mountEl) return null;
     const getRoomId = opts.getRoomId || (() => '');
-    const sim = Object.assign({ chat: true, like: { count: 10 }, gift: true, enter: true, follow: false }, opts.sim || {});
+    const sim = Object.assign({ chat: true, like: { count: 10 }, gift: true, enter: true, follow: true }, opts.sim || {});
     const chatOpt = sim.chat === true ? {} : (sim.chat || {});
     const likeOpt = sim.like === true ? { count: 10 } : (sim.like || {});
 
     mountEl.className = 'ctl-roomid-filter';
     mountEl.innerHTML = `
-      <div class="ctl-roomid-inner">
-        <label class="ctl-roomid-label">接收直播间ID
-          <input id="ctlRoomIdInput" type="text" placeholder="留空=所有房间；多个用逗号分隔"></label>
-        <button id="ctlRoomIdApply" class="btn secondary tiny">应用</button>
-      </div>
-      <div class="feed-sim">
-        <span class="feed-sim-tag">模拟观众</span>
-        <input id="simName" type="text" placeholder="昵称(默认:模拟观众)" value="模拟观众">
+      <div class="feed-rows">
+        <div class="feed-row">
+          <label class="feed-field">模拟观众名字：
+            <input id="simName" type="text" placeholder="观众名字七个字"></label>
+        </div>
         ${sim.chat ? `
-        <input id="simText" type="text" maxlength="40" placeholder="${esc(chatOpt.placeholder || '模拟弹幕文本')}">
-        <button id="btnSimChat" class="btn tiny secondary">发弹幕</button>` : ''}
+        <div class="feed-row">
+          <label class="feed-field">模拟弹幕：
+            <input id="simText" class="feed-chat" type="text" maxlength="40" placeholder="${esc(chatOpt.placeholder || '弹幕文本')}"></label>
+          <button id="btnSimChat" class="btn tiny secondary">发送弹幕</button>
+        </div>` : ''}
         ${sim.like ? `
-        <label class="feed-num">点赞×<input id="simLikeCount" type="number" min="1" value="${likeOpt.count ?? 10}"></label>
-        <button id="btnSimLike" class="btn tiny secondary">模拟点赞</button>` : ''}
+        <div class="feed-row">
+          <label class="feed-field">点赞×<input id="simLikeCount" type="number" min="1" value="${likeOpt.count ?? 10}"></label>
+          <button id="btnSimLike" class="btn tiny secondary">发送点赞</button>
+        </div>` : ''}
         ${sim.gift ? `
-        <label class="feed-num">礼物<input id="simGiftName" type="text" placeholder="小心心"></label>
-        <label class="feed-num">×<input id="simGiftCount" type="number" min="1" value="1"></label>
-        <button id="btnSimGift" class="btn tiny secondary">模拟送礼</button>` : ''}
-        ${sim.enter ? `<button id="btnSimEnter" class="btn tiny secondary">模拟进场</button>` : ''}
-        ${sim.follow ? `<button id="btnSimFollow" class="btn tiny secondary">模拟关注</button>` : ''}
+        <div class="feed-row">
+          <label class="feed-field">礼物名：
+            <select id="simGiftName">${FEED_GIFTS.map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('')}</select></label>
+          <label class="feed-field">×<input id="simGiftCount" type="number" min="1" value="1"></label>
+          <button id="btnSimGift" class="btn tiny secondary">模拟送礼</button>
+        </div>` : ''}
+        <div class="feed-row">
+          ${sim.enter ? `<button id="btnSimEnter" class="btn tiny secondary">模拟进场</button>` : ''}
+          ${sim.follow ? `<button id="btnSimFollow" class="btn tiny secondary">模拟关注</button>` : ''}
+        </div>
       </div>`;
 
-    const input = mountEl.querySelector('#ctlRoomIdInput');
-    const apply = mountEl.querySelector('#ctlRoomIdApply');
+    // 接收直播间ID：独立一行，渲染在挂载容器（#ctlFeedTools 模拟面板）上方
+    const roomRow = document.createElement('div');
+    roomRow.className = 'feed-roomrow';
+    roomRow.innerHTML = `
+      <label class="feed-field">接收直播间ID：
+        <input id="ctlRoomIdInput" type="text" placeholder="留空=所有房间；多个用逗号分隔"></label>
+      <button id="ctlRoomIdApply" class="btn secondary tiny">应用</button>`;
+    mountEl.parentNode.insertBefore(roomRow, mountEl);
+
+    const input = roomRow.querySelector('#ctlRoomIdInput');
+    const apply = roomRow.querySelector('#ctlRoomIdApply');
     const refresh = () => { const v = getRoomId(); if (v !== undefined && document.activeElement !== input) input.value = v || ''; };
     refresh();
     apply.onclick = () => control(game, 'setRoomFilter', { roomId: input.value.trim() });
 
-    const simName = () => (mountEl.querySelector('#simName') || {}).value?.trim() || '模拟观众';
+    const simName = () => (mountEl.querySelector('#simName') || {}).value?.trim() || '观众名字七个字';
     const chatText = mountEl.querySelector('#simText');
     const doChat = () => {
       const text = chatText.value.trim();
@@ -316,9 +341,9 @@ window.DG = (() => {
       count: Math.max(1, parseInt(mountEl.querySelector('#simLikeCount').value, 10) || 1),
     }));
     if (sim.gift) bindMock('#btnSimGift', 'mockGift', () => {
-      const giftName = (mountEl.querySelector('#simGiftName') || {}).value?.trim() || '';
+      const sel = mountEl.querySelector('#simGiftName');
       return {
-        giftName,
+        giftName: sel ? sel.value : '',
         giftCount: Math.max(1, parseInt((mountEl.querySelector('#simGiftCount') || {}).value, 10) || 1),
       };
     });
@@ -331,6 +356,214 @@ window.DG = (() => {
   function mountRoomFilter(mountEl, game, getRoomId) {
     return mountFeedTools(mountEl, game, { getRoomId, sim: false });
   }
+
+  /* ───────────── 观众时刻演出（展示屏侧边如画横幅） ─────────────
+   * 展示屏自动挂载（游戏零改动）：进场/关注/送礼事件从右侧滑入卡片，
+   * 带观众头像 + 事件文案 + 其在本玩法的排名/得分；不遮挡游戏画面主体。
+   * 防刷屏策略：同屏最多 3 张；连发时按 送礼＞关注＞进场 排队，队列超限先丢进场；
+   * 2.5s 内连续进场合并为「A、B 等 N 人」；同用户同礼物连击只涨计数 + 补粒子。
+   * 演出风格（data-skin）由宿主按游戏托管，随 moment 事件下发，主播台可切换。
+   */
+  /* 风格列表（与 host/server.js 的 VALID_MOMENT_SKINS 保持同步；样式见 base.css） */
+  const MOMENT_SKINS = [
+    { id: 'aurora', name: '流光（默认）' },
+    { id: 'neon', name: '霓虹电波' },
+    { id: 'meteor', name: '星雨' },
+    { id: 'scroll', name: '鎏金画卷' },
+  ];
+  const MOMENT_PRIORITY = { gift: 3, follow: 2, enter: 1 };
+  const MOMENT_STAY = { gift: 4200, follow: 3000, enter: 2200 };   // 停留时长也递进：送礼最久
+  const MOMENT_MAX_VISIBLE = 3;
+
+  function initMomentStage(game) {
+    const host = document.querySelector('.phone') || document.body;
+    const stack = document.createElement('div');
+    stack.className = 'moment-stack';
+    stack.dataset.skin = 'aurora';
+    host.appendChild(stack);
+
+    const queue = [];
+    let visible = 0;
+    let lastEnter = null;          // 进行中的进场合并卡 { card, names, total }
+    const giftCards = new Map();   // `${name}|${giftName}` → { card, countEl, count, onGone }
+
+    function enqueue(m) {
+      if (m.type === 'enter' && lastEnter && document.contains(lastEnter.card)) {
+        // 合并进场：刷新已有卡文案
+        lastEnter.total++;
+        lastEnter.names.push(m.user.name);
+        if (lastEnter.names.length > 3) lastEnter.names = lastEnter.names.slice(-3);
+        renderEnterTitle(lastEnter);
+        return;
+      }
+      if (m.type === 'gift') {
+        const key = m.user.name + '|' + (m.giftName || '礼物');
+        const ex = giftCards.get(key);
+        if (ex && document.contains(ex.card)) {
+          // 连击：计数 ×N + 弹跳 + 补粒子 + 延长停留（\u00D7 = ×，纯 ASCII 源码防编码剥离）
+          ex.count += (m.giftCount || 1);
+          ex.countEl.textContent = '\u00D7' + ex.count;
+          ex.countEl.classList.remove('moment-count-bump');
+          void ex.countEl.offsetWidth;
+          ex.countEl.classList.add('moment-count-bump');
+          spawnSparks(ex.card);
+          armOut(ex.card, MOMENT_STAY.gift, ex.onGone);
+          return;
+        }
+      }
+      queue.push(m);
+      while (queue.length > 8) {
+        let idx = queue.findIndex(x => x.type === 'enter');
+        if (idx < 0) idx = queue.findIndex(x => x.type === 'follow');
+        if (idx < 0) idx = 0;
+        queue.splice(idx, 1);
+      }
+      pump();
+    }
+
+    function pump() {
+      if (visible >= MOMENT_MAX_VISIBLE || !queue.length) return;
+      queue.sort((a, b) => (MOMENT_PRIORITY[b.type] || 0) - (MOMENT_PRIORITY[a.type] || 0));
+      show(queue.shift());
+    }
+
+    function show(m) {
+      visible++;
+      const card = buildCard(m);
+      stack.appendChild(card);
+      if (m.type === 'gift') {
+        const key = m.user.name + '|' + (m.giftName || '礼物');
+        const onGone = () => giftCards.delete(key);
+        giftCards.set(key, {
+          card,
+          countEl: card.querySelector('.moment-count'),
+          count: m.giftCount || 1,
+          onGone,
+        });
+        spawnSparks(card);
+        armOut(card, MOMENT_STAY.gift, onGone);
+      } else {
+        if (m.type === 'enter') {
+          lastEnter = { card, names: [m.user.name], total: 1 };
+          renderEnterTitle(lastEnter);
+        }
+        armOut(card, MOMENT_STAY[m.type] || 2600, () => {
+          if (lastEnter && lastEnter.card === card) lastEnter = null;
+        });
+      }
+    }
+
+    /** 到点滑出并回收；可重复调用以延长停留（内部先清旧定时器） */
+    function armOut(card, stay, onGone) {
+      card._cleanup && card._cleanup();
+      card.classList.remove('moment-out');
+      const t1 = setTimeout(() => card.classList.add('moment-out'), Math.max(200, stay - 380));
+      const t2 = setTimeout(() => {
+        card.remove();
+        visible--;
+        onGone && onGone();
+        pump();
+      }, stay);
+      card._cleanup = () => { clearTimeout(t1); clearTimeout(t2); };
+    }
+
+    function renderEnterTitle(rec) {
+      const el = rec.card.querySelector('.moment-title');
+      if (!el) return;
+      const shown = rec.names.join('、');
+      const more = rec.total > rec.names.length ? ` 等 ${rec.total} 人` : '';
+      el.innerHTML = `<b>${esc(shown)}</b>${more} 进入直播间`;
+    }
+
+    function buildCard(m) {
+      const card = document.createElement('div');
+      card.className = 'moment-card moment-' + (m.type || 'enter');
+      const shine = '<span class="moment-shine"></span>';
+      const speed = m.type === 'gift' ? '<span class="moment-speed"></span>' : '';
+      let title;
+      let giftLine = '';
+      let countCol = '';
+      if (m.type === 'gift') {
+        const img = m.giftImage ? `<img src="${esc(m.giftImage)}" referrerpolicy="no-referrer" onerror="this.remove()">` : '';
+        // 两行布局：第一行「名字(限宽省略) 送出」，第二行整行给礼物图标/礼物名；
+        // ×N 数量单独放卡片最右侧，竖排大字占约三行（见 base.css .moment-count）
+        title = `<b>${esc(m.user.name)}</b> 送出`;
+        giftLine = `<div class="moment-giftline"><span class="moment-giftchip">${img}<span class="moment-gname">${esc(m.giftName || '礼物')}</span></span></div>`;
+        countCol = `<span class="moment-count">&times;${m.giftCount || 1}</span>`;
+      } else if (m.type === 'follow') {
+        title = `<b>${esc(m.user.name)}</b> 关注了主播 ❤`;
+      } else {
+        title = `<b>${esc(m.user.name)}</b> 进入直播间`;
+      }
+      const sub = m.gameInfo
+        ? `🎮 本玩法第 ${m.gameInfo.rank} 名 · ${m.gameInfo.score} 分`
+        : (m.type === 'gift' ? '🎁 感谢礼物' : '');
+      card.innerHTML = `${shine}${speed}
+        <span class="moment-avatar">${avatarHTML(m.user.name, m.user.avatar)}</span>
+        <div class="moment-body">
+          <div class="moment-title">${title}</div>
+          ${giftLine}
+          ${sub ? `<div class="moment-sub">${sub}</div>` : ''}
+        </div>${countCol}`;
+      return card;
+    }
+
+    function spawnSparks(card, count = 18) {
+      const colors = isLightTheme() ? FIREWORK_LIGHT : FIREWORK_DARK;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('span');
+        p.className = 'moment-spark';
+        const ang = Math.random() * Math.PI * 2;
+        const dist = 26 + Math.random() * 44;
+        p.style.cssText = `--dx:${(Math.cos(ang) * dist).toFixed(0)}px;--dy:${(Math.sin(ang) * dist).toFixed(0)}px;`
+          + `left:${(28 + Math.random() * 34).toFixed(0)}%;top:${(26 + Math.random() * 48).toFixed(0)}%;`
+          + `background:${colors[(Math.random() * colors.length) | 0]};`;
+        card.appendChild(p);
+        setTimeout(() => p.remove(), 900);
+      }
+    }
+
+    connectSSE(game, {
+      onMoment: (_gid, m) => {
+        // 风格由宿主随事件下发：切换「演出风格」后下一条观众时刻即换装
+        if (m.skin && stack.dataset.skin !== m.skin) stack.dataset.skin = m.skin;
+        enqueue(m);
+      },
+    });
+  }
+
+  function autoMountMomentStage() {
+    if (!isStage()) return;
+    const game = new URLSearchParams(location.search).get('game') || '';
+    initMomentStage(game);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', autoMountMomentStage);
+  else autoMountMomentStage();
+
+  /** 主播台「演出风格」选择器：自动插在 [data-theme-picker]（展示屏主题行）后面，游戏零改动 */
+  function autoMountMomentSkinPicker() {
+    if (isStage()) return;
+    document.querySelectorAll('[data-theme-picker]').forEach(el => {
+      const game = new URLSearchParams(location.search).get('game') || el.dataset.game || '';
+      if (!game) return;
+      const row = document.createElement('div');
+      row.className = 'theme-row';
+      row.innerHTML = `演出风格 <select class="moment-skin-select">${
+        MOMENT_SKINS.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}</select>`;
+      el.after(row);
+      const select = row.querySelector('select');
+      fetch('/api/games').then(r => r.json()).then(j => {
+        const g = (j.games || []).find(x => x.id === game);
+        if (g && g.momentSkin) select.value = g.momentSkin;
+      }).catch(() => { /* 服务未就绪时保留默认项 */ });
+      select.addEventListener('change', async () => {
+        const r = await control(game, 'setMomentSkin', { skin: select.value });
+        if (r && r.ok) showToast('演出风格已切换（展示屏收到下一条观众时刻时生效）');
+      });
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', autoMountMomentSkinPicker);
+  else autoMountMomentSkinPicker();
 
   return {
     $, esc, initialOf, avatarHTML, showToast, control, connectSSE, launchFireworks,

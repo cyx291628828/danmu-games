@@ -224,7 +224,7 @@
   /* ───────────── 接入与模拟（公共组件：直播间筛选 + 模拟观众套件） ───────────── */
   roomFilter = DG.mountFeedTools($('ctlFeedTools'), GAME, {
     getRoomId: () => (state && state.cfg && state.cfg.allowedRoomId) || '',
-    sim: { chat: { placeholder: '模拟弹幕（红 / 蓝 或守城任意文本）' }, like: { count: 10 }, gift: true, enter: true },
+    sim: { chat: { placeholder: '红 / 蓝 或守城任意文本' }, like: { count: 10 }, gift: true, enter: true },
   });
   bindControlEvents();
 

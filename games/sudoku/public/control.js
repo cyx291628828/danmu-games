@@ -49,7 +49,7 @@
     $('statChips').innerHTML = `
       <span class="stat-chip">难度 <b>${esc(state.difficulty.label)}</b>（${state.holes} 空格）</span>
       <span class="stat-chip">已填 <b>${state.filled}</b>/81 · 空 <b>${81 - state.filled}</b></span>
-      <span class="stat-chip">弹幕填 <b class="gd">${rs.dm || 0}</b> · 点赞填 <b class="gd">${rs.like || 0}</b> · 礼物填 <b class="gd">${rs.gift || 0}</b> · 自动填 <b class="gd">${rs.auto || 0}</b> · 提示 <b class="gd">${rs.hint || 0}</b></span>
+      <span class="stat-chip">弹幕填 <b class="gd">${rs.dm || 0}</b> · 点赞填 <b class="gd">${rs.like || 0}</b> · 礼物填 <b class="gd">${rs.gift || 0}</b> · 关注填 <b class="gd">${rs.follow || 0}</b> · 自动填 <b class="gd">${rs.auto || 0}</b> · 提示 <b class="gd">${rs.hint || 0}</b></span>
       <span class="stat-chip">错填 <b>${rs.wrong || 0}</b>（${(state.cfg && state.cfg.wrongFillPenalty > 0) ? '扣 ' + state.cfg.wrongFillPenalty + ' 分/次' : '忽略+记录'}）</span>
       <span class="stat-chip">点赞充能 <b>${likeTop ? esc(likeTop.name) + ' ' + likeTop.likes : '0'}</b>/${state.likeThreshold}</span>`;
   }
@@ -136,8 +136,9 @@
       <div class="cfg-break"></div>
       <div class="cc-title">互动助攻</div>
       <label>点赞阈值N <input id="cfgLike" type="number" min="1" value="${c.likeThreshold ?? 30}"></label>
-      <label>送礼连填m格 <input id="cfgGift" type="number" min="1" max="9" value="${c.giftFillCount ?? 3}"></label>
-      <label>自动填数(秒) <input id="cfgAutoFill" type="number" min="0" value="${c.autoFillSec ?? 60}"></label>
+      <label>送礼连填m格 <input id="cfgGift" type="number" min="1" max="81" value="${c.giftFillCount ?? 3}"></label>
+      <label>关注填n格 <input id="cfgFollow" type="number" min="0" max="81" value="${c.followFillCount ?? 1}"></label>
+      <label>自动填数(秒) <input id="cfgAutoFill" type="number" min="-1" value="${c.autoFillSec ?? 60}"></label>
       <div class="cfg-break"></div>
       <div class="cc-title">弹幕规则</div>
       <label>匹配模式
@@ -154,7 +155,7 @@
           <option value="left-top" ${c.avatarCorner === 'left-top' ? 'selected' : ''}>左上角</option>
         </select>
       </label>
-      <div class="cfg-hint">自动填数 = 每隔 N 秒系统自动落 1 个正确数防冷场（0=关闭，不记分）。错填默认不落格仅红闪记录，扣分填 0 以外的数生效。改动即时生效并写回 config.json；难度在「开新一局」时生效。</div>
+      <div class="cfg-hint">自动填数 = 每隔 N 秒系统自动落 1 个正确数防冷场（不记分；0=关闭，结算仍显示自动数；-1=关闭且结算面板不显示自动数）。错填默认不落格仅红闪记录，扣分填 0 以外的数生效。改动即时生效并写回 config.json；难度在「开新一局」时生效。</div>
       <button id="btnApplyCfg" class="btn secondary">应用配置</button>`;
     $('btnApplyCfg').onclick = () => {
       const num = (id, def) => { const v = parseInt($(id).value, 10); return Number.isNaN(v) ? def : v; };
@@ -166,6 +167,7 @@
         scorePerFill: num('cfgScore', 10),
         likeThreshold: num('cfgLike', 30),
         giftFillCount: num('cfgGift', 3),
+        followFillCount: num('cfgFollow', 1),
         autoFillSec: num('cfgAutoFill', 60),
         rateLimitSec: num('cfgRate', 2),
         maxFillsPerUserPerRound: num('cfgQuota', 20),
@@ -197,7 +199,7 @@
         row.innerHTML = `<span>#${r.roundNo}</span>` +
           `<span class="${r.complete ? '' : 'r-ans'}">${r.complete ? `通关 ${fmtDur(r.durationSec)}` : `未完成 ${r.filled}/81`}</span>` +
           `<span>${r.mvpName ? 'MVP ' + esc(r.mvpName) + ' (+' + r.mvpScore + ')' : '无 MVP'}</span>` +
-          `<span style="color:var(--dim)">弹${r.dm || 0} 赞${r.like || 0} 礼${r.gift || 0} 自${r.auto || 0}</span>`;
+          `<span style="color:var(--dim)">弹${r.dm || 0} 赞${r.like || 0} 礼${r.gift || 0} 关${r.follow || 0} 自${r.auto || 0}</span>`;
         hist.appendChild(row);
       });
     } else {
@@ -211,7 +213,7 @@
   /* ───────────── 接入与模拟（公共组件：直播间筛选 + 模拟观众套件） ───────────── */
   roomFilter = DG.mountFeedTools($('ctlFeedTools'), GAME, {
     getRoomId: () => (state && state.cfg && state.cfg.allowedRoomId) || '',
-    sim: { chat: { placeholder: '模拟弹幕：A33 或 3行5列7' }, like: { count: 10 }, gift: true, enter: false },
+    sim: { chat: { placeholder: 'A33 或 3行5列7' }, like: { count: 10 }, gift: true, enter: true },
   });
 
   /* ───────────── 通用 AI 播报面板 ───────────── */

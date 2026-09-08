@@ -50,7 +50,8 @@ const CFG_DEFAULTS = {
   maxFillsPerUserPerRound: 20, // 每人每局弹幕填对上限（0=不限）
   likeThreshold: 30,          // 单人点赞累计 N → 随机填 1 格
   giftFillCount: 3,           // 送礼随机连填 m 格
-  autoFillSec: 60,            // 系统自动填数间隔（秒，0=关闭）
+  followFillCount: 1,         // 关注随机填 n 格（0=关注不填格）
+  autoFillSec: 60,            // 系统自动填数间隔（秒，0=关闭[结算仍显示自动数]，-1=关闭且结算不显示自动数）
   wrongFillPenalty: 0,        // 错填扣分（0=忽略不扣）
   fillPattern: 'loose',       // loose=宽松（357/3行5列7） strict=严格（仅 3行5列7）
   avatarCorner: 'right-top',  // 填对格子头像角标位置：right-top | left-top
@@ -81,7 +82,8 @@ const CONFIG_SCHEMA = [
   { key: 'scorePerFill', label: '每填对得分', type: 'number', min: 1, def: 10 },
   { key: 'likeThreshold', label: '点赞阈值N', type: 'number', min: 1, def: 30 },
   { key: 'giftFillCount', label: '送礼连填m格', type: 'number', min: 1, max: 9, def: 3 },
-  { key: 'autoFillSec', label: '自动填数(秒)', type: 'number', min: 0, def: 60 },
+  { key: 'followFillCount', label: '关注填n格', type: 'number', min: 0, max: 9, def: 1 },
+  { key: 'autoFillSec', label: '自动填数(秒)', type: 'number', min: -1, def: 60 },
 ];
 
 /* ═══════════════ 状态 ═══════════════ */
@@ -100,13 +102,14 @@ function createState() {
     likeMap: new Map(),        // uid → { name, avatar, likes }（单人点赞累计，满 N 触发）
     roundScores: new Map(),    // uid → { name, avatar, score, cnt }（本局计分，MVP 依此评）
     roundWrongs: new Map(),    // uid → { name, avatar, wrong }（本局错填数，结算 Top5 展示用）
-    roundStats: { dm: 0, like: 0, gift: 0, auto: 0, hint: 0, wrong: 0 },
+    roundStats: { dm: 0, like: 0, gift: 0, follow: 0, auto: 0, hint: 0, wrong: 0 },
     ops: [],                   // 本局操作记录（cap 30，随 SSE 下发供展示屏重连补显）
     history: [],               // 历史对局（cap 20）
     finishedInfo: null,        // { complete, durationSec, mvp }
     stats: { rounds: 0, clears: 0 },
     lastFillAt: new Map(),     // 弹幕限流
     fillCount: new Map(),      // uid → 本局弹幕填对次数
+    followRewarded: new Set(), // 已获得关注奖励的观众（每次游戏启动清零 → 一人限一次，防反复关注刷格）
   };
 }
 
@@ -150,7 +153,8 @@ function pushOp(ctx, entry) {
 /**
  * 核心：往空格落一个正确的数（服务端权威）。
  * @param {number} idx 0-80
- * @param {{src:string, entry?:{user,userId,avatar}, score:number}} p
+ * @param {{src:string, entry?:{user,userId,avatar}, score:number, silent?:boolean}} p
+ *        silent=true 时跳过本格的状态推送（批量填格由调用方整批推一次）
  * @returns {boolean} 是否成功落格
  */
 function doFill(ctx, idx, p) {
@@ -172,7 +176,7 @@ function doFill(ctx, idx, p) {
     state.roundScores.set(p.entry.userId, rs);
     ctx.awardScore({ userId: p.entry.userId, user: p.entry.user, avatar: p.entry.avatar }, p.score);
   }
-  emit.state();
+  if (p.silent !== true) emit.state();   // 批量填格传 silent，由调用方整批推一次
   // 进度里程碑播报：填格比例跨过 50% / 80% 各播一次（通关结算由 finish 负责）
   if (state.status === 'playing') {
     const holes = state.puzzle.holes;
@@ -198,13 +202,13 @@ function doFill(ctx, idx, p) {
   return true;
 }
 
-/** 随机挑一个空格落「正确数」的通用入口（点赞/礼物/自动/提示共用） */
-function fillRandom(ctx, src, entry, score) {
+/** 随机挑一个空格落「正确数」的通用入口（点赞/礼物/自动/提示共用）；opts.silent 跳过逐格推送 */
+function fillRandom(ctx, src, entry, score, opts = {}) {
   const { state } = ctx;
   const empties = emptyIdxs(state);
   if (!empties.length) return null;
   const idx = empties[Math.floor(Math.random() * empties.length)];
-  const ok = doFill(ctx, idx, { src, entry, score });
+  const ok = doFill(ctx, idx, { src, entry, score, ...opts });
   return ok ? { idx, pos: posLabel(idx), val: state.board[idx].v } : null;
 }
 
@@ -230,7 +234,7 @@ function startRound(ctx) {
   state.roundWrongs.clear();
   state.lastFillAt.clear();
   state.fillCount.clear();
-  state.roundStats = { dm: 0, like: 0, gift: 0, auto: 0, hint: 0, wrong: 0 };
+  state.roundStats = { dm: 0, like: 0, gift: 0, follow: 0, auto: 0, hint: 0, wrong: 0 };
   state.ops = [];
   state.status = 'playing';
   state.stats.rounds++;
@@ -250,12 +254,12 @@ function finishRound(ctx, reason) {
   state.finishedAt = Date.now();
   const complete = reason === 'complete';
   const durationSec = Math.round((state.finishedAt - state.startedAt) / 1000);
-  // 本局 Top5（按得分降序，最多 5 人）：每人填对数 + 错填数，结算面板展示
+  // 本局结算榜（按得分降序，最多 6 人：领奖台 1 + 2 + 3 布局）：每人填对数 + 错填数
   const wrongOf = uid => { const w = state.roundWrongs.get(uid); return w ? w.wrong : 0; };
   const top5 = Array.from(state.roundScores.values())
     .map(rs => ({ uid: rs.uid, name: rs.name, avatar: rs.avatar, score: rs.score, cnt: rs.cnt, wrong: wrongOf(rs.uid) }))
     .sort((a, b) => b.score - a.score || b.cnt - a.cnt || a.wrong - b.wrong)
-    .slice(0, 5);
+    .slice(0, 6);
   // 通关评 MVP：Top5 第一名 +mvpBonus 并计 1 胜
   let mvp = null;
   if (complete) {
@@ -362,7 +366,7 @@ function triggerLikeFill(ctx, rec) {
   pushOp(ctx, { type: 'like', name: rec.name, avatar: rec.avatar, pos: r.pos, idx: r.idx, val: r.val, score: cfg.scorePerFill, hot: true, msg: `点赞满 ${cfg.likeThreshold}，随机填入` });
 }
 
-/* ═══════════════ 礼物：随机连填 m 格 ═══════════════ */
+/* ═══════════════ 礼物：随机连填 m 格（同时落定） ═══════════════ */
 
 function handleGift(ctx, msg) {
   const { state, cfg } = ctx;
@@ -371,24 +375,53 @@ function handleGift(ctx, msg) {
   const avatar = userAvatar(msg);
   const uid = userKey(msg);
   const giftName = (msg && msg.giftName) || '礼物';
-  const m = Math.max(1, Math.min(9, parseInt(cfg.giftFillCount, 10) || 3));
+  const m = Math.max(1, Math.min(81, parseInt(cfg.giftFillCount, 10) || 3));
   const positions = [];
-  for (let i = 0; i < m; i++) {
-    ctx.setTimer('gift', () => {
-      if (state.status !== 'playing') return;
-      const r = fillRandom(ctx, 'gift', { user: name, userId: uid, avatar }, cfg.scorePerFill);
-      if (r) {
-        state.roundStats.gift++;
-        positions.push(`${r.pos}=${r.val}`);
-        ctx.emit.state();
-      }
-      // 最后一格落定后补一条汇总日志（含礼物名）
-      if (i === m - 1 && positions.length) {
-        const total = cfg.scorePerFill * positions.length;
-        ctx.log('INFO', `[sudoku #${state.roundNo}] 🎁 ${name} 送 ${giftName}，随机连填 ${positions.length} 格：${positions.join('、')}（+${total}）`);
-        pushOp(ctx, { type: 'gift', name, avatar, msg: `送 ${giftName} 连填 ${positions.length} 格：${positions.join('、')}`, score: total, hot: true });
-      }
-    }, i * 450);
+  for (let i = 0; i < m && state.status === 'playing'; i++) {
+    const r = fillRandom(ctx, 'gift', { user: name, userId: uid, avatar }, cfg.scorePerFill, { silent: true });
+    if (r) {
+      state.roundStats.gift++;
+      positions.push(`${r.pos}=${r.val}`);
+    }
+  }
+  if (positions.length) {
+    ctx.emit.state();   // 整批只推一次状态
+    const total = cfg.scorePerFill * positions.length;
+    ctx.log('INFO', `[sudoku #${state.roundNo}] 🎁 ${name} 送 ${giftName}，随机连填 ${positions.length} 格：${positions.join('、')}（+${total}）`);
+    pushOp(ctx, { type: 'gift', name, avatar, msg: `送 ${giftName} 连填 ${positions.length} 格：${positions.join('、')}`, score: total, hot: true });
+  }
+  return true;
+}
+
+/* ═══════════════ 关注：随机填 n 格
+   （同时落定；每位观众每次游戏启动限奖励一次，防止反复关注/取关刷格） ═══════════════ */
+
+function handleFollow(ctx, msg) {
+  const { state, cfg } = ctx;
+  if (state.status !== 'playing') return false;
+  const n = Math.max(0, Math.min(81, parseInt(cfg.followFillCount, 10) || 0));
+  if (n <= 0) return true;   // 配置为 0 = 关注不填格
+  const name = userName(msg);
+  const avatar = userAvatar(msg);
+  const uid = userKey(msg);
+  if (state.followRewarded.has(uid)) {
+    ctx.log('INFO', `[sudoku #${state.roundNo}] ⭐ ${name} 重复关注（本场已奖励过，忽略）`);
+    return true;
+  }
+  state.followRewarded.add(uid);
+  const positions = [];
+  for (let i = 0; i < n && state.status === 'playing'; i++) {
+    const r = fillRandom(ctx, 'follow', { user: name, userId: uid, avatar }, cfg.scorePerFill, { silent: true });
+    if (r) {
+      state.roundStats.follow++;
+      positions.push(`${r.pos}=${r.val}`);
+    }
+  }
+  if (positions.length) {
+    ctx.emit.state();   // 整批只推一次状态
+    const total = cfg.scorePerFill * positions.length;
+    ctx.log('INFO', `[sudoku #${state.roundNo}] ⭐ ${name} 关注了主播，随机填 ${positions.length} 格：${positions.join('、')}（+${total}）`);
+    pushOp(ctx, { type: 'follow', name, avatar, msg: `关注主播，随机填 ${positions.length} 格：${positions.join('、')}`, score: total, hot: true });
   }
   return true;
 }
@@ -553,13 +586,15 @@ function handleAction(ctx, action, payload = {}) {
       return { ok: true, msg: '直播间筛选已更新' };
     }
     case 'config': {
-      const allowed = ['roundSec', 'resultShowSec', 'autoNextRound', 'difficulty', 'scorePerFill', 'rateLimitSec', 'maxFillsPerUserPerRound', 'likeThreshold', 'giftFillCount', 'autoFillSec', 'wrongFillPenalty', 'fillPattern', 'avatarCorner', 'mvpBonus', 'allowedRoomId', ...BC_CFG_KEYS];
+      const allowed = ['roundSec', 'resultShowSec', 'autoNextRound', 'difficulty', 'scorePerFill', 'rateLimitSec', 'maxFillsPerUserPerRound', 'likeThreshold', 'giftFillCount', 'followFillCount', 'autoFillSec', 'wrongFillPenalty', 'fillPattern', 'avatarCorner', 'mvpBonus', 'allowedRoomId', ...BC_CFG_KEYS];
       for (const k of allowed) {
         if (payload[k] !== undefined) cfg[k] = payload[k];
       }
       if (!DIFFICULTIES[cfg.difficulty]) cfg.difficulty = 'normal';
-      cfg.giftFillCount = Math.max(1, Math.min(9, parseInt(cfg.giftFillCount, 10) || 3));
-      cfg.autoFillSec = Math.max(0, parseInt(cfg.autoFillSec, 10) || 0);
+      cfg.giftFillCount = Math.max(1, Math.min(81, parseInt(cfg.giftFillCount, 10) || 3));
+      cfg.followFillCount = Math.max(0, Math.min(81, parseInt(cfg.followFillCount, 10) || 0));
+      // 自动填数：-1 = 关闭且结算面板不显示自动数；0 = 关闭（结算仍显示自动数）；>0 = 间隔秒
+      cfg.autoFillSec = Math.max(-1, parseInt(cfg.autoFillSec, 10) || 0);
       ctx.persistConfig(cfg);
       if (state.status === 'playing') scheduleAutoFill(ctx);   // 自动填数间隔改了立即生效
       ctx.log('INFO', '[config] 已更新:', cfg);
@@ -634,7 +669,7 @@ function publicState(ctx) {
       roundSec: cfg.roundSec, resultShowSec: cfg.resultShowSec, autoNextRound: cfg.autoNextRound,
       difficulty: cfg.difficulty, scorePerFill: cfg.scorePerFill, rateLimitSec: cfg.rateLimitSec,
       maxFillsPerUserPerRound: cfg.maxFillsPerUserPerRound, likeThreshold: cfg.likeThreshold,
-      giftFillCount: cfg.giftFillCount, autoFillSec: cfg.autoFillSec, wrongFillPenalty: cfg.wrongFillPenalty,
+      giftFillCount: cfg.giftFillCount, followFillCount: cfg.followFillCount, autoFillSec: cfg.autoFillSec, wrongFillPenalty: cfg.wrongFillPenalty,
       fillPattern: cfg.fillPattern, avatarCorner: cfg.avatarCorner, mvpBonus: cfg.mvpBonus,
       allowedRoomId: cfg.allowedRoomId || '',
     },
@@ -678,6 +713,7 @@ module.exports = {
   handleDanmu,
   handleLike,
   handleGift,
+  handleFollow,
   handleAction,
   publicState,
   clearGameTimers,

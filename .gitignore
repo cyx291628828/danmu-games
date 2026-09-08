@@ -1,6 +1,9 @@
 # 依赖（npm install 后生成，见 package.json）
 node_modules/
 
+# 打包产物（一键打包.bat / node scripts/package.js 输出）
+dist/
+
 # 运行时数据：玩家排行榜 / 红蓝赛季名册（含真实观众昵称与头像，不入库；首次运行自动生成）
 data/*
 !data/.gitkeep

@@ -412,7 +412,7 @@
    * 答题竞猜额外支持「模拟关注」（关注主播本题算答对的调试）。 */
   roomFilter = DG.mountFeedTools($('ctlFeedTools'), GAME, {
     getRoomId: () => (state && state.cfg && state.cfg.allowedRoomId) || '',
-    sim: { chat: { placeholder: '模拟答题（A/B/C/D 或 1/2/3/4）' }, like: { count: 10 }, gift: true, enter: false, follow: true },
+    sim: { chat: { placeholder: '模拟答题（A/B/C/D 或 1/2/3/4）' }, like: { count: 10 }, gift: true, enter: true, follow: true },
   });
 
   /* ───────────── 通用 AI 语音播报面板（common broadcast.js） ───────────── */

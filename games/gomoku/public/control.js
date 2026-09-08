@@ -350,7 +350,7 @@
   /* ───────────── 接入与模拟 + AI 播报 ───────────── */
   roomFilter = DG.mountFeedTools($('ctlFeedTools'), GAME, {
     getRoomId: () => (state && state.cfg && state.cfg.allowedRoomId) || '',
-    sim: { chat: { placeholder: '模拟弹幕：H8 / 排队 / 准备' }, like: { count: 10 }, gift: true, enter: true },
+    sim: { chat: { placeholder: 'H8 / 排队 / 准备' }, like: { count: 10 }, gift: true, enter: true },
   });
   DGBroadcast.mountPanel($('bcPanel'), { game: GAME });
   renderFeed();

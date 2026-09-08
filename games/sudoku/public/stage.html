@@ -44,7 +44,7 @@
 
     <div class="howto">
       <div class="howto-line">弹幕发 <b>行×列×数</b>：A33 = A行3列填 3 · 填对 <b id="howtoScore">+10</b> 分留头像</div>
-      <div class="howto-gold">个人点赞满 <b id="howtoLike">30</b> 随机填 1 格 👍 · 送礼连填 <b id="howtoGift">3</b> 格 🎁<span id="howtoAuto"></span></div>
+      <div class="howto-gold"><b id="howtoLike">30</b> 点赞 👍填 1 格 · 送礼🎁连填 <b id="howtoGift">3</b> 格<span id="howtoFollowSeg"> · 关注⭐连填 <b id="howtoFollow">1</b> 格</span><span id="howtoAuto"></span></div>
     </div>
 
     <!-- 下部：操作记录 | 排行榜（左右各半，与猜数字同版式） -->
@@ -62,15 +62,14 @@
     <div id="fireworks" class="fireworks"></div>
     <div id="winBanner" class="win-banner hidden">
       <div class="result-wrap">
-        <div class="win-card">
-          <div class="win-body">
-            <div class="win-title" id="winTitle">数 独 完 成 !</div>
-            <!-- 本局 Top5：MVP 皇冠标记，每人填对/错填数 -->
-            <div class="win-top5" id="winTop5"></div>
-            <div class="win-answer" id="winSub"></div>
-          </div>
+        <!-- 结算面板：领奖台布局（顶缘居中👑头像向上突出，第一名行左侧另有大头像，2/3 一排带名次，4/5/6 一排仅名字对错分） -->
+        <div class="win-card result-panel">
+          <div class="p-top-av" id="winTopAv" style="display:none;"></div>
+          <div class="win-title" id="winTitle">数 独 完 成</div>
+          <div class="podium" id="winPodium"></div>
+          <div class="win-answer" id="winSub"></div>
         </div>
-        <!-- 下一局倒计时：位于卡片边框下方（取代旧的 win-ring 边框进度条） -->
+        <!-- 下一局倒计时：位于面板边框下方 -->
         <div class="result-next" id="winNext" style="display:none;"></div>
       </div>
     </div>

@@ -414,10 +414,9 @@ button { cursor: pointer; }
 }
 
 /* 游戏开关（控制页；core.js autoMountPowerPin 渲染） */
-.power-pin { display: inline-flex; align-items: center; gap: 10px; margin-left: 12px; vertical-align: middle; }
-.power-pin-tip { font-size: 12px; color: var(--dim); }
-.power-pin[data-on="0"] .power-pin-tip { color: var(--green); }
-.power-pin[data-on="1"] .power-pin-tip { color: var(--gold); }
+/* 游戏开关（局面控制按钮行内，右对齐） */
+.power-pin { display: inline-flex; align-items: center; }
+.btn-row .power-pin { margin-left: auto; }
 
 /* 线索出现条件（主播台）：每条独立选触发方式，选项由服务端 clueCondModes 下发动态渲染 */
 .cc-title { font-size: 13px; color: var(--sub); margin: 2px 0 6px; }
@@ -463,37 +462,35 @@ button { cursor: pointer; }
   padding: 10px 12px; background: var(--panel2); border: 1px solid var(--line);
   border-radius: 8px; margin-bottom: 12px;
 }
-/* 筛选行 */
-.ctl-roomid-inner { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.ctl-roomid-label {
+/* 接收直播间ID：独立一行，位于模拟面板（#ctlFeedTools）上方 */
+.feed-roomrow {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-  font-size: 13px; color: var(--sub);
+  margin-bottom: 10px;
 }
-.ctl-roomid-label input {
-  padding: 4px 8px; border-radius: 6px;
-  flex: 1 1 300px; min-width: 220px; max-width: 560px;
-  border: 1px solid var(--line); background: var(--bg); color: var(--text);
-  font-size: 13px;
+/* 模拟面板：名字 / 弹幕 / 点赞 / 送礼 各占一行，进场+关注同行 */
+.feed-rows { display: flex; flex-direction: column; gap: 8px; }
+.feed-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.feed-field {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 13px; color: var(--sub); white-space: nowrap;
 }
-/* 模拟行：昵称 + 弹幕 + 点赞(可调数量) + 送礼 + 进场，换行自适应 */
-.feed-sim { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.feed-sim-tag {
-  flex: 0 0 auto; font-size: 12px; font-weight: 600; color: var(--accent);
-  border: 1px solid var(--accent); border-radius: 999px; padding: 1px 9px;
-}
-.feed-sim input {
+.feed-roomrow input, .feed-rows input {
   padding: 4px 8px; border-radius: 6px; font-size: 13px;
   border: 1px solid var(--line); background: var(--bg); color: var(--text);
 }
-.feed-sim input#simName { width: 130px; }
-.feed-sim input#simText { flex: 1 1 220px; min-width: 180px; max-width: 360px; }
-.feed-sim input::placeholder { color: var(--dim); }
-.feed-num { display: flex; align-items: center; gap: 4px; font-size: 13px; color: var(--sub); }
-.feed-num input {
+.feed-rows select {
+  padding: 4px 6px; border-radius: 6px; font-size: 13px;
+  border: 1px solid var(--line); background: var(--bg); color: var(--text);
+}
+/* 文本输入固定宽度，不随行自适应拉伸 */
+.feed-roomrow input#ctlRoomIdInput,
+.feed-row input.feed-chat { width: 300px; flex: 0 0 auto; }
+.feed-rows input#simName { width: 160px; }
+.feed-roomrow input::placeholder, .feed-rows input::placeholder { color: var(--dim); }
+.feed-field input[type="number"] {
   width: 56px; min-width: 56px; padding: 4px 6px;
   text-align: center; font-variant-numeric: tabular-nums;
 }
-.feed-num input#simGiftName { width: 84px; min-width: 84px; text-align: left; }
 .danger-tip { color: var(--red); font-size: 12px; font-weight: 400; }
 .ctl-answer { font-size: 26px; font-weight: 500; color: var(--accent); margin-bottom: 10px; letter-spacing: 4px; }
 .ctl-clues { display: flex; flex-direction: column; gap: 8px; }
@@ -535,3 +532,313 @@ button { cursor: pointer; }
   background: var(--panel2); border: 1px solid #fbbf24; color: #fbbf24;
   padding: 10px 16px; border-radius: 8px; font-size: 13px; max-width: 360px;
 }
+
+/* ═════════ 观众时刻演出（进场/关注/送礼 侧边如画横幅，展示屏通用） ═════════
+   core.js initMomentStage 渲染：卡片从右滑入 → 停留（流光扫过）→ 滑出。
+   三档皮肤：进场（绿边）/ 关注（蓝边）/ 送礼（金边+辉光+速度线，最华丽）。
+   全部走主题变量，11 套主题自动适配；挂载在 .phone 内，不遮挡游戏主体。 */
+.moment-stack {
+  position: absolute; top: 58px; right: 8px; z-index: 60;
+  display: flex; flex-direction: column; gap: 8px;
+  width: min(74%, 300px);
+  pointer-events: none;
+}
+.moment-card {
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: linear-gradient(120deg, rgba(var(--glow-rgb), 0.12), var(--panel) 58%);
+  border: 1px solid var(--line);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  animation: momentIn 0.5s cubic-bezier(0.18, 1.35, 0.4, 1) both;
+}
+.moment-card.moment-out { animation: momentOut 0.38s ease-in both; }
+@keyframes momentIn {
+  from { transform: translateX(115%) scale(0.9); opacity: 0; }
+  to { transform: translateX(0) scale(1); opacity: 1; }
+}
+@keyframes momentOut {
+  to { transform: translateX(115%) scale(0.92); opacity: 0; }
+}
+/* 三档皮肤 + 层次度：进场小而素 → 关注居中 → 送礼最大最炫（宽度/头像/字号/动效全递进） */
+.moment-enter {
+  width: 76%; margin-left: auto;
+  padding: 5px 10px;
+  border-left: 3px solid var(--green);
+  background: var(--panel2);
+  box-shadow: none;
+}
+.moment-enter .moment-shine { display: none; }
+.moment-enter .moment-avatar { flex: 0 0 30px; width: 30px; height: 30px; }
+.moment-enter .moment-avatar .avatar { width: 30px; height: 30px; font-size: 15px; }
+.moment-enter .moment-title { font-size: 12px; }
+.moment-follow {
+  width: 88%; margin-left: auto;
+  padding: 8px 12px;
+  border-left: 3px solid var(--accent);
+}
+.moment-follow .moment-avatar { flex: 0 0 40px; width: 40px; height: 40px; }
+.moment-follow .moment-avatar .avatar { width: 40px; height: 40px; font-size: 20px; }
+.moment-follow .moment-title { font-size: 13px; }
+.moment-gift {
+  padding: 12px 14px;
+  border: 2px solid var(--gold);
+  background: linear-gradient(120deg, rgba(var(--glow-rgb), 0.3), var(--panel) 62%);
+  box-shadow: 0 0 18px rgba(var(--glow-rgb), 0.45), 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+.moment-gift .moment-avatar { flex: 0 0 56px; width: 56px; height: 56px; }
+.moment-gift .moment-avatar .avatar { width: 56px; height: 56px; font-size: 28px; }
+.moment-gift .moment-title { font-size: 15px; font-weight: 600; animation: giftTitleGlow 1.6s ease-in-out infinite; }
+.moment-gift .moment-sub { font-size: 12px; }
+@keyframes giftTitleGlow {
+  0%, 100% { text-shadow: 0 0 6px rgba(var(--glow-rgb), 0.35); }
+  50% { text-shadow: 0 0 18px rgba(var(--glow-rgb), 0.85); }
+}
+/* 头像：礼物金环呼吸，关注蓝环 */
+.moment-avatar { position: relative; flex: 0 0 44px; width: 44px; height: 44px; z-index: 1; }
+.moment-avatar .avatar { width: 44px; height: 44px; font-size: 22px; }
+.moment-gift .moment-avatar .avatar {
+  box-shadow: 0 0 0 2px var(--gold), 0 0 14px rgba(var(--glow-rgb), 0.8);
+  animation: momentPulse 1.2s ease-in-out infinite;
+}
+.moment-follow .moment-avatar .avatar { box-shadow: 0 0 0 2px var(--accent); }
+@keyframes momentPulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--gold), 0 0 10px rgba(var(--glow-rgb), 0.55); }
+  50% { box-shadow: 0 0 0 3px var(--gold), 0 0 20px rgba(var(--glow-rgb), 0.95); }
+}
+/* 流光扫过（送礼更快） */
+.moment-shine {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.2) 48%, transparent 62%);
+  transform: translateX(-130%);
+  animation: momentShine 2.6s ease-in-out infinite;
+}
+.moment-gift .moment-shine { animation-duration: 1.6s; }
+@keyframes momentShine {
+  0% { transform: translateX(-130%); }
+  55%, 100% { transform: translateX(130%); }
+}
+/* 速度线（仅送礼）：斜向条纹向左飞驰 */
+.moment-speed {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.55;
+  background: repeating-linear-gradient(100deg, transparent 0 16px, rgba(var(--glow-rgb), 0.13) 16px 18px);
+  animation: momentSpeed 0.6s linear infinite;
+}
+@keyframes momentSpeed { to { background-position: 44px 0; } }
+/* 文案 */
+.moment-body { position: relative; z-index: 1; min-width: 0; flex: 1; }
+.moment-title { font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.moment-title b { color: var(--gold); }
+.moment-follow .moment-title b { color: var(--accent); }
+.moment-sub {
+  margin-top: 3px; font-size: 11px; color: var(--sub);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.moment-giftchip { display: inline-flex; align-items: center; gap: 3px; color: var(--gold); font-weight: 600; }
+.moment-giftchip img { width: 16px; height: 16px; object-fit: contain; }
+/* ×N 数量列：卡片最右侧、单行横排大字，列高撑满卡片三行内容（数字垂直居中）、金色辉光 */
+.moment-count {
+  flex: none; align-self: stretch;
+  display: flex; align-items: center;
+  margin-left: 6px;
+  font-size: 34px; font-weight: 800; line-height: 1;
+  color: var(--gold); text-align: center;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-shadow: 0 0 12px rgba(var(--glow-rgb), 0.65);
+}
+.moment-count-bump { animation: momentBump 0.35s cubic-bezier(0.2, 1.6, 0.4, 1); }
+@keyframes momentBump { 0% { transform: scale(1); } 50% { transform: scale(1.25); } 100% { transform: scale(1); } }
+/* 礼物卡两行布局：第一行「名字(限宽省略，超长只截名字)+送出」，第二行整行给礼物图标/礼物名 */
+.moment-gift .moment-title b {
+  display: inline-block; max-width: 130px; vertical-align: bottom;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.moment-giftline { display: flex; align-items: center; gap: 3px; margin-top: 3px; min-width: 0; }
+.moment-giftline .moment-giftchip { flex: 0 1 auto; min-width: 0; max-width: 100%; }
+.moment-giftchip .moment-gname { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* 礼物粒子（小号烟花，从卡面溅出） */
+.moment-spark {
+  position: absolute; width: 6px; height: 6px; border-radius: 50%;
+  pointer-events: none; z-index: 2;
+  animation: momentSpark 0.85s ease-out forwards;
+}
+@keyframes momentSpark {
+  0% { transform: translate(0, 0) scale(1); opacity: 0.95; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; }
+}
+
+/* ═══ 流光 aurora（默认风格的递进强化）：进场微动 → 关注旋转星环 → 送礼冲击波 ═══ */
+/* 关注：蓝色旋转虚线星环 */
+.moment-follow .moment-avatar::after {
+  content: ''; position: absolute; inset: -5px; border-radius: 50%;
+  border: 2px dashed var(--accent);
+  animation: momentSpin 7s linear infinite;
+}
+@keyframes momentSpin { to { transform: rotate(360deg); } }
+/* 送礼：入场更弹（回弹过冲） */
+.moment-gift { animation: momentGiftIn 0.55s cubic-bezier(0.18, 1.5, 0.35, 1) both; }
+@keyframes momentGiftIn {
+  0% { transform: translateX(115%) scale(0.7); opacity: 0; }
+  70% { transform: translateX(-6px) scale(1.04); opacity: 1; }
+  100% { transform: translateX(0) scale(1); }
+}
+/* 送礼：金色冲击波双环从大头像向外扩散 */
+.moment-gift::before, .moment-gift::after {
+  content: ''; position: absolute; left: 42px; top: 50%;
+  width: 28px; height: 28px; border: 2px solid rgba(var(--glow-rgb), 0.85);
+  border-radius: 50%; transform: translate(-50%, -50%);
+  pointer-events: none; animation: momentWave 0.9s ease-out infinite;
+}
+.moment-gift::after { animation-delay: 0.45s; }
+@keyframes momentWave {
+  0% { opacity: 0.85; transform: translate(-50%, -50%) scale(0.4); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(2.8); }
+}
+
+/* ═════════ 风格包：data-skin 挂在 .moment-stack 上，宿主随 moment 事件下发 ═════════
+   每套内三档递进：进场（微动效）→ 关注（中：环/闪烁/徽章）→ 送礼（强：冲击波/拖尾/粒子）。 */
+
+/* ── 霓虹电波 neon：深色玻璃底 + 霓虹描边；关注=青霓虹闪烁，送礼=彩虹流动边+紫色冲击波 ── */
+[data-skin="neon"] .moment-card {
+  background: linear-gradient(140deg, rgba(12, 16, 28, 0.94), rgba(20, 26, 44, 0.9));
+  border: 1px solid rgba(120, 140, 200, 0.35);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.5);
+}
+[data-skin="neon"] .moment-shine { display: none; }
+[data-skin="neon"] .moment-enter {
+  border: 1px solid #39ff88; border-left-width: 3px;
+  box-shadow: 0 0 12px rgba(57, 255, 136, 0.45), inset 0 0 14px rgba(57, 255, 136, 0.12);
+}
+[data-skin="neon"] .moment-follow {
+  border: 1px solid #22d3ee;
+  animation: momentIn 0.5s cubic-bezier(0.18, 1.35, 0.4, 1) both, neonFlicker 2.2s ease-in-out infinite;
+}
+@keyframes neonFlicker {
+  0%, 100% { box-shadow: 0 0 14px rgba(34, 211, 238, 0.5), inset 0 0 14px rgba(34, 211, 238, 0.12); }
+  50% { box-shadow: 0 0 28px rgba(34, 211, 238, 0.9), inset 0 0 24px rgba(34, 211, 238, 0.28); }
+}
+[data-skin="neon"] .moment-follow .moment-avatar::after {
+  content: ''; position: absolute; inset: -5px; border-radius: 50%;
+  border: 2px solid rgba(34, 211, 238, 0.75);
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.6);
+  animation: momentSpin 5s linear infinite;
+}
+[data-skin="neon"] .moment-gift {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(140deg, rgba(12, 16, 28, 0.95), rgba(20, 26, 44, 0.92)) padding-box,
+    linear-gradient(120deg, #ff5d8f, #ffd166, #06d6a0, #4cc9f0, #b388ff, #ff5d8f) border-box;
+  background-size: auto, 300% 300%;
+  box-shadow: 0 0 24px rgba(179, 136, 255, 0.55);
+  animation: momentGiftIn 0.55s cubic-bezier(0.18, 1.5, 0.35, 1) both, neonBorder 3s linear infinite;
+}
+@keyframes neonBorder {
+  0% { background-position: 0% 50%, 0% 50%; }
+  100% { background-position: 0% 50%, 300% 50%; }
+}
+[data-skin="neon"] .moment-gift::before, [data-skin="neon"] .moment-gift::after {
+  border-color: rgba(179, 136, 255, 0.9);
+}
+[data-skin="neon"] .moment-gift::after { border-color: rgba(76, 201, 240, 0.9); }
+[data-skin="neon"] .moment-title { color: #dfe6ff; }
+[data-skin="neon"] .moment-enter .moment-title b { color: #7dffb0; }
+[data-skin="neon"] .moment-follow .moment-title b { color: #67e8f9; }
+[data-skin="neon"] .moment-gift .moment-title b { color: #ff9ecb; }
+[data-skin="neon"] .moment-sub { color: #8b95c9; }
+
+/* ── 星雨 meteor：深蓝星空卡；进场=小流星划过，关注=金色星轨环，送礼=彗星拖尾+星形星屑 ── */
+[data-skin="meteor"] .moment-card {
+  background:
+    radial-gradient(1px 1px at 18% 30%, rgba(255, 255, 255, 0.9) 50%, transparent 51%),
+    radial-gradient(1px 1px at 42% 68%, rgba(255, 255, 255, 0.7) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 66% 22%, rgba(255, 255, 255, 0.8) 50%, transparent 51%),
+    radial-gradient(1px 1px at 84% 60%, rgba(255, 255, 255, 0.6) 50%, transparent 51%),
+    radial-gradient(1px 1px at 30% 85%, rgba(255, 255, 255, 0.5) 50%, transparent 51%),
+    linear-gradient(135deg, #0b1026, #1c2350);
+  border: 1px solid rgba(150, 170, 255, 0.4);
+}
+[data-skin="meteor"] .moment-shine { display: none; }
+[data-skin="meteor"] .moment-enter { border-left: 3px solid #8ef0b2; }
+[data-skin="meteor"] .moment-enter::before {
+  content: ''; position: absolute; top: 8px; width: 34%; height: 2px;
+  background: linear-gradient(90deg, transparent, #c9d8ff);
+  transform: rotate(-16deg); pointer-events: none;
+  animation: meteorStreak 2.2s ease-in infinite;
+}
+@keyframes meteorStreak {
+  0% { right: -35%; opacity: 0; }
+  15% { opacity: 1; }
+  45%, 100% { right: 105%; opacity: 0; }
+}
+[data-skin="meteor"] .moment-follow { border-left: 3px solid #ffd166; }
+[data-skin="meteor"] .moment-follow .moment-avatar::after {
+  content: ''; position: absolute; inset: -6px; border-radius: 50%;
+  border: 2px dotted #ffd166; animation: momentSpin 5s linear infinite;
+}
+[data-skin="meteor"] .moment-gift {
+  border: 1px solid #ffd166;
+  box-shadow: 0 0 20px rgba(255, 209, 102, 0.45);
+}
+[data-skin="meteor"] .moment-gift .moment-speed {
+  background: repeating-linear-gradient(100deg, transparent 0 18px, rgba(255, 209, 102, 0.18) 18px 21px);
+  animation-duration: 0.45s;
+}
+[data-skin="meteor"] .moment-spark {
+  border-radius: 0;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+[data-skin="meteor"] .moment-title { color: #e8ecff; }
+[data-skin="meteor"] .moment-enter .moment-title b { color: #8ef0b2; }
+[data-skin="meteor"] .moment-follow .moment-title b { color: #ffd166; }
+[data-skin="meteor"] .moment-gift .moment-title b { color: #ffb347; }
+[data-skin="meteor"] .moment-sub { color: #9aa5d0; }
+
+/* ── 鎏金画卷 scroll：米色卷轴卡；进场=红签纸条，关注=蓝签+「已关注」印章，送礼=金边+金箔雨 ── */
+[data-skin="scroll"] .moment-card {
+  background: linear-gradient(120deg, #f9f2df, #ecdbb4);
+  border: 1px solid #b8860b; border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  animation: scrollUnfold 0.5s ease-out both;
+}
+@keyframes scrollUnfold {
+  from { clip-path: inset(0 0 0 100%); opacity: 0.5; }
+  to { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+[data-skin="scroll"] .moment-card.moment-out { animation: scrollClose 0.4s ease-in both; }
+@keyframes scrollClose {
+  to { clip-path: inset(0 100% 0 0); opacity: 0; }
+}
+[data-skin="scroll"] .moment-enter { border-left: 3px solid #c0392b; }
+[data-skin="scroll"] .moment-follow { border-left: 4px solid #2980b9; }
+[data-skin="scroll"] .moment-follow .moment-title::after {
+  content: '已关注'; display: inline-block; margin-left: 6px;
+  font-size: 10px; color: #c0392b; border: 1.5px solid #c0392b;
+  border-radius: 4px; padding: 0 4px; transform: rotate(-6deg);
+}
+[data-skin="scroll"] .moment-gift {
+  border: 2px solid #b8860b;
+  box-shadow: 0 0 16px rgba(184, 134, 11, 0.5);
+}
+[data-skin="scroll"] .moment-gift .moment-shine {
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 215, 0, 0.4) 48%, transparent 62%);
+}
+[data-skin="scroll"] .moment-gift::before {
+  border-color: rgba(184, 134, 11, 0.8);
+}
+/* 金箔雨：礼物粒子变小金箔下落翻转 */
+[data-skin="scroll"] .moment-spark {
+  width: 7px; height: 4px; border-radius: 1px;
+  animation: scrollFoil 1s ease-in forwards;
+}
+@keyframes scrollFoil {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--dx), 46px) rotate(300deg); opacity: 0; }
+}
+[data-skin="scroll"] .moment-title { color: #3a2c12; }
+[data-skin="scroll"] .moment-title b { color: #8a5a08; }
+[data-skin="scroll"] .moment-sub { color: #6b5d3a; }
+
+/* 滑出动画优先于各风格的入场/循环动画（放在风格包之后保证覆盖） */
+.moment-card.moment-out { animation: momentOut 0.38s ease-in both; }

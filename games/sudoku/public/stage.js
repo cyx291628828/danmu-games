@@ -15,7 +15,7 @@
   let lastRoundNo = -1;
   const cellCache = new Array(81).fill('');   // 每格渲染指纹，变化才重建（并触发弹跳动画）
 
-  const BADGE = { like: '👍', gift: '🎁', hint: '💡', auto: '⚙️' };
+  const BADGE = { like: '👍', gift: '🎁', follow: '⭐', hint: '💡', auto: '⚙️' };
 
   connectSSE(GAME, {
     onState: (_gid, st) => { state = st; renderAll(); },
@@ -137,6 +137,9 @@
     $('howtoScore').textContent = '+' + (cfg.scorePerFill ?? 10);
     $('howtoLike').textContent = cfg.likeThreshold ?? 30;
     $('howtoGift').textContent = cfg.giftFillCount ?? 3;
+    $('howtoFollow').textContent = cfg.followFillCount ?? 1;
+    // 关注填格数配置为 0（关注不填格）时隐藏该段
+    $('howtoFollowSeg').style.display = (cfg.followFillCount ?? 0) > 0 ? '' : 'none';
     $('howtoAuto').textContent = cfg.autoFillSec > 0 ? ` · 每 ${cfg.autoFillSec} 秒系统自动落 1 格 ⚙️` : '';
     $('likeN').textContent = cfg.likeThreshold ?? 30;
 
@@ -211,7 +214,7 @@
     } else if (op.type === 'wrong') {
       body = `❌ <span class="who">${esc(op.name)}</span> 填 <span class="pos">${esc(op.pos)}=${esc(op.val)}</span> ${esc(op.msg || '填错，已忽略')}`;
     } else {
-      const icon = { dm: '✍️', like: '👍', gift: '🎁', hint: '💡', auto: '⚙️' }[op.type] || '';
+      const icon = { dm: '✍️', like: '👍', gift: '🎁', follow: '⭐', hint: '💡', auto: '⚙️' }[op.type] || '';
       const who = op.name ? `<span class="who">${esc(op.name)}</span>` : '';
       const msg = op.msg ? ` ${esc(op.msg)}` : '';
       const pos = op.pos ? ` <span class="pos">${esc(op.pos)}=${esc(op.val)}</span>` : '';
@@ -245,7 +248,8 @@
     while (box.children.length > 40) box.removeChild(box.lastChild);
   }
 
-  /* ══════════════ 排行榜（右栏，数独专属：按 MVP 次数排序） ══════════════ */
+  /* ══════════════ 排行榜（右栏，数独专属：按 MVP 次数排序，仅显示 MVP 次数列；
+     积分不展示，但服务端照常记录，并作为同 MVP 次数时的排序依据） ══════════════ */
   let lbFingerprint = '';
   function renderBoardList() {
     const box = $('boardBody');
@@ -253,7 +257,7 @@
     const fp = list.map(r => `${r.rank}|${r.name}|${r.mvp}|${r.score}`).join(',');
     if (fp === lbFingerprint) return;
     lbFingerprint = fp;
-    const head = '<div class="lb-th"><span class="rk">名次</span><span class="nm">玩家</span><span class="mv">MVP</span><span class="sc">积分</span></div>';
+    const head = '<div class="lb-th"><span class="rk">名次</span><span class="nm">玩家</span><span class="mv">MVP</span></div>';
     if (!list.length) {
       box.innerHTML = head + '<div class="lb-empty">暂无榜单数据</div>';
       return;
@@ -264,47 +268,87 @@
         ${DG.avatarHTML(r.name, r.avatar)}
         <span class="nm">${esc(r.name)}</span>
         <span class="mv">${r.mvp > 0 ? '👑' + r.mvp : '—'}</span>
-        <span class="sc">${r.score}</span>
       </div>`).join('');
   }
 
   /* ══════════════ 结算横幅（本局 Top5：MVP + 每人填对/错填数） ══════════════ */
   function renderWinBanner() {
     const banner = $('winBanner');
-    const card = banner.querySelector('.win-card');
+    const panel = banner.querySelector('.result-panel');
     if (state.status === 'result' && state.finishedInfo) {
       const fi = state.finishedInfo;
       const st = state.roundStats || {};
-      const statLine = `用时 ${fmtMMSS(fi.durationSec)} · 弹幕 ${st.dm || 0} · 点赞 ${st.like || 0} · 礼物 ${st.gift || 0} · 自动 ${st.auto || 0}`;
-      // Top5 榜单（服务端已按得分排序截断）
-      const top5 = fi.top5 || [];
-      $('winTop5').innerHTML = top5.length
-        ? top5.map((t, i) => {
-          const medal = i < 3 ? ' m' + (i + 1) : '';
-          const isMvp = i === 0 && fi.complete && fi.mvp;
-          return `<div class="wt-row${medal}${isMvp ? ' mvp' : ''}">
-            <span class="rk">${i + 1}</span>
-            ${DG.avatarHTML(t.name, t.avatar)}
-            <span class="nm">${isMvp ? '👑 MVP · ' : ''}${esc(t.name)}</span>
-            <span class="st">对 <b class="ok">${t.cnt}</b> · 错 <b class="bad">${t.wrong || 0}</b></span>
-            <span class="sc">+${t.score}</span>
-          </div>`;
-        }).join('')
-        : '<div class="wt-empty">本局无观众参与填格</div>';
+      // 「自动 X」是否显示由配置的自动填数秒数驱动：-1 = 不显示；其余（含 0=关闭）都显示，与是否通关无关
+      const showAuto = (state.cfg && state.cfg.autoFillSec != null) ? state.cfg.autoFillSec >= 0 : true;
+      const autoPart = showAuto ? ` · 自动 ${st.auto || 0}` : '';
+      const statLine = `用时 ${fmtMMSS(fi.durationSec)} · 弹幕 ${st.dm || 0} · 点赞 ${st.like || 0} · 礼物 ${st.gift || 0} · 关注 ${st.follow || 0}${autoPart}`;
+      // ── 领奖台结算面板：顶缘居中👑头像向上突出 + 第一名行左侧头像，第 2/3 名一排（带名次），第 4/5/6 名一排（仅名字对错分）──
+      // 每人展示：正确数 / 错误数 / 总积分；MVP 额外 +mvpBonus（默认 50）
+      const board = fi.top5 || [];
+      const bonus = (state.cfg && state.cfg.mvpBonus) || 0;
+      const mvpActive = fi.complete && !!fi.mvp;
+
+      const mini = (t, rank, withAvatar) => t ? `
+        <div class="p-card">
+          ${withAvatar ? `<span class="p-av-sm r${rank}">${DG.avatarHTML(t.name, t.avatar)}</span>` : ''}
+          <div class="p-col">
+            <div class="p-name-sm">${esc(t.name)}</div>
+            <div class="p-stats-sm"><b class="ok">对${t.cnt}</b><b class="bad">错${t.wrong || 0}</b><b class="pt">${t.score}分</b></div>
+          </div>
+        </div>` : '<div class="p-card ghost">虚位以待</div>';
+
+      // 顶缘居中、向上突出的冠军头像（皇冠随通关 MVP 显示，无观众时隐藏）
+      const topAv = $('winTopAv');
+      if (board.length) {
+        const [top1] = board;
+        topAv.style.display = '';
+        panel.classList.add('has-top-av');
+        topAv.innerHTML = `${mvpActive ? '<span class="p-crown">👑</span>' : ''}<span class="p-top-av-in">${
+          top1.avatar
+            ? `<img src="${esc(top1.avatar)}" referrerpolicy="no-referrer" onerror="this.remove();this.parentNode.textContent='${esc(initialOf(top1.name))}'">`
+            : esc(initialOf(top1.name))
+        }</span>`;
+      } else {
+        topAv.style.display = 'none';
+        panel.classList.remove('has-top-av');
+      }
+
+      let podium;
+      if (!board.length) {
+        podium = '<div class="wt-empty">本局无观众参与填格</div>';
+      } else {
+        const [p1, second, third, ...others] = board;
+        podium = `
+          <div class="p-card p1">
+            <span class="p-av-wrap">${DG.avatarHTML(p1.name, p1.avatar)}</span>
+            <div class="p-col">
+              <div class="p-name"><span class="p-nm">${esc(p1.name)}</span>${mvpActive ? `<span class="p-bonus">MVP +${bonus}</span>` : '<span class="p-tag">本局第一</span>'}</div>
+              <div class="p-stats">
+                <span class="ok">正确 ${p1.cnt}</span>
+                <span class="bad">错误 ${p1.wrong || 0}</span>
+                <span class="pt">总分 ${p1.score + (mvpActive ? bonus : 0)}</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-row">${mini(second, 2, true)}${mini(third, 3, true)}</div>
+          <div class="p-row">${mini(others[0], 4, false)}${mini(others[1], 5, false)}${mini(others[2], 6, false)}</div>`;
+      }
+      $('winPodium').innerHTML = podium;
+
       if (fi.complete) {
-        $('winTitle').textContent = '数 独 完 成 !';
-        card.style.borderColor = 'var(--gold)';
+        $('winTitle').textContent = '数 独 完 成';
+        panel.style.borderColor = 'var(--gold)';
         $('winTitle').style.color = 'var(--gold)';
-        card.classList.add('is-win');
+        panel.classList.add('is-win');
         if (state.finishedAt !== lastFinishedAt) {
           lastFinishedAt = state.finishedAt;
           launchFireworks('fireworks');
         }
       } else {
         $('winTitle').textContent = '本 局 结 束';
-        card.style.borderColor = 'var(--accent)';
+        panel.style.borderColor = 'var(--accent)';
         $('winTitle').style.color = 'var(--accent)';
-        card.classList.remove('is-win');
+        panel.classList.remove('is-win');
       }
       $('winSub').textContent = statLine;
       banner.classList.remove('hidden');

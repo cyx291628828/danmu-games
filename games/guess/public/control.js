@@ -261,7 +261,7 @@
   /* ───────────── 接入与模拟（公共组件：直播间筛选 + 模拟观众套件） ───────────── */
   roomFilter = DG.mountFeedTools($('ctlFeedTools'), GAME, {
     getRoomId: () => (state && state.cfg && state.cfg.allowedRoomId) || '',
-    sim: { chat: { placeholder: '模拟猜数（如 1234 或 猜1234）' }, like: { count: 1 }, gift: false, enter: false },
+    sim: { chat: { placeholder: '模拟猜数（如 1234 或 猜1234）' }, like: { count: 10 }, gift: true, enter: true },
   });
 
   /* ───────────── 通用 AI 语音播报面板（common broadcast.js） ───────────── */

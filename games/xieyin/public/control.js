@@ -106,6 +106,6 @@
   /* ───────────── 接入与模拟 ───────────── */
   roomFilter = DG.mountFeedTools($('ctlFeedTools'), GAME, {
     getRoomId: () => (state && state.cfg && state.cfg.allowedRoomId) || '',
-    sim: { chat: { placeholder: '模拟答案，如：杨幂' }, like: false, gift: false, enter: false },
+    sim: { chat: { placeholder: '模拟答案，如：杨幂' }, like: { count: 10 }, gift: true, enter: true },
   });
 })();
