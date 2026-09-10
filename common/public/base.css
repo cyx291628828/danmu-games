@@ -546,6 +546,23 @@ button { cursor: pointer; }
   width: min(74%, 300px);
   pointer-events: none;
 }
+/* 上下位置由 JS 写 inline top:%；左右用 data-pos-x */
+.moment-stack[data-pos-x="right"] { right: 8px; left: auto; }
+.moment-stack[data-pos-x="left"] { left: 8px; right: auto; }
+/* 靠左时入场/出场改为从左侧滑入 */
+.moment-stack[data-pos-x="left"] .moment-card {
+  animation-name: momentInLeft;
+}
+.moment-stack[data-pos-x="left"] .moment-card.moment-out {
+  animation-name: momentOutLeft;
+}
+@keyframes momentInLeft {
+  from { transform: translateX(-115%) scale(0.9); opacity: 0; }
+  to { transform: translateX(0) scale(1); opacity: 1; }
+}
+@keyframes momentOutLeft {
+  to { transform: translateX(-115%) scale(0.92); opacity: 0; }
+}
 .moment-card {
   position: relative; overflow: hidden;
   display: flex; align-items: center; gap: 10px;

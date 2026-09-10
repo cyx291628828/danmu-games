@@ -621,8 +621,9 @@ window.DG = (() => {
 
     connectSSE(game, {
       onMoment: (_gid, m) => {
-        // 风格由宿主随事件下发：切换「演出风格」后下一条观众时刻即换装
+        // 风格/位置由宿主随事件下发：切换后下一条观众时刻即生效
         if (m.skin && stack.dataset.skin !== m.skin) stack.dataset.skin = m.skin;
+        if (m.pos) applyMomentPos(stack, m.pos);
         enqueue(m);
       },
     });
@@ -640,7 +641,7 @@ window.DG = (() => {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', autoMountMomentStage);
   else autoMountMomentStage();
 
-  /** 主播台「演出风格」选择器：自动插在 [data-theme-picker]（展示屏主题行）后面，游戏零改动 */
+  /** 主播台「演出风格 / 出现位置」选择器：自动插在 [data-theme-picker] 后面，游戏零改动 */
   function autoMountMomentSkinPicker() {
     if (isStage()) return;
     document.querySelectorAll('[data-theme-picker]').forEach(el => {
@@ -649,73 +650,58 @@ window.DG = (() => {
       const row = document.createElement('div');
       row.className = 'theme-row';
       row.innerHTML = `演出风格 <select class="moment-skin-select">${
-        MOMENT_SKINS.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}</select>`;
+        MOMENT_SKINS.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}</select>`
+        + ` 上下 <input type="range" class="moment-pos-y" min="0" max="100" step="1" value="8" style="vertical-align:middle;width:110px">`
+        + ` <span class="moment-pos-y-val" style="min-width:2.5em;display:inline-block">8%</span>`
+        + ` <select class="moment-pos-x" title="左右位置">`
+        + `<option value="right">靠右</option><option value="left">靠左</option></select>`;
       el.after(row);
-      const select = row.querySelector('select');
+      const select = row.querySelector('.moment-skin-select');
+      const selY = row.querySelector('.moment-pos-y');
+      const valY = row.querySelector('.moment-pos-y-val');
+      const selX = row.querySelector('.moment-pos-x');
       fetch('/api/games').then(r => r.json()).then(j => {
         const g = (j.games || []).find(x => x.id === game);
         if (g && g.momentSkin) select.value = g.momentSkin;
+        if (g && g.momentPos) {
+          if (g.momentPos.y != null) {
+            selY.value = String(g.momentPos.y);
+            valY.textContent = g.momentPos.y + '%';
+          }
+          if (g.momentPos.x) selX.value = g.momentPos.x;
+        }
       }).catch(() => { /* 服务未就绪时保留默认项 */ });
       select.addEventListener('change', async () => {
         const r = await control(game, 'setMomentSkin', { skin: select.value });
         if (r && r.ok) showToast('演出风格已切换（展示屏收到下一条观众时刻时生效）');
       });
+      const sendPos = async () => {
+        const r = await control(game, 'setMomentPos', { y: selY.value, x: selX.value });
+        if (r && r.ok) showToast('出现位置已切换（展示屏收到下一条观众时刻时生效）');
+      };
+      selY.addEventListener('input', () => { valY.textContent = selY.value + '%'; });
+      selY.addEventListener('change', sendPos);
+      selX.addEventListener('change', sendPos);
     });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', autoMountMomentSkinPicker);
   else autoMountMomentSkinPicker();
 
-  /* ═══════════ 展示屏小屏自适应（只缩不放） ═══════════
-     大屏（视口 ≥ 设计基准）：保持原行为——.phone 宽度自适应、内部固定 px 字号不变。
-       框变大而字不变，信息密度更高；若此时也等比放大会导致「同高度装不下同样多内容」。
-     小屏（视口 < 设计基准）：.phone 固定为基准宽并整体 zoom 缩小，字号随之等比缩小，
-       解决「容器缩小、字号不变导致文字溢出/截断」。
-     s = 1 处两种算法连续（渲染尺寸仅差亚像素），切换无跳变。 */
-  const STAGE_BASE_W = 600;
-  const STAGE_BASE_H = (600 * 16) / 9;   // 1066.67（9:16）
-  const SUPPORT_ZOOM = 'zoom' in document.documentElement.style;
-
-  function fitStage() {
-    const phone = document.querySelector('.phone');
-    if (!phone) return;
-    const vw = window.innerWidth || document.documentElement.clientWidth;
-    const vh = window.innerHeight || document.documentElement.clientHeight;
-    // 与 #view-stage 的 padding(6px × 2) 对齐，四周留 12px
-    const s = Math.min((vw - 12) / STAGE_BASE_W, (vh - 12) / STAGE_BASE_H);
-
-    if (s >= 1) {
-      // 大屏：清掉内联覆盖，回到 base.css 的自适应宽度；不放大
-      phone.style.width = '';
-      phone.style.zoom = '1';
-      phone.style.transform = 'none';
-      return;
-    }
-
-    // 小屏：固定基准宽 + 整体等比缩小
-    phone.style.width = STAGE_BASE_W + 'px';
-    const scale = Math.max(0.2, s);        // 下限 0.2，避免极端窄窗缩到不可见
-    if (SUPPORT_ZOOM) {
-      phone.style.transform = 'none';
-      phone.style.zoom = String(scale);
-    } else {
-      // 不支持 zoom 的旧浏览器：退回 transform（同样以中心等比缩放，视觉一致）
-      phone.style.transformOrigin = 'center';
-      phone.style.transform = `scale(${scale})`;
-    }
+  /** 观众时刻位置：y=距顶部百分比 0~100，x=left|right */
+  function applyMomentPos(stack, pos) {
+    if (!stack || !pos) return;
+    const y = Math.max(0, Math.min(100, Number(pos.y)));
+    const topPct = Number.isFinite(y) ? y : 8;
+    const x = pos.x === 'left' ? 'left' : 'right';
+    stack.style.top = topPct + '%';
+    stack.style.bottom = 'auto';
+    stack.style.transform = 'none';
+    if (stack.dataset.posX !== x) stack.dataset.posX = x;
   }
-
-  function autoFitStage() {
-    if (!isStage()) return;                // 仅展示屏生效，主播台不受影响
-    fitStage();
-    window.addEventListener('resize', fitStage);
-    window.addEventListener('orientationchange', fitStage);
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', autoFitStage);
-  else autoFitStage();
 
   return {
     $, esc, initialOf, avatarHTML, showToast, control, connectSSE, launchFireworks,
     mountRoomFilter, mountFeedTools, mountLeaderboard,
-    THEMES, applyTheme, mountThemePicker, fitStage,
+    THEMES, applyTheme, mountThemePicker,
   };
 })();

@@ -21,5 +21,12 @@
   "aiModel": "gpt-4o-mini",
   "aiTimeoutSec": 8,
   "bcAutoSpeak": true,
-  "bcEnabled": {}
+  "bcEnabled": {
+    "enter": false,
+    "follow": true,
+    "gift": true,
+    "roundStart": true,
+    "progress": true,
+    "finish": true
+  }
 }

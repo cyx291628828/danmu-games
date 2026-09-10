@@ -15,7 +15,7 @@
   "wordHintRankFrom": 2,
   "wordHintRankTo": 10000,
   "allowedRoomId": "",
-  "aiBroadcast": "local",
+  "aiBroadcast": "off",
   "aiApiUrl": "",
   "aiApiKey": "",
   "aiModel": "gpt-4o-mini",

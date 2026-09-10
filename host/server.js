@@ -137,6 +137,27 @@ const VALID_MOMENT_SKINS = new Set(['aurora', 'neon', 'meteor', 'scroll']);
 const momentSkins = (hostCfg.momentSkins && typeof hostCfg.momentSkins === 'object') ? { ...hostCfg.momentSkins } : {};
 function momentSkinOf(gameId) { return VALID_MOMENT_SKINS.has(momentSkins[gameId]) ? momentSkins[gameId] : 'aurora'; }
 
+/* ───────────── 观众时刻出现位置（按游戏托管） ─────────────
+   momentPos: { <gameId>: { y: 0~100（距顶部百分比）, x: 'left'|'right' } }，缺省 y=8 + right */
+const VALID_MOMENT_X = new Set(['left', 'right']);
+const momentPosMap = (hostCfg.momentPos && typeof hostCfg.momentPos === 'object') ? { ...hostCfg.momentPos } : {};
+/** 兼容旧枚举 top/mid/bottom */
+function normalizeMomentY(v) {
+  if (v === 'top') return 8;
+  if (v === 'mid') return 50;
+  if (v === 'bottom') return 78;
+  const n = Math.round(Number(v));
+  if (!Number.isFinite(n)) return 8;
+  return Math.max(0, Math.min(100, n));
+}
+function momentPosOf(gameId) {
+  const p = momentPosMap[gameId] || {};
+  return {
+    y: normalizeMomentY(p.y),
+    x: VALID_MOMENT_X.has(p.x) ? p.x : 'right',
+  };
+}
+
 /** 游戏启用开关（关闭后不处理弹幕、清理定时器，导航显示已关闭） */
 const enabledMap = {};
 for (const g of games) enabledMap[g.id] = !(hostCfg.enabled && hostCfg.enabled[g.id] === false);
@@ -144,7 +165,7 @@ for (const g of games) enabledMap[g.id] = !(hostCfg.enabled && hostCfg.enabled[g
 /** 宿主配置统一落盘（activeGame / themes / enabled / momentSkins 同一文件原子持久化） */
 function persistHost() {
   try {
-    fs.writeFileSync(HOST_CFG_PATH, JSON.stringify({ ...hostCfg, activeGame, themes, enabled: enabledMap, momentSkins }, null, 2));
+    fs.writeFileSync(HOST_CFG_PATH, JSON.stringify({ ...hostCfg, activeGame, themes, enabled: enabledMap, momentSkins, momentPos: momentPosMap }, null, 2));
   } catch (e) { warn('[host] 配置落盘失败:', e.message); }
 }
 
@@ -304,6 +325,7 @@ function broadcastMoment(gameId, msg) {
   broadcast(gameId, 'moment', {
     type: msg.event,                       // enter | follow | gift
     skin: momentSkinOf(gameId),            // 演出风格：展示屏据此切换卡片外观
+    pos: momentPosOf(gameId),              // 出现位置：{ y: top|mid|bottom, x: left|right }
     user: {
       name: (msg.user && msg.user.name) || '观众',
       avatar: (msg.user && msg.user.avatar) || '',
@@ -417,6 +439,7 @@ function onHttpRequest(req, res) {
           running: inst ? g.liveStatuses.includes(inst.state.status) : false,
           enabled: inst ? inst.enabled !== false : true,   // 关闭状态：导航显示已关闭
           momentSkin: momentSkinOf(g.id),                 // 观众时刻演出风格（主播台选择器回填）
+          momentPos: momentPosOf(g.id),                   // 观众时刻出现位置（上下 + 左右）
           // 运行中状态集合原样下发：主播台导航点据此分类（进行中/暂停/结算中）
           liveStatuses: g.liveStatuses,
           roundNo: inst ? inst.state.roundNo : 0,
@@ -514,6 +537,18 @@ function onHttpRequest(req, res) {
             persistHost();
             info(`[moment] 「${inst.meta.name}」演出风格 → ${s}`);
             r = { ok: true, msg: `「${inst.meta.name}」演出风格已切换` };
+          }
+        } else if (cmd.action === 'setMomentPos') {
+          // 宿主级动作：y=距顶部百分比 0~100，x=left|right
+          const y = normalizeMomentY(cmd.y);
+          const x = String(cmd.x || 'right');
+          if (!VALID_MOMENT_X.has(x)) {
+            r = { ok: false, msg: `未知左右位置: ${x}` };
+          } else {
+            momentPosMap[game] = { y, x };
+            persistHost();
+            info(`[moment] 「${inst.meta.name}」出现位置 → top:${y}% + ${x}`);
+            r = { ok: true, msg: `「${inst.meta.name}」出现位置已切换（下一条观众时刻生效）` };
           }
         } else if (cmd.action === 'setGameEnabled') {
           // 宿主级动作：关闭 = 停止弹幕分派 + 清理该游戏全部定时器；开启 = 恢复分派
