@@ -176,7 +176,10 @@ button { cursor: pointer; }
 }
 .phone {
   position: relative;
-  /* 宽 = min(视口宽留边, 视口高按 9/16 换算后的宽)——窗口越大手机框越大，至少一个维度贴边齐平，比例恒定 */
+  /* 宽 = min(视口宽留边, 视口高按 9/16 换算后的宽)——窗口越大手机框越大，至少一个维度贴边齐平，比例恒定。
+     注意：这是「大屏」的默认行为（框变大、内部固定 px 字号不变，信息密度更高）。
+     当窗口小于设计基准时，common/core.js 的 fitStage() 会改为「固定基准宽 600 + 整体 zoom 缩小」，
+     使字号随框等比缩小，避免小屏溢出。即：只缩不放，大屏视觉保持原样。 */
   width: min(100vw - 12px, calc((100dvh - 12px) * 9 / 16));
   aspect-ratio: 9 / 16;
   background: var(--bg);
@@ -225,7 +228,7 @@ button { cursor: pointer; }
   color: var(--text);
 }
 /* 得分：第 4 名起弱化，前三名才用奖牌色 —— 有对比才显得出层级 */
-.lb-row .sc { flex: 0 0 70px; color: var(--sub); font-size: 14px; text-align: right; }
+.lb-row .sc { flex: 0 0 50px; color: var(--sub); font-size: 14px; text-align: right; }
 
 /* ═════════ 排行榜前三名强化 ═════════
    奖牌徽章 + 第一名皇冠 + 行底色 + 左侧色条 + 头像描边 + 名字/得分上色。
@@ -280,11 +283,11 @@ button { cursor: pointer; }
 .lb-row.r2 .avatar { box-shadow: 0 0 0 2px var(--silver); }
 .lb-row.r3 .avatar { box-shadow: 0 0 0 2px var(--bronze); }
 /* 4) 名字上色加粗；第一名再放大一档 */
-.lb-row.r1 .nm { color: var(--gold); font-weight: 700; font-size: 17px; }
+.lb-row.r1 .nm { color: var(--gold); font-weight: 700; font-size: 16px; }
 .lb-row.r2 .nm { color: var(--silver); font-weight: 600; }
 .lb-row.r3 .nm { color: var(--bronze); font-weight: 600; }
 /* 5) 得分用奖牌色并加粗（第 4 名起已在上方弱化为 --sub） */
-.lb-row.r1 .sc { color: var(--gold); font-weight: 700; font-size: 15px; }
+.lb-row.r1 .sc { color: var(--gold); font-weight: 700; font-size: 14px; }
 .lb-row.r2 .sc { color: var(--silver); font-weight: 600; }
 .lb-row.r3 .sc { color: var(--bronze); font-weight: 600; }
 .lb-empty { text-align: center; color: var(--dim); font-size: 11px; padding: 14px 0; }
@@ -842,3 +845,23 @@ button { cursor: pointer; }
 
 /* 滑出动画优先于各风格的入场/循环动画（放在风格包之后保证覆盖） */
 .moment-card.moment-out { animation: momentOut 0.38s ease-in both; }
+
+/* ═══════ 统一排行榜：前三名固定 + 第4~50名从下到上无缝轮播 ═══════ */
+/* 宿主容器由 mountLeaderboard 加 .lb-flex-col（纵向弹性布局） */
+.lb-flex-col { display: flex; flex-direction: column; min-height: 0; }
+/* 轮播视口：吃满剩余高度（父容器有约束时），并给 200px 兜底高度保证一定能裁剪滚动 */
+.lb-rot-viewport {
+  flex: 1 1 auto; height: 200px; min-height: 0; max-height: 100%;
+  overflow: hidden;
+  margin-top: 4px;
+}
+/* 轨道：内容复制两份，translateY(-50%) 即恰好滚过一份 → 无缝循环 */
+/* 轨道：内容超出视口时（mountLeaderboard 检测后加 .lb-rot-anim）启用无缝上滚 */
+.lb-rot-track { will-change: transform; }
+.lb-rot-track.lb-rot-anim { animation: lbRotScroll linear infinite; }
+@keyframes lbRotScroll {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+/* 轮播行之间的柔和分隔（与固定区视觉衔接） */
+.lb-rot-slot-hint { text-align: right; font-size: 10px; color: var(--dim); padding: 2px 4px 0; }

@@ -142,9 +142,10 @@
 
   function renderBoards() {
     $('xyHeroes').innerHTML = boardRows(st.heroes, '等待第一位答对的观众', false);
-    const lb = (st.leaderboard || []).slice(0, 8).map(r => ({
+    const lb = (st.leaderboard || []).slice(0, 50).map(r => ({
       name: r.name, avatar: r.avatar, score: r.totalScore ?? r.score ?? 0, wins: r.totalWins ?? r.wins ?? 0,
     }));
-    $('xyBoard').innerHTML = boardRows(lb, '暂无数据', true);
+    // 总排行榜（统一组件：前三固定 + 第4~50名轮播）
+    DG.mountLeaderboard($('xyBoard'), lb, { totalScore: r => r.score ?? r.totalScore ?? 0 });
   }
 })();

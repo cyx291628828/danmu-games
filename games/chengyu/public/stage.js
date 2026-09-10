@@ -172,27 +172,9 @@
   function renderBoard(withAnim = false) {
     const box = $('cyBoard');
     if (!box) return;
-    const list = state.leaderboard || [];
-    // 分格：名次 / 头像 / 玩家 / 得分（与猜数字等游戏共用 common/public/base.css 的 .lb-* 样式）
-    const head = `<div class="lb-th">
-        <span class="rk">名次</span>
-        <span class="nm">玩家</span>
-        <span class="sc">得分</span>
-      </div>`;
-    if (!list.length) {
-      box.innerHTML = head + '<div class="lb-empty">暂无榜单数据</div>';
-      return;
-    }
-    box.innerHTML = head + list.map((r, i) => {
-      const cls = i < 3 ? ' r' + (i + 1) : '';
-      const avatar = DG.avatarHTML(r.name, r.avatar);
-      const total = r.totalScore != null ? r.totalScore : ((r.guess_score || 0) + (r.chengyu_score || 0));
-      return `<div class="lb-row${cls}${withAnim ? ' enter' : ''}">
-        <span class="rk">${r.rank || (i + 1)}</span>
-        ${avatar}
-        <span class="nm">${esc(r.name)}</span>
-        <span class="sc">${total}</span>
-      </div>`;
-    }).join('');
+    // 统一排行榜组件：前三名固定 + 第4~50名轮播（common/public/core.js）
+    DG.mountLeaderboard(box, state.leaderboard || [], {
+      totalScore: r => (r.totalScore != null ? r.totalScore : ((r.guess_score || 0) + (r.chengyu_score || 0))),
+    });
   }
 })();

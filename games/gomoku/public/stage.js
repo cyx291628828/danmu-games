@@ -361,26 +361,16 @@
     while (box.children.length > 30) box.removeChild(box.lastChild);
   }
 
-  /* ══════════════ 排行榜（含击败人机等级徽章） ══════════════ */
+  /* ══════════════ 排行榜（统一组件：前三固定 + 第4~50名轮播） ══════════════ */
   let lbFp = '';
   function renderLeaderboard() {
     const box = $('boardBody');
+    if (!box) return;
     const list = state.leaderboard || [];
-    const fp = list.map(r => `${r.rank}|${r.name}|${r.totalScore}|${r.gomoku_badge || 0}`).join(',');
+    const fp = list.map(r => `${r.rank}|${r.name}|${r.totalScore != null ? r.totalScore : 0}`).join(',');
     if (fp === lbFp) return;
     lbFp = fp;
-    const head = '<div class="lb-th"><span class="rk">名次</span><span class="nm">玩家</span><span class="sc">得分</span></div>';
-    if (!list.length) {
-      box.innerHTML = head + '<div class="lb-empty">暂无榜单数据</div>';
-      return;
-    }
-    box.innerHTML = head + list.map((r, i) =>
-      `<div class="lb-row${i < 3 ? ' r' + (i + 1) : ''}">
-        <span class="rk">${r.rank || (i + 1)}</span>
-        ${DG.avatarHTML(r.name, r.avatar)}
-        <span class="nm">${esc(r.name)}${(r.gomoku_badge > 0) ? `<span class="lb-badge" title="段位（击败人机最高等级）">${danOf(r.gomoku_badge)}</span>` : ''}</span>
-        <span class="sc">${r.totalScore}</span>
-      </div>`).join('');
+    DG.mountLeaderboard(box, list, { totalScore: r => (r.totalScore != null ? r.totalScore : 0) });
   }
 
   /* ══════════════ 结算横幅 ══════════════ */

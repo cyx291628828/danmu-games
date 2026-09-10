@@ -331,19 +331,10 @@
   function renderBoard() {
     const box = $('boardBody');
     if (!box) return;
-    const list = state.leaderboard || [];
-    const head = `<div class="lb-th"><span class="rk">名次</span><span class="nm">玩家</span><span class="sc">得分</span></div>`;
-    if (!list.length) { box.innerHTML = head + '<div class="lb-empty">暂无榜单数据</div>'; return; }
-    box.innerHTML = head + list.map((r, i) => {
-      const cls = i < 3 ? ' r' + (i + 1) : '';
-      const total = r.totalScore != null ? r.totalScore : 0;
-      return `<div class="lb-row${cls}">
-        <span class="rk">${r.rank || (i + 1)}</span>
-        ${DG.avatarHTML(r.name, r.avatar)}
-        <span class="nm">${esc(r.name)}</span>
-        <span class="sc">${total}</span>
-      </div>`;
-    }).join('');
+    // 统一排行榜组件：前三名固定 + 第4~50名轮播（common/public/core.js）
+    DG.mountLeaderboard(box, state.leaderboard || [], {
+      totalScore: r => (r.totalScore != null ? r.totalScore : 0),
+    });
   }
 
   /* ── 揭晓横幅（含答对人头像墙 + 最快答对） ── */

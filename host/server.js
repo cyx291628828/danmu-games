@@ -261,10 +261,35 @@ function dispatchDanmuEvent(msg) {
       }
     } catch (e) { warn(`[danmu] 游戏 ${gid} 处理 ${msg.event} 异常:`, e.message); }
 
+    // 进场/关注/送礼 → 通用 AI 播报（各游戏 slots 自动并入 enter/follow/gift，主播台可逐点开关）
+    if (msg.event === 'enter' || msg.event === 'follow' || msg.event === 'gift') {
+      try { speakAudience(gid, msg); } catch (e) { warn('[bc] 观众事件播报异常:', e.message); }
+    }
+
     // 进场/关注/送礼 → 广播 moment 演出事件（展示屏侧边如画横幅；展示层独立于游戏是否实现对应接口）
     if (msg.event !== 'chat' && msg.event !== 'like') {
       try { broadcastMoment(gid, msg); } catch (e) { warn('[moment] 广播异常:', e.message); }
     }
+  }
+}
+
+/** 观众事件 AI 播报：走该游戏的播报中心（开关/限流/模板由 BC 统一处理）
+ * follow 整场游戏只播一次（与「关注效果只生效一次」对齐）；enter/gift 仍按 minGapSec 限流。 */
+function speakAudience(gameId, msg) {
+  const inst = instances.get(gameId);
+  if (!inst || !inst.ctx) return;
+  const bc = inst.ctx._bc;
+  if (!bc || typeof bc.speak !== 'function') return;
+  const user = (msg.user && msg.user.name) || '观众';
+  if (msg.event === 'enter') {
+    bc.speak('enter', { user }).catch(() => {});
+  } else if (msg.event === 'follow') {
+    if (inst._followSpoken) return;
+    inst._followSpoken = true;
+    bc.speak('follow', { user }).catch(() => {});
+  } else if (msg.event === 'gift') {
+    const giftCount = Math.max(1, (Number(msg.giftCount) || 1) * (Number(msg.repeatCount) || 1));
+    bc.speak('gift', { user, giftName: msg.giftName || '礼物', giftCount }).catch(() => {});
   }
 }
 

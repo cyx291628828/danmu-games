@@ -139,9 +139,11 @@ window.DGBroadcast = (() => {
       </div>`).join('');
     box.querySelectorAll('input[type="checkbox"]').forEach(chk => {
       chk.addEventListener('change', () => {
-        const id = chk.id.slice(4);
+        // 一次提交全部开关，避免只传当前项时与服务端合并/回填不同步，表现为「像单选」
         const payload = { bcEnabled: {} };
-        payload.bcEnabled[id] = chk.checked;
+        box.querySelectorAll('input[type="checkbox"]').forEach(c2 => {
+          payload.bcEnabled[c2.id.slice(4)] = c2.checked;
+        });
         sendConfig(panelGame, payload);
       });
     });
@@ -195,7 +197,11 @@ window.DGBroadcast = (() => {
     if (state.bcSlots) {
       for (const s of state.bcSlots) {
         const el = $('bcS_' + s.id);
-        if (el && document.activeElement !== el) el.checked = c.bcEnabled ? c.bcEnabled[s.id] !== false : true;
+        if (el && document.activeElement !== el) {
+          const v = c.bcEnabled ? c.bcEnabled[s.id] : undefined;
+          // publicState 下发的是「计算后的完整开关表」；undefined 时按开处理（兼容旧数据）
+          el.checked = v === undefined ? true : !!v;
+        }
       }
     }
   }

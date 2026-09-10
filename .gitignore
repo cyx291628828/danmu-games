@@ -23,3 +23,8 @@ gui-test-screenshots/
 *.bak
 *.back
 *.tmp
+# 语义猜词模型：Volume 过大（单个 >100MB，超过 GitHub 单文件上限），且均为可再生成产物，不入库。
+# 获取方式见 games/semantic/README.md：下载源词向量后执行
+#   node scripts/gen_semantic_model.cjs <word2vec二进制文件>
+games/semantic/model/source/light_Tencent_AILab_ChineseEmbedding.bin
+games/semantic/model/vectors.f32

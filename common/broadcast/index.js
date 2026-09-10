@@ -58,6 +58,42 @@ const BC_CFG_KEYS = Object.keys(BC_CFG_DEFAULTS);
 
 const DEFAULT_SYSTEM = '你是直播间弹幕游戏的解说员，风格热血、简短、有梗。根据给出的对局数据写一段60字以内的中文口播，只输出口播内容本身，不要任何前缀、引号或解释。';
 
+/* ═══════════════ 观众事件播报点（全游戏自动挂载） ═══════════════
+ * 进场 / 关注 / 送礼。默认关闭（def:false），主播台「AI 播报」逐点开关打开后才播。
+ * 宿主 dispatchDanmuEvent 在分发完游戏逻辑后调用 BC.speak，各游戏零改动。 */
+const AUDIENCE_SLOTS = [
+  {
+    id: 'enter',
+    label: '观众进场',
+    desc: '有观众进入直播间时口播欢迎',
+    def: false,
+    minGapSec: 18,
+    system: '你是直播间互动游戏的暖场助手。有观众刚进直播间，写一段20字以内的简短欢迎口播，热情自然，只输出内容本身。',
+    buildUser: d => `观众「${d.user}」刚进入直播间，请简短欢迎并顺势邀请一起玩当前游戏。`,
+    local: d => `欢迎「${d.user}」进场！来都来了，弹幕一起玩一局～`,
+  },
+  {
+    id: 'follow',
+    label: '观众关注',
+    desc: '有观众关注主播时口播感谢',
+    def: false,
+    minGapSec: 12,
+    system: '你是直播间互动助手。有观众刚关注了主播，写一段20字以内的感谢口播，真诚有梗，只输出内容本身。',
+    buildUser: d => `观众「${d.user}」刚关注了主播，请简短感谢。`,
+    local: d => `感谢「${d.user}」点关注！关注不迷路，下一把更精彩～`,
+  },
+  {
+    id: 'gift',
+    label: '观众送礼',
+    desc: '有观众送礼时口播感谢',
+    def: false,
+    minGapSec: 8,
+    system: '你是直播间互动助手。有观众送出了礼物，写一段25字以内的感谢口播，热情但不肉麻，只输出内容本身。',
+    buildUser: d => `观众「${d.user}」送出「${d.giftName || '礼物'}」${d.giftCount > 1 ? `×${d.giftCount}` : ''}，请简短感谢。`,
+    local: d => `谢谢「${d.user}」的${d.giftName || '礼物'}${d.giftCount > 1 ? `×${d.giftCount}` : ''}！大气！`,
+  },
+];
+
 /**
  * 创建播报中心实例（每个游戏一个）
  *
@@ -66,6 +102,7 @@ const DEFAULT_SYSTEM = '你是直播间弹幕游戏的解说员，风格热血�
  * @param {string} opts.gameName  游戏名（日志/默认 prompt 用）
  * @param {Array}  opts.slots     播报点定义，每项：
  *        { id, label, desc, def=true, minGapSec=0, system, buildUser(data)->string, local(data)->string }
+ *        进场/关注/送礼三点由本模块自动并入，各游戏无需重复定义。
  * @param {()=>object} opts.getCfg    取当前游戏 cfg
  * @param {()=>object} opts.getState  取当前游戏 state（播报结果写入 state.bc）
  * @param {()=>void}   opts.emit      状态变更推送（通常 emit.state）
@@ -77,8 +114,12 @@ function createBroadcaster(opts = {}) {
     getCfg = () => ({}), getState = () => ({}), emit = () => {}, log = () => {},
   } = opts;
 
+  // 观众事件三点自动并入（游戏自带同 id 时以游戏定义为准）
+  const gameIds = new Set(slots.map(s => s && s.id).filter(Boolean));
+  const allSlots = [...AUDIENCE_SLOTS.filter(s => !gameIds.has(s.id)), ...slots];
+
   const byId = new Map();
-  for (const s of slots) if (s && s.id) byId.set(s.id, s);
+  for (const s of allSlots) if (s && s.id) byId.set(s.id, s);
   const lastAt = new Map();   // slotId -> 上次实际播报时间戳（minGapSec 限流用）
 
   /** 当前播报模式（'off' | 'local' | 'api'） */
@@ -216,7 +257,7 @@ function createBroadcaster(opts = {}) {
     const c = getCfg() || {};
     const bc = st.bc || {};
     const enabled = {};
-    for (const s of slots) if (s && s.id) enabled[s.id] = slotEnabled(s.id);
+    for (const s of allSlots) if (s && s.id) enabled[s.id] = slotEnabled(s.id);
     return {
       // 当前/最近一条播报（seq 自增，前端据此判断「该朗读新的一条」）
       bc: {
@@ -228,7 +269,7 @@ function createBroadcaster(opts = {}) {
         log: (bc.log || []).slice(0, 8),
       },
       // 播报点清单（主播台据此渲染逐点开关）
-      bcSlots: slots.filter(s => s && s.id).map(s => ({ id: s.id, label: s.label || s.id, desc: s.desc || '' })),
+      bcSlots: allSlots.filter(s => s && s.id).map(s => ({ id: s.id, label: s.label || s.id, desc: s.desc || '' })),
       // 播报配置（密钥明文绝不下发，前端只知道「是否已配置」）
       bcCfg: {
         aiBroadcast: c.aiBroadcast || 'local',
@@ -255,11 +296,11 @@ function createBroadcaster(opts = {}) {
   }
 
   return {
-    slots, mode, apiReady, slotEnabled,
+    slots: allSlots, mode, apiReady, slotEnabled,
     generate, speak, push, control, collectConfig, publicState, configSchema,
     /** 便捷：一次性关闭全部播报（游戏结束时用） */
     reset() { lastAt.clear(); },
   };
 }
 
-module.exports = { createBroadcaster, BC_CFG_DEFAULTS, BC_CFG_KEYS, DEFAULT_SYSTEM };
+module.exports = { createBroadcaster, BC_CFG_DEFAULTS, BC_CFG_KEYS, DEFAULT_SYSTEM, AUDIENCE_SLOTS };

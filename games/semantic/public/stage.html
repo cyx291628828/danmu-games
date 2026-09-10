@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>语义猜词 · 直播互动游戏 · 展示屏</title>
+<link rel="stylesheet" href="/common/base.css">
+<link rel="stylesheet" href="stage.css">
+</head>
+<body data-view="stage">
+
+<!-- ═══════════ 展示屏 stage（9:16 竖屏投屏 / OBS 浏览器源） ═══════════ -->
+<div id="view-stage">
+  <div class="phone">
+    <header class="top">
+      <div class="game-title">语义猜词 · 直播互动</div>
+      <div class="round-badge" id="stRound">ROUND 0</div>
+    </header>
+
+    <div class="countdown-row">
+      <div class="cd">
+        <span id="cdNum" class="cd-num">--</span>
+        <span class="cd-unit">秒</span>
+      </div>
+    </div>
+
+    <div class="cd-progress">
+      <div class="cd-progress-labels" id="cdProgLabels"></div>
+      <div class="cd-progress-track">
+        <div class="cd-progress-fill" id="cdProgFill"></div>
+        <div class="cd-progress-marks" id="cdProgMarks"></div>
+      </div>
+    </div>
+
+    <!-- 神秘词卡片：竞猜中逐字亮出（首字提示/揭晓），平时显示 ? -->
+    <div class="cells" id="cells"></div>
+
+    <div class="howto">
+      <div class="howto-line">弹幕发一个词，如： <b class="howto-b">老师</b></div>
+      <div class="howto-gold">和答案意思越近，相似度越高 · 分越高 · 猜中额外得分</div>
+    </div>
+
+    <div class="hint-tip" id="hintTip" style="display:none;"></div>
+
+    <div class="lower">
+      <section class="col-guess">
+        <h3>🔥 实时猜测 · 按关联度排序</h3>
+        <div id="guessStream" class="guess-box"></div>
+      </section>
+      <div class="col-right">
+        <!-- 点赞解锁提示词（按每个观众各自计数）：进度条显示本轮点赞王距下一个阈值的进度 -->
+        <section class="col-likes" id="likeSection" style="display:none">
+          <h3>👍 点赞随机出一词 <span class="ly-who" id="lyWho"></span></h3>
+          <div class="ly-track"><div class="ly-fill" id="lyFill"></div><span class="ly-count" id="lyCount"></span></div>
+        </section>
+        <!-- 玩家弹幕词：最近 5 条真实弹幕（最新在上、不排序；不含礼物/点赞解锁词） -->
+        <section class="col-recent">
+          <h3>💬 玩家弹幕词</h3>
+          <div class="rc-list" id="rcList"><div class="rc-empty">等待观众弹幕…</div></div>
+        </section>
+        <section class="col-board">
+          <div class="board-head">
+            <h3>排行榜</h3>
+          </div>
+          <div id="boardBody" class="board-box"></div>
+        </section>
+      </div>
+    </div>
+
+    <div id="fireworks" class="fireworks"></div>
+    <div id="winBanner" class="win-banner hidden">
+      <div class="result-wrap">
+        <!-- 结算面板（数独风领奖台）：顶缘居中头像向上突出，榜首大卡 + 其余上榜玩家小卡（2/3 一排、4/5/6 一排） -->
+        <div class="win-card result-panel">
+          <div class="p-top-av" id="winTopAv" style="display:none;"></div>
+          <div class="win-title" id="winTitle">本 轮 结 束</div>
+          <div class="podium" id="winPodium"></div>
+          <div class="win-answer" id="winSub"></div>
+        </div>
+        <!-- 下一局倒计时：位于面板边框下方 -->
+        <div class="result-next" id="winNext" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/common/core.js"></script>
+<script src="stage.js"></script>
+</body>
+</html>

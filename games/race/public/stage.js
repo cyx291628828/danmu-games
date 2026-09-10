@@ -313,11 +313,8 @@
     $('richRows').innerHTML = rich.length
       ? rich.map((r, i) => rowHTML(i + 1, (i === 0 ? '💰 ' : '') + r.name, r.avatar, r.chips)).join('')
       : '<div class="row empty">暂无数据</div>';
-    // 总荣誉榜
-    const lb = (state.leaderboard || []).slice(0, 4);
-    $('honorRows').innerHTML = lb.length
-      ? lb.map((r, i) => rowHTML(i + 1, r.name, r.avatar, r.totalScore)).join('')
-      : '<div class="row empty">暂无数据</div>';
+    // 总荣誉榜（统一组件：前三固定 + 第4~50名轮播）
+    DG.mountLeaderboard($('honorRows'), state.leaderboard || [], { totalScore: r => r.totalScore ?? 0 });
   }
 
   /* ═══════════════ 特效 ═══════════════ */

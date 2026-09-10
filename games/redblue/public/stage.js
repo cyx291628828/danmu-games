@@ -225,19 +225,12 @@
           <span class="sc">${t.pulls + t.likes}</span>
         </div>`).join('') : '<div class="lb-empty">暂无贡献</div>';
     }
-    // 总排行榜
+    // 总排行榜（统一组件：前三固定 + 第4~50名轮播）
     const lb = state.leaderboard || [];
     const lfp = lb.map(r => `${r.rank}|${r.name}|${r.totalScore || 0}`).join(',');
     if (lfp !== lbFingerprint) {
       lbFingerprint = lfp;
-      const box = $('boardBody');
-      box.innerHTML = lb.length ? lb.slice(0, 5).map((r, i) => `
-        <div class="lb-row${i < 3 ? ' r' + (i + 1) : ''}">
-          <span class="rk">${r.rank || i + 1}</span>
-          ${DG.avatarHTML(r.name, r.avatar)}
-          <span class="nm">${esc(r.name)}</span>
-          <span class="sc">${r.totalScore || 0}</span>
-        </div>`).join('') : '<div class="lb-empty">暂无榜单数据</div>';
+      DG.mountLeaderboard($('boardBody'), lb, { totalScore: r => r.totalScore || 0 });
     }
     // 赛季功勋榜（跨场次阵营功勋）
     const season = state.season;

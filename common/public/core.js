@@ -185,31 +185,65 @@ window.DG = (() => {
    * handlers: { onState(gameId, state), onGuess(gameId, entry), onNotice(gameId, notice),
    *             onMoment(gameId, moment), onError }
    * moment = 观众时刻（进场/关注/送礼，宿主在弹幕转发到达时统一广播，含观众本玩法排名）
-   * 返回 { close() }
+   * 同一 game 键复用一条 EventSource（多订阅者扇出）：浏览器同源 HTTP/1.1 并发约 6 条，
+   * 展示屏若「游戏状态 + 观众时刻」各开一条，再开第三个页面就会堵死静态资源一直转圈。
+   * 返回 { close() }：只退订本 handlers；最后一个订阅者离开时才真正关闭连接。
    */
+  const _sseByGame = new Map(); // key → { es, subs:Set, likeProgress }
+
   function connectSSE(game, handlers = {}) {
-    const q = game ? `?game=${encodeURIComponent(game)}` : '';
-    const es = new EventSource('/api/events' + q);
-    es.addEventListener('state', e => {
-      const st = JSON.parse(e.data);
-      applyTheme(st.theme);        // 展示屏：应用主题
-      syncThemePicker(st.theme);   // 主播台：同步下拉框
-      if (handlers.onState) handlers.onState(st.__game, st, e);
-    });
-    es.addEventListener('guess', e => {
-      const g = JSON.parse(e.data);
-      if (handlers.onGuess) handlers.onGuess(g.__game, g, e);
-    });
-    es.addEventListener('notice', e => {
-      const n = JSON.parse(e.data);
-      if (handlers.onNotice) handlers.onNotice(n.__game, n, e);
-    });
-    es.addEventListener('moment', e => {
-      const m = JSON.parse(e.data);
-      if (handlers.onMoment) handlers.onMoment(m.__game, m, e);
-    });
-    es.onerror = () => { if (handlers.onError) handlers.onError(); };
-    return { close: () => es.close() };
+    const key = String(game || '');
+    let rec = _sseByGame.get(key);
+    if (!rec) {
+      const q = key ? `?game=${encodeURIComponent(key)}` : '';
+      const es = new EventSource('/api/events' + q);
+      // 本连接收到的点赞数（跨游戏统一计数，供「每 N 赞解锁提示词」这类玩法做本地进度显示；
+      // 服务端权威进度随 state.likeProgress 下发，二者取大值兜底）
+      const likeProgress = { total: 0 };
+      const subs = new Set();
+      const fanout = (name, a, b, c) => {
+        for (const h of subs) {
+          try { if (h[name]) h[name](a, b, c); } catch (err) { console.error('[sse]', name, err); }
+        }
+      };
+      es.addEventListener('state', e => {
+        const st = JSON.parse(e.data);
+        applyTheme(st.theme);        // 展示屏：应用主题
+        syncThemePicker(st.theme);   // 主播台：同步下拉框
+        fanout('onState', st.__game, st, e);
+      });
+      es.addEventListener('like', e => {
+        const g = JSON.parse(e.data);
+        likeProgress.total += (Number(g.count) || 1);
+        fanout('onLike', g.__game, g, e);
+      });
+      es.addEventListener('guess', e => {
+        const g = JSON.parse(e.data);
+        fanout('onGuess', g.__game, g, e);
+      });
+      es.addEventListener('notice', e => {
+        const n = JSON.parse(e.data);
+        fanout('onNotice', n.__game, n, e);
+      });
+      es.addEventListener('moment', e => {
+        const m = JSON.parse(e.data);
+        fanout('onMoment', m.__game, m, e);
+      });
+      es.onerror = () => { fanout('onError'); };
+      rec = { es, subs, likeProgress };
+      _sseByGame.set(key, rec);
+    }
+    rec.subs.add(handlers);
+    return {
+      close: () => {
+        rec.subs.delete(handlers);
+        if (!rec.subs.size) {
+          try { rec.es.close(); } catch {}
+          _sseByGame.delete(key);
+        }
+      },
+      likeProgress: rec.likeProgress,
+    };
   }
 
   /* ───────────── 烟花（获胜庆祝） ─────────────
@@ -355,6 +389,68 @@ window.DG = (() => {
   /* 兼容旧接口：mountRoomFilter(mountEl, game, getRoomId) —— 仅直播间筛选，无模拟行 */
   function mountRoomFilter(mountEl, game, getRoomId) {
     return mountFeedTools(mountEl, game, { getRoomId, sim: false });
+  }
+
+  /* ───────────── 排行榜统一组件：前三名固定 + 第 4~50 名从下到上无缝轮播 ─────────────
+   * 所有游戏的总排行榜统一走这里渲染：.lb-th 表头 + 前三名固定不动，
+   * 第 4~50 名进 .lb-rot-track 无缝向上滚动循环（CSS 动画，不占 JS 定时器）。
+   * list 项须含 rank/name/avatar；分数列用 opts.totalScore(r)，默认 r.totalScore ?? r.score ?? 0。
+   * speed = 滚动速度（px/s，默认 26）。指纹守卫：榜单未变化时保留现有 DOM（不打断滚动）。 */
+  function mountLeaderboard(box, list, opts = {}) {
+    if (!box) return null;
+    const totalScore = opts.totalScore || (r => r.totalScore ?? r.score ?? 0);
+    const scoreLabel = opts.scoreLabel || '得分';   // 第三列表头（如数独用「MVP」）
+    const speed = Math.max(8, opts.speed || 26);   // 滚动速度 px/s
+
+    const rows = (Array.isArray(list) ? list : []).slice(0, 50);
+    const fp = rows.map(r => `${r.rank}|${r.name}|${totalScore(r) ?? 0}`).join(',');
+    if (box._lbFp === fp) return (box._lbHandle || null);
+    box._lbFp = fp;
+    const head = `<div class="lb-th"><span class="rk">名次</span><span class="nm">玩家</span><span class="sc">${esc(scoreLabel)}</span></div>`;
+    const rowHTML = (r, extra = '') =>
+      `<div class="lb-row${extra}">
+        <span class="rk">${r.rank || ''}</span>
+        ${DG.avatarHTML(r.name, r.avatar)}
+        <span class="nm">${esc(r.name)}</span>
+        <span class="sc">${esc(String(totalScore(r) ?? 0))}</span>
+      </div>`;
+
+    if (!rows.length) {
+      box.innerHTML = head + '<div class="lb-empty">暂无榜单数据</div>';
+      return null;
+    }
+
+    box.classList.add('lb-flex-col');               // 纵向弹性布局：轮播视口吃满剩余高度
+    const top3 = rows.slice(0, 3);
+    const rest = rows.slice(3);                     // 第 4~50 名
+
+    if (!rest.length) {
+      box.innerHTML = head + top3.map((r, i) => rowHTML(r, ' r' + (i + 1))).join('');
+      return null;
+    }
+
+    // 先按单份内容渲染，再测量：内容超出视口才启用「第4名↔第50名首尾相连」的无缝循环，
+    // 没超出就静态平铺（不滚）。测量在下一帧布局完成后进行。
+    box.innerHTML = head
+      + top3.map((r, i) => rowHTML(r, ' r' + (i + 1))).join('')
+      + `<div class="lb-rot-viewport"><div class="lb-rot-track">${rest.map(r => rowHTML(r)).join('')}</div></div>`;
+
+    const viewport = box.querySelector('.lb-rot-viewport');
+    const track = box.querySelector('.lb-rot-track');
+    requestAnimationFrame(() => {
+      if (!track || !viewport || track.dataset.rolled) return;
+      const contentH = track.scrollHeight;          // 单份内容高度
+      const viewH = viewport.clientHeight;
+      if (contentH > viewH + 1) {
+        // 超出显示区域 → 复制一份内容，translateY(-50%) 恰好滚过一份 → 第4名与第50名首尾相连循环
+        const dur = Math.min(150, Math.max(12, Math.round(contentH / speed)));
+        track.innerHTML = track.innerHTML + track.innerHTML;
+        track.style.animationDuration = dur + 's';
+        track.classList.add('lb-rot-anim');
+        track.dataset.rolled = '1';
+      }
+    });
+    return null;
   }
 
   /* ───────────── 观众时刻演出（展示屏侧边如画横幅） ─────────────
@@ -534,7 +630,11 @@ window.DG = (() => {
 
   function autoMountMomentStage() {
     if (!isStage()) return;
-    const game = new URLSearchParams(location.search).get('game') || '';
+    // 与 stage.js 同一 game 键（优先 ?game=，否则从路径 /games/<id>/ 推断），
+    // 这样能复用页面里已有的那条 SSE，而不是再占一条浏览器连接
+    const qGame = new URLSearchParams(location.search).get('game');
+    const pathMatch = location.pathname.match(/\/games\/([^/]+)\//);
+    const game = qGame || (pathMatch && pathMatch[1]) || '';
     initMomentStage(game);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', autoMountMomentStage);
@@ -565,9 +665,57 @@ window.DG = (() => {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', autoMountMomentSkinPicker);
   else autoMountMomentSkinPicker();
 
+  /* ═══════════ 展示屏小屏自适应（只缩不放） ═══════════
+     大屏（视口 ≥ 设计基准）：保持原行为——.phone 宽度自适应、内部固定 px 字号不变。
+       框变大而字不变，信息密度更高；若此时也等比放大会导致「同高度装不下同样多内容」。
+     小屏（视口 < 设计基准）：.phone 固定为基准宽并整体 zoom 缩小，字号随之等比缩小，
+       解决「容器缩小、字号不变导致文字溢出/截断」。
+     s = 1 处两种算法连续（渲染尺寸仅差亚像素），切换无跳变。 */
+  const STAGE_BASE_W = 600;
+  const STAGE_BASE_H = (600 * 16) / 9;   // 1066.67（9:16）
+  const SUPPORT_ZOOM = 'zoom' in document.documentElement.style;
+
+  function fitStage() {
+    const phone = document.querySelector('.phone');
+    if (!phone) return;
+    const vw = window.innerWidth || document.documentElement.clientWidth;
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    // 与 #view-stage 的 padding(6px × 2) 对齐，四周留 12px
+    const s = Math.min((vw - 12) / STAGE_BASE_W, (vh - 12) / STAGE_BASE_H);
+
+    if (s >= 1) {
+      // 大屏：清掉内联覆盖，回到 base.css 的自适应宽度；不放大
+      phone.style.width = '';
+      phone.style.zoom = '1';
+      phone.style.transform = 'none';
+      return;
+    }
+
+    // 小屏：固定基准宽 + 整体等比缩小
+    phone.style.width = STAGE_BASE_W + 'px';
+    const scale = Math.max(0.2, s);        // 下限 0.2，避免极端窄窗缩到不可见
+    if (SUPPORT_ZOOM) {
+      phone.style.transform = 'none';
+      phone.style.zoom = String(scale);
+    } else {
+      // 不支持 zoom 的旧浏览器：退回 transform（同样以中心等比缩放，视觉一致）
+      phone.style.transformOrigin = 'center';
+      phone.style.transform = `scale(${scale})`;
+    }
+  }
+
+  function autoFitStage() {
+    if (!isStage()) return;                // 仅展示屏生效，主播台不受影响
+    fitStage();
+    window.addEventListener('resize', fitStage);
+    window.addEventListener('orientationchange', fitStage);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', autoFitStage);
+  else autoFitStage();
+
   return {
     $, esc, initialOf, avatarHTML, showToast, control, connectSSE, launchFireworks,
-    mountRoomFilter, mountFeedTools,
-    THEMES, applyTheme, mountThemePicker,
+    mountRoomFilter, mountFeedTools, mountLeaderboard,
+    THEMES, applyTheme, mountThemePicker, fitStage,
   };
 })();

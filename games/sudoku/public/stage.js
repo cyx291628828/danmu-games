@@ -253,22 +253,16 @@
   let lbFingerprint = '';
   function renderBoardList() {
     const box = $('boardBody');
+    if (!box) return;
     const list = state.sudokuBoard || [];
     const fp = list.map(r => `${r.rank}|${r.name}|${r.mvp}|${r.score}`).join(',');
     if (fp === lbFingerprint) return;
     lbFingerprint = fp;
-    const head = '<div class="lb-th"><span class="rk">名次</span><span class="nm">玩家</span><span class="mv">MVP</span></div>';
-    if (!list.length) {
-      box.innerHTML = head + '<div class="lb-empty">暂无榜单数据</div>';
-      return;
-    }
-    box.innerHTML = head + list.map((r, i) =>
-      `<div class="lb-row${i < 3 ? ' r' + (i + 1) : ''}">
-        <span class="rk">${r.rank || (i + 1)}</span>
-        ${DG.avatarHTML(r.name, r.avatar)}
-        <span class="nm">${esc(r.name)}</span>
-        <span class="mv">${r.mvp > 0 ? '👑' + r.mvp : '—'}</span>
-      </div>`).join('');
+    // 统一排行榜组件：前三名固定 + 第4~50名轮播（第三列=MVP 次数，scoreLabel 适配表头）
+    DG.mountLeaderboard(box, list, {
+      scoreLabel: 'MVP',
+      totalScore: r => (r.mvp > 0 ? '👑' + r.mvp : '—'),
+    });
   }
 
   /* ══════════════ 结算横幅（本局 Top5：MVP + 每人填对/错填数） ══════════════ */
